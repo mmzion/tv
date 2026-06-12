@@ -3,27 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zion Sports — Ultimate FIFA OTT</title>
+    <title>Zion Sports — Ultimate OTT</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     
     <style>
-        /* ওটিটি ডার্ক লাক্সারি থিম */
+        /* লাক্সারি ওটিটি ডার্ক থিম */
         body {
-            background-color: #06090e;
+            background-color: #04070b;
             color: #f8fafc;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
+            padding-top: 60px;
         }
 
         /* আল্ট্রা-মিনিমাল টপ বার */
         .ott-nav {
-            background: rgba(6, 9, 14, 0.75);
+            background: rgba(4, 7, 11, 0.8);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
             height: 60px;
             display: flex;
             align-items: center;
@@ -43,103 +44,122 @@
         }
         .site-brand span {
             color: #ef4444;
-            font-size: 12px;
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            font-size: 11px;
+            border: 1px solid rgba(239, 68, 68, 0.25);
             padding: 1px 6px;
             border-radius: 4px;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
-        /* ওটিটি মেইন ড্যাশবোর্ড লেআউট */
+        /* ওটিটি ড্যাশবোর্ড গ্রিড */
         .ott-dashboard {
-            margin-top: 60px;
-            padding: 20px;
-            min-height: calc(100vh - 60px);
+            padding: 24px;
+            max-width: 1600px;
+            margin: 0 auto;
         }
 
-        /* অ্যাম্বিয়েন্ট লাইট গ্লো সহ প্লেয়ার কন্টেইনার */
+        /* ডেস্কটপ ওটিটি ফ্রেমওয়ার্ক (16:9 Aspect Ratio Lock) */
         .theater-screen {
             position: relative;
             background: #000;
-            border-radius: 16px;
+            border-radius: 14px;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 
-                        0 0 50px rgba(239, 68, 68, 0.05); /* মৃদু অ্যাম্বিয়েন্ট গ্লো */
-            transition: box-shadow 0.5s ease;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            width: 100%;
+            aspect-ratio: 16 / 9; /* ডেস্কটপে পারফেক্ট প্লেয়ার সাইজ লক */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        /* Plyr প্লেয়ার কাস্টমাইজেশন */
+        /* Plyr রেসপনসিভ কন্টেইনার */
         .plyr {
-            --plyr-color-main: #ef4444; 
-            max-height: 72vh;
-            border-radius: 16px;
-        }
-
-        /* মডার্ন গ্লাস-মরফিজম সাইডবার প্যানেল */
-        .sidebar-panel {
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 16px;
-            padding: 20px;
+            width: 100%;
             height: 100%;
         }
+        .plyr--video {
+            background: #000;
+        }
+
+        /* ফিক্সড হাইট ইন্টারেক্টিভ সাইড প্যানেল */
+        .sidebar-panel {
+            background: rgba(13, 18, 28, 0.45);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 14px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
         .panel-header {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: #94a3b8;
-            margin-bottom: 15px;
+            color: #64748b;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
-        /* ওটিটি স্টাইল চ্যানেল লিস্ট কার্ডস */
+        /* ওটিটি স্টাইল কন্টেন্ট স্ক্রোল এরিয়া */
         .channel-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
+            overflow-y: auto;
+            padding-right: 4px;
         }
-        .channel-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 12px 16px;
+        
+        /* কাস্টম সাইডবার স্ক্রোলবার ডিজাইন */
+        .channel-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .channel-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
+        }
+
+        /* প্রিমিয়াম চ্যানেল আইটেম কার্ডস */
+        .channel-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 12px 14px;
+            border-radius: 8px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .channel-card:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(255, 255, 255, 0.15);
-            transform: translateX(4px);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(2px);
         }
         .channel-card.active {
-            background: linear-gradient(90deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.03) 100%);
+            background: linear-gradient(90deg, rgba(239, 68, 68, 0.12) 0%, rgba(239, 68, 68, 0.02) 100%);
             border-color: #ef4444;
-            box-shadow: inset 3px 0 0 #ef4444;
         }
         .card-info {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
         .card-icon {
-            width: 36px;
-            height: 36px;
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 14px;
             color: #94a3b8;
-            transition: all 0.2s ease;
         }
         .channel-card.active .card-icon {
             background: #ef4444;
@@ -147,30 +167,45 @@
         }
         .card-name {
             font-weight: 600;
-            font-size: 14.5px;
+            font-size: 14px;
+            letter-spacing: -0.1px;
         }
         .status-badge {
             font-size: 10px;
             font-weight: 700;
-            color: #64748b;
-            text-transform: uppercase;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         .channel-card.active .status-badge {
             color: #ef4444;
         }
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            display: inline-block;
+            animation: blink 1.5s infinite;
+        }
 
-        /* ডাইনামিক লাইভ মেটাডাটা সেকশন */
+        @keyframes blink {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* স্ট্রিম ইনফরমেশন সেকশন */
         .stream-details {
             margin-top: 20px;
-            background: rgba(255, 255, 255, 0.01);
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            background: rgba(13, 18, 28, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.02);
             padding: 16px 20px;
             border-radius: 12px;
         }
         .stream-title {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
-            letter-spacing: -0.3px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -184,27 +219,36 @@
             padding: 2px 6px;
             border-radius: 4px;
             text-transform: uppercase;
-            animation: breathe 2s infinite ease-in-out;
         }
-
-        @keyframes breathe {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.97); }
-        }
-
         .stream-meta-tags {
-            margin-top: 10px;
+            margin-top: 8px;
             display: flex;
             gap: 15px;
             font-size: 13px;
-            color: #64748b;
+            color: #475569;
         }
         .tag-item { display: flex; align-items: center; gap: 4px; }
 
-        /* রেসপনসিভ মোবাইল লেআউট ব্রেকিং */
+        /* পিসি এবং বড় স্ক্রিনের নিখুঁত লেআউট ক্যালকুলেশন */
+        @media (min-width: 992px) {
+            .dashboard-row {
+                display: flex;
+                align-items: stretch;
+            }
+            .sidebar-panel {
+                height: 100%;
+                max-height: calc(16 / 9 * 100%); /* প্লেয়ারের হাইটের সাথে সমতা রাখা */
+            }
+            .channel-list {
+                height: 0;
+                flex-grow: 1; /* অটোফিলাপ স্ক্রোল স্পেস */
+            }
+        }
+        
         @media (max-width: 991px) {
-            .sidebar-panel { margin-top: 20px; height: auto; }
-            .channel-card:hover { transform: translateY(-2px); }
+            .theater-screen { aspect-ratio: auto; height: 210px; }
+            .sidebar-panel { margin-top: 16px; }
+            .channel-list { max-height: 300px; }
         }
     </style>
 </head>
@@ -212,15 +256,15 @@
 
     <nav class="ott-nav px-3 px-md-4">
         <div class="site-brand">
-            <i class="bi bi-grid-1x2-fill text-danger"></i> Zion Sports <span>FIFA OTT</span>
+            <i class="bi bi-play-hd-fill text-danger"></i> Zion Sports <span>LIVE HUB</span>
         </div>
     </nav>
 
     <div class="container-fluid ott-dashboard">
-        <div class="row g-4">
+        <div class="row g-4 dashboard-row">
             
-            <div class="col-lg-9">
-                <div class="theater-screen" id="mainScreen">
+            <div class="col-lg-9 d-flex flex-column">
+                <div class="theater-screen">
                     <video id="player" playsinline controls autoplay muted></video>
                 </div>
                 
@@ -230,9 +274,9 @@
                         <span id="activeTitle">Caze TV — FIFA Broadcast Feed</span>
                     </h1>
                     <div class="stream-meta-tags">
-                        <div class="tag-item"><i class="bi bi-shield-check text-success"></i> Premium Stream Connection</div>
-                        <div class="tag-item"><i class="bi bi-cpu"></i> HLS Auto-Adaptive Core</div>
-                        <div class="tag-item"><i class="bi bi-lightning-charge-fill text-warning"></i> Ultra Low Latency</div>
+                        <div class="tag-item"><i class="bi bi-globe"></i> Global Feed Connection</div>
+                        <div class="tag-item"><i class="bi bi-cpu"></i> Auto-Resolution Core</div>
+                        <div class="tag-item"><i class="bi bi-lightning-charge"></i> Ultra Low Latency</div>
                     </div>
                 </div>
             </div>
@@ -240,40 +284,48 @@
             <div class="col-lg-3">
                 <div class="sidebar-panel">
                     <div class="panel-header">
-                        <i class="bi bi-collection-play"></i> Select Live Feed
+                        <i class="bi bi-collection-play-fill"></i> Select Channel
                     </div>
                     
                     <div class="channel-list">
                         <div class="channel-card active" onclick="switchChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8', 'Caze TV — FIFA Broadcast Feed', this)">
                             <div class="card-info">
-                                <div class="card-icon"><i class="bi bi-play-fill"></i></div>
+                                <div class="card-icon"><i class="bi bi-tv"></i></div>
                                 <div class="card-name">Caze TV</div>
                             </div>
-                            <div class="status-badge">1080p Stream</div>
+                            <div class="status-badge"><span class="pulse-dot"></span> 1080p</div>
                         </div>
 
                         <div class="channel-card" onclick="switchChannel('https://tvsen5.aynaott.com/PtvSports/index.m3u8', 'PTV Sports — FIFA World Matches', this)">
                             <div class="card-info">
-                                <div class="card-icon"><i class="bi bi-play-fill"></i></div>
+                                <div class="card-icon"><i class="bi bi-tv"></i></div>
                                 <div class="card-name">PTV Sports</div>
                             </div>
-                            <div class="status-badge">HD Feed</div>
+                            <div class="status-badge"><span class="pulse-dot"></span> Live</div>
                         </div>
 
                         <div class="channel-card" onclick="switchChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Sports 1 — Global Football Feed', this)">
                             <div class="card-info">
-                                <div class="card-icon"><i class="bi bi-play-fill"></i></div>
+                                <div class="card-icon"><i class="bi bi-tv"></i></div>
                                 <div class="card-name">Bein Sports 1</div>
                             </div>
-                            <div class="status-badge">Global</div>
+                            <div class="status-badge"><span class="pulse-dot"></span> HD</div>
                         </div>
 
                         <div class="channel-card" onclick="switchChannel('https://1nyaler.streamhostingcdn.top/stream/32/index.m3u8', 'WIN Sports — Premium FIFA Stream', this)">
                             <div class="card-info">
-                                <div class="card-icon"><i class="bi bi-play-fill"></i></div>
+                                <div class="card-icon"><i class="bi bi-tv"></i></div>
                                 <div class="card-name">WIN Sports</div>
                             </div>
-                            <div class="status-badge">Premium</div>
+                            <div class="status-badge"><span class="pulse-dot"></span> Premium</div>
+                        </div>
+
+                        <div class="channel-card" onclick="switchChannel('https://api.allorigins.win/raw?url=' + encodeURIComponent('http://103.59.176.72:8083/live1/tracks-v1a1/mono.m3u8?token=123'), 'T Sports 2 — Live Streaming Feed', this)">
+                            <div class="card-info">
+                                <div class="card-icon"><i class="bi bi-tv text-warning"></i></div>
+                                <div class="card-name">T Sports 2</div>
+                            </div>
+                            <div class="status-badge"><span class="pulse-dot"></span> Active</div>
                         </div>
                     </div>
                 </div>
@@ -289,9 +341,8 @@
         let hls = null;
         const video = document.getElementById('player');
         const activeTitle = document.getElementById('activeTitle');
-        const mainScreen = document.getElementById('mainScreen');
 
-        // Plyr Engine Setup
+        // Plyr Engine
         const player = new Plyr(video, {
             autoplay: true,
             muted: true,
@@ -300,7 +351,7 @@
             speed: { selected: 1, options: [0.5, 0.75, 1, 1.25, 1.5, 2] }
         });
 
-        // HLS Native Injector & Dynamic Resolution Parser
+        // Core HLS Parser & Resolution Hook
         function playHlsStream(url) {
             if (hls) hls.destroy();
 
@@ -328,7 +379,7 @@
                         }
                     };
 
-                    // Auto Adaptive Labels on Settings Menu
+                    // Auto Convert Numbers to Premium Text Labels
                     player.on('ready', () => {
                         const qualityMenu = document.querySelectorAll('[data-plyr="quality"]');
                         qualityMenu.forEach(menu => {
@@ -342,36 +393,29 @@
                         });
                     });
                     
-                    video.play().catch(e => console.log("Engine Auto Boot Blocked:", e));
+                    video.play().catch(e => console.log("Autoplay Engine:", e));
                 });
             } 
             else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = url;
                 video.addEventListener('loadedmetadata', () => {
-                    video.play().catch(e => console.log("Engine Auto Boot Blocked:", e));
+                    video.play().catch(e => console.log("Autoplay Engine:", e));
                 });
             }
         }
 
-        // Dashboard Channel Switcher Routing Engine
+        // Switching Engine Router
         function switchChannel(url, title, element) {
             activeTitle.textContent = title;
             
-            // সাইডবার কার্ডগুলোর একটিভ স্টেট ম্যানেজমেন্ট
             const cards = document.querySelectorAll('.channel-card');
             cards.forEach(card => card.classList.remove('active'));
             element.classList.add('active');
 
-            // ভিডিও স্ক্রিনে অ্যাম্বিয়েন্ট পালস ফ্ল্যাশ থ্রো করা
-            mainScreen.style.boxShadow = '0 30px 60px rgba(0, 0, 0, 0.8), 0 0 50px rgba(239, 68, 68, 0.3)';
-            setTimeout(() => { 
-                mainScreen.style.boxShadow = '0 30px 60px rgba(0, 0, 0, 0.8), 0 0 50px rgba(239, 68, 68, 0.05)'; 
-            }, 600);
-
             playHlsStream(url);
         }
 
-        // Initial default boot on load
+        // Boot Loader
         document.addEventListener('DOMContentLoaded', () => {
             const defaultUrl = 'https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8';
             playHlsStream(defaultUrl);
