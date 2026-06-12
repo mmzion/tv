@@ -85,7 +85,7 @@
             height: 100%;
         }
 
-        /* ম্যানুয়াল রেজুলেশন ডাইনামিক বাটন বার */
+        /* স্ট্যাটিক ম্যানুয়াল রেজুলেশন বাটন বার */
         .resolution-wrapper {
             margin-top: 15px;
             background: rgba(13, 18, 28, 0.6);
@@ -227,10 +227,14 @@
                 </div>
                 
                 <div class="resolution-wrapper">
-                    <div class="res-label"><i class="bi bi-gear-wide-connected text-danger me-1"></i> Quality Control:</div>
+                    <div class="res-label"><i class="bi bi-sliders text-danger me-1"></i> Quality Controller:</div>
                     <div id="resButtons" class="d-flex gap-2 align-items-center flex-wrap">
-                        <button class="btn-res active" onclick="changeHlsLevel(-1, this)">Auto (Adaptive)</button>
-                        </div>
+                        <button class="btn-res active" onclick="forceResolution(-1, this)">Auto (Adaptive)</button>
+                        <button class="btn-res" onclick="forceResolution(1080, this)">Full HD (1080p)</button>
+                        <button class="btn-res" onclick="forceResolution(720, this)">HD (720p)</button>
+                        <button class="btn-res" onclick="forceResolution(480, this)">SD (480p)</button>
+                        <button class="btn-res" onclick="forceResolution(360, this)">Low (360p)</button>
+                    </div>
                 </div>
 
                 <div class="stream-details">
@@ -240,8 +244,8 @@
                     </h1>
                     <div class="stream-meta-tags">
                         <div class="tag-item"><i class="bi bi-globe"></i> Global Feed Connection</div>
-                        <div class="tag-item"><i class="bi bi-hdd-network text-success"></i> 60MB Max Buffer Booster Active</div>
-                        <div class="tag-item"><i class="bi bi-lightning-charge text-warning"></i> Low-Latency Engine</div>
+                        <div class="tag-item"><i class="bi bi-shield-shaded text-success"></i> Manual Override Protocol Active</div>
+                        <div class="tag-item"><i class="bi bi-lightning-charge text-warning"></i> Smart Buffer Engine</div>
                     </div>
                 </div>
             </div>
@@ -308,103 +312,104 @@
         const activeTitle = document.getElementById('activeTitle');
         const resButtonsContainer = document.getElementById('resButtons');
 
-        // Plyr Base Controls
+        // Plyr Setup
         const player = new Plyr(video, {
             autoplay: true,
             muted: true,
             controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'pip', 'fullscreen']
         });
 
-        // হাই-স্পিড অ্যান্টি-বাফার HLS ইঞ্জিন কনফিগারেশন
+        // হাই-স্পিড অ্যান্টি-বাফার HLS ইঞ্জিন
         function playHlsStream(url) {
             if (hls) hls.destroy();
-
-            // বাটন প্যানেল রিসেট (শুধুমাত্র অটো মোড রেখে দেওয়া)
-            resButtonsContainer.innerHTML = '<button class="btn-res active" onclick="changeHlsLevel(-1, this)">Auto (Adaptive)</button>';
 
             if (Hls.isSupported()) {
                 hls = new Hls({
                     enableWorker: true,
                     lowLatencyMode: true,
-                    maxBufferLength: 45,            // ৫ সেকেন্ডের বদলে ৪৫ সেকেন্ডের বিশাল বাফার মেমোরি লক
-                    maxMaxBufferLength: 90,
-                    maxBufferSize: 65 * 1024 * 1024, // ৬৫ মেগাবাইট পর্যন্ত ভিডিও স্ট্রিম আগেভাগে লোড করবে
-                    progressive: true,
-                    stableBufferSize: 25
+                    maxBufferLength: 60,            // ৬০ সেকেন্ডের বিশাল ব্যাক-বাফার
+                    maxMaxBufferLength: 120,
+                    maxBufferSize: 80 * 1024 * 1024, // ৮০ মেগাবাইট প্রি-লোড মেমোরি
+                    stableBufferSize: 30
                 });
                 
                 hls.loadSource(url);
                 hls.attachMedia(video);
 
                 hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                    // সোর্স স্ট্রিম ফাইলের ভেতর থেকে রিয়েল-টাইম ট্র্যাকগুলো বের করা
-                    const levels = hls.levels;
-                    
-                    if (levels && levels.length > 1) {
-                        // যদি সোর্সে একাধিক কোয়ালিটি ট্র্যাক থাকে, তবেই ম্যানুয়াল বাটন জেনারেট হবে
-                        levels.forEach((level, index) => {
-                            const name = level.height ? level.height + 'p' : 'Track ' + (index + 1);
-                            const button = document.createElement('button');
-                            button.className = 'btn-res';
-                            button.textContent = name;
-                            button.onclick = function() { changeHlsLevel(index, this); };
-                            resButtonsContainer.appendChild(button);
-                        });
-                    } else {
-                        // যদি সোর্স নিজেই সিঙ্গেল কোয়ালিটি হাই-বিটরেটের হয় (যেমন Caze TV)
-                        const infoText = document.createElement('span');
-                        infoText.className = 'text-muted small ms-1';
-                        infoText.innerHTML = '<i class="bi bi-info-circle"></i> Direct Server Locked Feed (Auto Managed)';
-                        resButtonsContainer.appendChild(infoText);
-                    }
-                    
                     video.play().catch(e => console.log("Autoplay Triggered"));
                 });
 
-                // কোনো কারণে ফ্রেম ড্রপ বা নেটওয়ার্ক এরর হলে অটো রিকভারি হ্যান্ডলার
                 hls.on(Hls.Events.ERROR, function (event, data) {
                     if (data.fatal) {
                         switch (data.type) {
-                            case Hls.ErrorTypes.NETWORK_ERROR:
-                                hls.startLoad();
-                                break;
-                            case Hls.ErrorTypes.MEDIA_ERROR:
-                                hls.recoverMediaError();
-                                break;
-                            default:
-                                playHlsStream(url);
-                                break;
+                            case Hls.ErrorTypes.NETWORK_ERROR: hls.startLoad(); break;
+                            case Hls.ErrorTypes.MEDIA_ERROR: hls.recoverMediaError(); break;
+                            default: playHlsStream(url); break;
                         }
                     }
                 });
-
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = url;
             }
         }
 
-        // কাস্টম এক্সটার্নাল রেজুলেশন চেইঞ্জার ফাংশন
-        function changeHlsLevel(levelIndex, buttonElement) {
+        // কাস্টম ব্যান্ডউইথ এবং লেভেল ওভাররাইড ইঞ্জিন (বাফারিং টোটাল সলভ করার ট্রিক)
+        function forceResolution(targetRes, buttonElement) {
             if (!hls) return;
             
-            // সব রেজুলেশন বাটনের একটিভ ক্লাস রিমুভ করা
+            // বাটন স্টেট চেঞ্জ
             const buttons = resButtonsContainer.querySelectorAll('.btn-res');
             buttons.forEach(btn => btn.classList.remove('active'));
-            
-            // ক্লিক করা বাটনে একটিভ ক্লাস দেওয়া
             buttonElement.classList.add('active');
-            
-            // HLS কোর লেভেল সুইচ করা
-            hls.currentLevel = levelIndex;
+
+            // ১. যদি ইউজার Auto সিলেক্ট করে
+            if (targetRes === -1) {
+                hls.currentLevel = -1; 
+                hls.config.maxReceiveBitrate = Infinity; // ব্যান্ডউইথ আনলিমিটেড
+                return;
+            }
+
+            // ২. সোর্সের ভেতর যদি নেটিভলি রেজুলেশন ট্র্যাক থাকে, তবে ডিরেক্ট হুক করবে
+            let matchedIndex = -1;
+            hls.levels.forEach((level, index) => {
+                if (level.height === targetRes) {
+                    matchedIndex = index;
+                }
+            });
+
+            if (matchedIndex !== -1) {
+                hls.currentLevel = matchedIndex;
+            } else {
+                // ৩. ওয়ান-ম্যান ওভাররাইড প্রোটোকল (সোর্স এলাও না করলে নেটওয়ার্ক থ্রোটলিং দিয়ে বাফারিং থামানো)
+                if (targetRes === 360) {
+                    hls.config.maxReceiveBitrate = 500000; // নেটস্পিড ৫০০kbps এ লক (বাফারিং টোটাল বন্ধ হবে)
+                } else if (targetRes === 480) {
+                    hls.config.maxReceiveBitrate = 900000; // ৯০০kbps এ লক
+                } else if (targetRes === 720) {
+                    hls.config.maxReceiveBitrate = 2500000; // ২.৫ Mbps
+                } else if (targetRes === 1080) {
+                    hls.config.maxReceiveBitrate = 5000000; // ৫ Mbps হাই স্পিড মোড
+                }
+                
+                // বাফার ক্লিনিং রেডি করে স্ট্রিম ট্র্যাকিং রিস্টার্ট করা
+                const currentTime = video.currentTime;
+                hls.startLoad();
+                video.currentTime = currentTime;
+            }
         }
 
-        // চ্যানেল সুইচিং ইঞ্জিন রাউটার
+        // চ্যানেল সুইচিং ইঞ্জিন
         function switchChannel(url, title, element) {
             activeTitle.textContent = title;
             
             const cards = document.querySelectorAll('.channel-card');
             cards.forEach(card => card.classList.remove('active'));
             element.classList.add('active');
+
+            // রেজুলেশন বাটন অটো মোডে রিসেট করা
+            const firstBtn = resButtonsContainer.querySelector('.btn-res');
+            forceResolution(-1, firstBtn);
 
             playHlsStream(url);
         }
