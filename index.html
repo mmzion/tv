@@ -64,7 +64,7 @@
             margin: 0 auto;
         }
 
-        /* ১. বড় ভিডিও প্লেয়ার স্ক্রিন */
+        /* ভিডিও প্লেয়ার স্ক্রিন */
         .theater-screen {
             position: relative;
             background: #000;
@@ -81,7 +81,7 @@
             height: 100%;
         }
 
-        /* ২. এক্টিভ চ্যানেলের নাম বক্স */
+        /* এক্টিভ চ্যানেলের নাম বক্স */
         .stream-details {
             margin-top: 15px;
             background: rgba(13, 18, 28, 0.15);
@@ -92,7 +92,7 @@
         .stream-title { font-size: 18px; font-weight: 700; margin: 0; display: flex; align-items: center; }
         .badge-live { background: #ef4444; color: #fff; font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 4px; text-transform: uppercase; margin-right: 10px; letter-spacing: 0.5px;}
 
-        /* ৩. ক্যাটাগরি সিলেক্টর ট্যাব */
+        /* ক্যাটাগরি সিলেক্টর ট্যাব */
         .ott-tabs-wrapper {
             margin-top: 15px;
             background: rgba(13, 18, 28, 0.4);
@@ -120,7 +120,7 @@
             color: #fff;
         }
 
-        /* ৪. ৪টি বড় বাটন প্যানেল কন্টেইনার */
+        /* ৪. বাটন প্যানেল কন্টেইনার */
         .horizontal-panel {
             margin-top: 15px;
             background: rgba(13, 18, 28, 0.35);
@@ -130,7 +130,7 @@
             padding: 15px;
         }
 
-        /* পিসিতে ৪ কলাম লক, মোবাইলে ২ কলাম লেআউট */
+        /* পিসিতে ৪ কলাম লক গ্রিড */
         .channel-list-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -138,7 +138,20 @@
             gap: 12px;
         }
 
-        /* লোগো ও প্লে আইকন বাদে বড় বাটন স্টাইল */
+        /* আইপিটিভি লং প্যানেল রেডি (যদি অনেক চ্যানেল থাকে তবে স্ক্রোল হবে) */
+        .iptv-grid-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            width: 100%;
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .iptv-grid-row::-webkit-scrollbar { width: 4px; }
+        .iptv-grid-row::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+
+        /* ওটিটি বাটন স্লিক থিম */
         .channel-card {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -163,6 +176,15 @@
             border-color: #ef4444;
             box-shadow: 0 10px 25px -10px rgba(239, 68, 68, 0.3);
         }
+        
+        /* রিডাইরেক্ট এক্সটার্নাল কার্ড ডিজাইন */
+        .redirect-card {
+            border-color: rgba(245, 158, 11, 0.15);
+        }
+        .redirect-card:hover {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.04);
+        }
 
         /* শুধু চ্যানেলের নাম থাকবে */
         .card-name { 
@@ -178,10 +200,12 @@
         }
         .channel-card.active .card-name {
             color: #fff;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
         }
-        
-        /* লাইভ সিগন্যাল ডট */
+        .redirect-card .card-name {
+            color: #f59e0b;
+        }
+
+        /* লাইভ ইন্ডিকেটর ডট */
         .live-tag-dot {
             position: absolute;
             top: 12px;
@@ -193,19 +217,39 @@
             animation: blink 1.5s infinite;
             display: none;
         }
-        .channel-card.active .live-tag-dot {
+        .channel-card.active .live-tag-dot, .redirect-card .live-tag-dot {
             display: block;
+        }
+        .redirect-card .live-tag-dot {
+            background-color: #f59e0b;
         }
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        /* মোবাইল স্ক্রিন সেটিংস (২*২ স্কয়ার গ্রিড লেআউট) */
+        /* সাব-ক্যাটাগরি হেডার টেক্সট */
+        .cat-header-title {
+            grid-column: span 4;
+            font-size: 11px;
+            font-weight: 800;
+            color: #ef4444;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            opacity: 0.6;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            padding-bottom: 4px;
+        }
+        .cat-header-title:first-child { margin-top: 0; }
+
+        /* মোবাইল অপ্টিমাইজেশন (২ কলাম স্প্লিট) */
         @media (max-width: 768px) {
-            .channel-list-row {
+            .channel-list-row, .iptv-grid-row {
                 grid-template-columns: repeat(2, 1fr); 
                 gap: 10px;
             }
+            .cat-header-title { grid-column: span 2; }
             .channel-card { 
-                padding: 22px 8px; 
+                padding: 20px 8px; 
                 border-radius: 10px; 
                 aspect-ratio: 1.4 / 1; 
             }
@@ -238,7 +282,7 @@
                 
                 <div class="ott-tabs-wrapper">
                     <button class="tab-trigger active" onclick="togglePanelTab('fifa', this)"><i class="bi bi-trophy-fill me-1"></i> FIFA Premium</button>
-                    <button class="tab-trigger" onclick="togglePanelTab('iptv', this)"><i class="bi bi-tv-fill me-1"></i> IPTV Beta</button>
+                    <button class="tab-trigger" onclick="togglePanelTab('iptv', this)"><i class="bi bi-wifi me-1"></i> Only WiFi</button>
                 </div>
 
                 <div class="horizontal-panel">
@@ -256,29 +300,189 @@
                             <div class="live-tag-dot"></div>
                             <div class="card-name">PTV Sports</div>
                         </div>
-                        <div class="channel-card" onclick="switchChannel('https://1nyaler.streamhostingcdn.top/stream/32/index.m3u8', 'WIN Sports — Premium FIFA Stream', this)">
-                            <div class="live-tag-dot"></div>
-                            <div class="card-name">WIN Premium</div>
-                        </div>
-                    </div>
-
-                    <div id="iptvTabPanel" class="channel-list-row d-none">
-                        <div class="channel-card" onclick="switchProxyChannel('http://198.195.239.50:8095/tsports/index.m3u8', 'T Sports Live Feed (BDIX Connection Required)', this)">
+                        <div class="channel-card redirect-card" onclick="window.open('http://rgkkw.live:80/live/1Aoen7elp5/IgMJ60tmAa/130714.ts', '_blank')">
                             <div class="live-tag-dot"></div>
                             <div class="card-name">T Sports</div>
                         </div>
-                        <div class="channel-card" onclick="switchProxyChannel('http://198.195.239.50:8095/starSports1/index.m3u8', 'Star Sports 1 Live Feed (BDIX Connection Required)', this)">
-                            <div class="live-tag-dot"></div>
-                            <div class="card-name">Star Sports 1</div>
+                    </div>
+
+                    <div id="iptvTabPanel" class="iptv-grid-row d-none">
+                        
+                        <div class="cat-header-title">📺 Sports Link Grid</div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/tsports/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">T Sports (BDIX)</div>
                         </div>
-                        <div class="channel-card" onclick="switchProxyChannel('http://198.195.239.50:8095/sonyTenSports1/index.m3u8', 'Sony Ten 1 HD Broadcast (BDIX Connection Required)', this)">
-                            <div class="live-tag-dot"></div>
-                            <div class="card-name">Sony Ten 1</div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSports1/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Star Sports 1</div>
                         </div>
-                        <div class="channel-card" onclick="switchProxyChannel('http://198.195.239.50:8095/somoyTv/index.m3u8', 'Somoy TV Live 24/7 News (BDIX Connection Required)', this)">
-                            <div class="live-tag-dot"></div>
-                            <div class="card-name">Somoy TV</div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSports2/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Star Sports 2</div>
                         </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSports3/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Star Sports 3</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSportsSelect1/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Star Select 1</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSportsSelect2/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Star Select 2</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports1/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Sony Ten 1</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports2/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Sony Ten 2</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports3/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Sony Ten 3</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports4/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Sony Ten 4</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports5/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Sony Ten 5</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/ptv/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">PTV Feed</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/euroSports/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Euro Sports</div>
+                        </div>
+
+                        <div class="cat-header-title">📰 Live News</div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/somoyTv/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Somoy TV</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/news24/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">News 24</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/channel24/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Channel 24</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/atnNews/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">ATN News</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/ekattorTv/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Ekattor TV</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/jamunaTv/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Jamuna TV</div>
+                        </div>
+
+                        <div class="cat-header-title">🇧🇩 Bangla Media</div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/atnBangla/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">ATN Bangla</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/banglaVision/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Banglavision</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/channelI/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Channel I</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/GTV/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">GTV</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/ntv/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">NTV</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/maasranga/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Maasranga</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/deepto/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Deepto TV</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/btv/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">BTV</div>
+                        </div>
+
+                        <div class="cat-header-title">🇮🇳 Indian Bangla serials</div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starJalsha/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Star Jalsha</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/jalshaMovies/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Jalsha Movies</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/zeeBangla/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Zee Bangla</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/zeeBanglaCinema/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Zee Cinema Ban</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/colorsBangla/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Colors Bangla</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/colorsBanglaChinema/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Colors Cinema</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyAath/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Sony Aath</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/enter10Bangla/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Enter10 Bangla</div>
+                        </div>
+
+                        <div class="cat-header-title">🇮🇳 Hindi Entertainment</div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyMax/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Sony Max</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyEntertainment/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Sony TV Hindi</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starGold/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Star Gold</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starPlus/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Star Plus</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starMovies/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Star Movies</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/zeeTV/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Zee TV</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/zeeChinema/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Zee Cinema Hin</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/colors/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Colors Hindi</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/colorsCineplex/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Cineplex Hindi</div>
+                        </div>
+
+                        <div class="cat-header-title">🎵 Music</div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sangeetBangla/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Sangeet Bangla</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/9xm/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">9XM Music</div>
+                        </div>
+
+                        <div class="cat-header-title">🌍 Documentary</div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/discovery/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Discovery</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/nationalGeographic/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Nat Geo</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/animalPlanet/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Animal Planet</div>
+                        </div>
+
+                        <div class="cat-header-title">👶 Kids & Cartoon</div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/cartoonNetwork/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Cartoon Network</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/pogo/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Pogo TV</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/nick/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Nickelodeon</div>
+                        </div>
+                        <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/disnepKids/index.m3u8', '_blank')">
+                            <div class="live-tag-dot"></div><div class="card-name">Disney Kids</div>
+                        </div>
+
                     </div>
 
                 </div>
@@ -295,18 +499,18 @@
         const video = document.getElementById('player');
         const activeTitle = document.getElementById('activeTitle');
 
-        // Plyr Setup (অটো-অ্যাডাপ্টিভ মোড ব্যাকগ্রাউন্ড লকিং)
+        // Plyr Setup (অটো-অ্যাডাপ্টিভ থিম মোড)
         const player = new Plyr(video, {
             autoplay: true,
             muted: true,
             controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'pip', 'fullscreen']
         });
 
-        // অটো রোটেশন ইঞ্জিন (ল্যান্ডস্কেপ ফুলস্ক্রিন লক)
+        // অটো রোটেশন ইঞ্জিন ল্যান্ডস্কেপ লক
         player.on('enterfullscreen', () => { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(e => {}); });
         player.on('exitfullscreen', () => { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); });
 
-        // আল্ট্রা-বাফার হাই-স্পিড HLS কোর ইঞ্জিন
+        // আল্ট্রা-বাফার HLS ইন্টেলিজেন্ট ইঞ্জিন
         function playHlsStream(url) {
             if (hls) hls.destroy();
 
@@ -324,7 +528,7 @@
                 hls.attachMedia(video);
 
                 hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                    hls.currentLevel = -1; // অটো মোড
+                    hls.currentLevel = -1; // অটো মোড অ্যাক্টিভেট
                     video.play().catch(e => {});
                 });
 
@@ -340,17 +544,6 @@
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = url;
             }
-        }
-
-        // 🛡️ ডিরেক্ট লোকাল BDIX সোর্স পাসার ইঞ্জিন 
-        function switchProxyChannel(rawUrl, title, element) {
-            activeTitle.textContent = title;
-            
-            const cards = document.querySelectorAll('.channel-card');
-            cards.forEach(card => card.classList.remove('active'));
-            element.classList.add('active');
-
-            playHlsStream(rawUrl); // কোনো ইউএসএ প্রক্সি ছাড়া সরাসরি লোকাল আইপি হিট করবে
         }
 
         // সাধারণ প্রিমিয়াম চ্যানেল রাউটার
@@ -379,7 +572,7 @@
             }
         }
 
-        // ডিফল্ট বুট লোডার
+        // বুট লোডার
         document.addEventListener('DOMContentLoaded', () => {
             playHlsStream('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8');
         });
