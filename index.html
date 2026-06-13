@@ -85,7 +85,7 @@
             height: 100%;
         }
 
-        /* স্ট্যাটিক ম্যানুয়াল রেজুলেশন বাটন বার */
+        /* কাস্টম রেজুলেশন কন্ট্রোল বার */
         .resolution-wrapper {
             margin-top: 15px;
             background: rgba(13, 18, 28, 0.6);
@@ -240,7 +240,7 @@
                 <div class="stream-details">
                     <h1 class="stream-title">
                         <span class="badge-live">Live</span>
-                        <span id="activeTitle">Caze TV — FIFA Broadcast Feed</span>
+                        <span id="activeTitle">Bein Sports 1 — Global Football Feed</span>
                     </h1>
                     <div class="stream-meta-tags">
                         <div class="tag-item"><i class="bi bi-globe"></i> Global Feed Connection</div>
@@ -257,12 +257,20 @@
                     </div>
                     
                     <div class="channel-list">
-                        <div class="channel-card active" onclick="switchChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8', 'Caze TV — FIFA Broadcast Feed', this)">
+                        <div class="channel-card active" onclick="switchChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Sports 1 — Global Football Feed', this)">
+                            <div class="card-info">
+                                <div class="card-icon"><i class="bi bi-tv"></i></div>
+                                <div class="card-name">Bein Sports 1</div>
+                            </div>
+                            <div class="status-badge"><span class="pulse-dot"></span> HD</div>
+                        </div>
+
+                        <div class="channel-card" onclick="switchChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8', 'Caze TV — FIFA Broadcast Feed', this)">
                             <div class="card-info">
                                 <div class="card-icon"><i class="bi bi-tv"></i></div>
                                 <div class="card-name">Caze TV</div>
                             </div>
-                            <div class="status-badge"><span class="pulse-dot"></span> Multi-Bitrate</div>
+                            <div class="status-badge"><span class="pulse-dot"></span> 1080p</div>
                         </div>
 
                         <div class="channel-card" onclick="switchChannel('https://tvsen5.aynaott.com/PtvSports/index.m3u8', 'PTV Sports — FIFA World Matches', this)">
@@ -271,14 +279,6 @@
                                 <div class="card-name">PTV Sports</div>
                             </div>
                             <div class="status-badge"><span class="pulse-dot"></span> Live</div>
-                        </div>
-
-                        <div class="channel-card" onclick="switchChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Sports 1 — Global Football Feed', this)">
-                            <div class="card-info">
-                                <div class="card-icon"><i class="bi bi-tv"></i></div>
-                                <div class="card-name">Bein Sports 1</div>
-                            </div>
-                            <div class="status-badge"><span class="pulse-dot"></span> HD</div>
                         </div>
 
                         <div class="channel-card" onclick="switchChannel('https://1nyaler.streamhostingcdn.top/stream/32/index.m3u8', 'WIN Sports — Premium FIFA Stream', this)">
@@ -319,7 +319,7 @@
             controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'pip', 'fullscreen']
         });
 
-        // হাই-স্পিড অ্যান্টি-বাফার HLS ইঞ্জিন
+        // HLS ইঞ্জিন
         function playHlsStream(url) {
             if (hls) hls.destroy();
 
@@ -327,9 +327,9 @@
                 hls = new Hls({
                     enableWorker: true,
                     lowLatencyMode: true,
-                    maxBufferLength: 60,            // ৬০ সেকেন্ডের বিশাল ব্যাক-বাফার
+                    maxBufferLength: 60,            
                     maxMaxBufferLength: 120,
-                    maxBufferSize: 80 * 1024 * 1024, // ৮০ মেগাবাইট প্রি-লোড মেমোরি
+                    maxBufferSize: 80 * 1024 * 1024, 
                     stableBufferSize: 30
                 });
                 
@@ -354,23 +354,20 @@
             }
         }
 
-        // কাস্টম ব্যান্ডউইথ এবং লেভেল ওভাররাইড ইঞ্জিন (বাফারিং টোটাল সলভ করার ট্রিক)
+        // রেজুলেশন ওভাররাইড ইঞ্জিন
         function forceResolution(targetRes, buttonElement) {
             if (!hls) return;
             
-            // বাটন স্টেট চেঞ্জ
             const buttons = resButtonsContainer.querySelectorAll('.btn-res');
             buttons.forEach(btn => btn.classList.remove('active'));
             buttonElement.classList.add('active');
 
-            // ১. যদি ইউজার Auto সিলেক্ট করে
             if (targetRes === -1) {
                 hls.currentLevel = -1; 
-                hls.config.maxReceiveBitrate = Infinity; // ব্যান্ডউইথ আনলিমিটেড
+                hls.config.maxReceiveBitrate = Infinity; 
                 return;
             }
 
-            // ২. সোর্সের ভেতর যদি নেটিভলি রেজুলেশন ট্র্যাক থাকে, তবে ডিরেক্ট হুক করবে
             let matchedIndex = -1;
             hls.levels.forEach((level, index) => {
                 if (level.height === targetRes) {
@@ -381,18 +378,11 @@
             if (matchedIndex !== -1) {
                 hls.currentLevel = matchedIndex;
             } else {
-                // ৩. ওয়ান-ম্যান ওভাররাইড প্রোটোকল (সোর্স এলাও না করলে নেটওয়ার্ক থ্রোটলিং দিয়ে বাফারিং থামানো)
-                if (targetRes === 360) {
-                    hls.config.maxReceiveBitrate = 500000; // নেটস্পিড ৫০০kbps এ লক (বাফারিং টোটাল বন্ধ হবে)
-                } else if (targetRes === 480) {
-                    hls.config.maxReceiveBitrate = 900000; // ৯০০kbps এ লক
-                } else if (targetRes === 720) {
-                    hls.config.maxReceiveBitrate = 2500000; // ২.৫ Mbps
-                } else if (targetRes === 1080) {
-                    hls.config.maxReceiveBitrate = 5000000; // ৫ Mbps হাই স্পিড মোড
-                }
+                if (targetRes === 360) hls.config.maxReceiveBitrate = 500000;
+                else if (targetRes === 480) hls.config.maxReceiveBitrate = 900000;
+                else if (targetRes === 720) hls.config.maxReceiveBitrate = 2500000;
+                else if (targetRes === 1080) hls.config.maxReceiveBitrate = 5000000;
                 
-                // বাফার ক্লিনিং রেডি করে স্ট্রিম ট্র্যাকিং রিস্টার্ট করা
                 const currentTime = video.currentTime;
                 hls.startLoad();
                 video.currentTime = currentTime;
@@ -407,16 +397,15 @@
             cards.forEach(card => card.classList.remove('active'));
             element.classList.add('active');
 
-            // রেজুলেশন বাটন অটো মোডে রিসেট করা
             const firstBtn = resButtonsContainer.querySelector('.btn-res');
             forceResolution(-1, firstBtn);
 
             playHlsStream(url);
         }
 
-        // বুট লোডার
+        // বুট লোডার (Bein Sports 1-কে ডিফল্ট লিংক হিসেবে পাস করা হয়েছে)
         document.addEventListener('DOMContentLoaded', () => {
-            const defaultUrl = 'https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8';
+            const defaultUrl = 'https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8';
             playHlsStream(defaultUrl);
         });
     </script>
