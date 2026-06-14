@@ -22,4 +22,146 @@
         
         /* 📑 এক্সপ্যান্ডেড ট্যাব বাটন স্টাইল */
         .ott-tabs-wrapper { margin-top: 15px; background: rgba(13, 18, 28, 0.6); padding: 4px; border-radius: 10px; display: inline-flex; gap: 6px; border: 1px solid rgba(255,255,255,0.03); width: 100%; overflow-x: auto; white-space: nowrap; }
-        .ott-tabs-wrapper::-webkit-scrollbar
+        .ott-tabs-wrapper::-webkit-scrollbar { height: 0px; }
+        .tab-trigger { background: transparent; color: #64748b; border: none; padding: 8px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; border-radius: 8px; transition: all 0.2s ease; display: inline-flex; align-items: center; }
+        .tab-trigger.active { background: #ef4444; color: #fff; }
+
+        /* 📱 রেসপন্সিভ গ্রিড লেআউট */
+        .iptv-grid-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+        .panel-grid-hidden { display: none !important; }
+
+        .channel-card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; cursor: pointer; text-align: center; aspect-ratio: 1.2/1; display: flex; align-items: center; justify-content: center; border: 1px solid transparent; transition: all 0.2s ease; }
+        .channel-card.active { border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.05); }
+        .redirect-card { border: 1px solid rgba(245, 158, 11, 0.2); }
+        .redirect-card:hover { border-color: #f59e0b; background: rgba(245, 158, 11, 0.05); }
+        
+        .card-name { font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.3; }
+
+        @media (max-width: 992px) { .iptv-grid-row { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 768px) { .iptv-grid-row { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 480px) { .iptv-grid-row { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+
+    <nav class="ott-nav"><div class="text-white fw-bold"><i class="bi bi-play-circle text-danger"></i> ZION SPORTS</div></nav>
+
+    <div class="container-fluid ott-dashboard">
+        <div class="theater-screen">
+            <div id="plyr-wrapper"><video id="player" playsinline controls autoplay muted></video></div>
+        </div>
+        
+        <div class="stream-details">
+            <h1 class="h6 m-0"><span class="badge-live">Live</span><span id="activeTitle">Bein Direct</span></h1>
+        </div>
+
+        <div class="ott-tabs-wrapper">
+            <button class="tab-trigger active" onclick="togglePanelTab('fifa', this)"><i class="bi bi-trophy-fill me-1"></i> FIFA Premium</button>
+            <button class="tab-trigger" onclick="togglePanelTab('sports', this)"><i class="bi bi-broadcast me-1"></i> Live Sports</button>
+            <button class="tab-trigger" onclick="togglePanelTab('entertainment', this)"><i class="bi bi-mask me-1"></i> Entertainment</button>
+            <button class="tab-trigger" onclick="togglePanelTab('news-movies', this)"><i class="bi bi-film me-1"></i> News & Movies</button>
+        </div>
+
+        <div class="horizontal-panel">
+            
+            <div id="fifaTabPanel" class="iptv-grid-row">
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/tsports/index.m3u8', '_blank')">
+                    <div class="card-name" style="color: #ef4444;"><i class="bi bi-box-arrow-up-right"></i> T Sports</div>
+                </div>
+                <div class="channel-card active" onclick="switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', this)"><div class="card-name">Bein<br>Direct</div></div>
+                <div class="channel-card" onclick="switchStandardChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8', 'Caze TV', this)"><div class="card-name">Caze<br>TV</div></div>
+                <div class="channel-card" onclick="switchStandardChannel('https://tvsen5.aynaott.com/PtvSports/index.m3u8', 'PTV Sports', this)"><div class="card-name">PTV<br>Sports</div></div>
+                <div class="channel-card" onclick="switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/32/index.m3u8', 'WIN Premium', this)"><div class="card-name">WIN<br>Premium</div></div>
+            </div>
+
+            <div id="sportsTabPanel" class="iptv-grid-row panel-grid-hidden">
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/tsports/index.m3u8', '_blank')"><div class="card-name">T Sports</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSports1/index.m3u8', '_blank')"><div class="card-name">Star Sports 1</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSports2/index.m3u8', '_blank')"><div class="card-name">Star Sports 2</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSports3/index.m3u8', '_blank')"><div class="card-name">Star Sports 3</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSportsSelect1/index.m3u8', '_blank')"><div class="card-name">Star Select 1</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSportsSelect2/index.m3u8', '_blank')"><div class="card-name">Star Select 2</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports1/index.m3u8', '_blank')"><div class="card-name">Sony Ten 1</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports2/index.m3u8', '_blank')"><div class="card-name">Sony Ten 2</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports3/index.m3u8', '_blank')"><div class="card-name">Sony Ten 3</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports4/index.m3u8', '_blank')"><div class="card-name">Sony Ten 4</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports5/index.m3u8', '_blank')"><div class="card-name">Sony Ten 5</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/ptv/index.m3u8', '_blank')"><div class="card-name">PTV Feed</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/euroSports/index.m3u8', '_blank')"><div class="card-name">Euro Sports</div></div>
+            </div>
+
+            <div id="entertainmentTabPanel" class="iptv-grid-row panel-grid-hidden">
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/zeeBangla/index.m3u8', '_blank')"><div class="card-name">Zee Bangla</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starJalsha/index.m3u8', '_blank')"><div class="card-name">Star Jalsha</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/colorsBangla/index.m3u8', '_blank')"><div class="card-name">Colors Bangla</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyAath/index.m3u8', '_blank')"><div class="card-name">Sony Aath</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starPlus/index.m3u8', '_blank')"><div class="card-name">Star Plus</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonySab/index.m3u8', '_blank')"><div class="card-name">Sony Sab</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/zeeTv/index.m3u8', '_blank')"><div class="card-name">Zee TV</div></div>
+            </div>
+
+            <div id="newsMoviesTabPanel" class="iptv-grid-row panel-grid-hidden">
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/jalshaMovies/index.m3u8', '_blank')"><div class="card-name"><i class="bi bi-film"></i> Jalsha Movies</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/zeeBanglaCinema/index.m3u8', '_blank')"><div class="card-name"><i class="bi bi-film"></i> Zee Cinema</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyMax/index.m3u8', '_blank')"><div class="card-name"><i class="bi bi-film"></i> Sony Max</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starGold/index.m3u8', '_blank')"><div class="card-name"><i class="bi bi-film"></i> Star Gold</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/somoyTv/index.m3u8', '_blank')"><div class="card-name"><i class="bi bi-newspaper"></i> Somoy TV</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/jamunaTv/index.m3u8', '_blank')"><div class="card-name"><i class="bi bi-newspaper"></i> Jamuna TV</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/independentTv/index.m3u8', '_blank')"><div class="card-name"><i class="bi bi-newspaper"></i> Independent</div></div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/ekattorTv/index.m3u8', '_blank')"><div class="card-name"><i class="bi bi-newspaper"></i> Ekattor TV</div></div>
+            </div>
+
+        </div>
+        
+        <div class="text-center mt-5 text-muted" style="font-size: 10px; opacity: 0.4;">© 2026 Zion Sports • Powered by GitHub Pages</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+
+    <script>
+        const video = document.getElementById('player');
+        let hls = null;
+
+        const plyr = new Plyr(video, { autoplay: true, muted: true });
+
+        function switchStandardChannel(url, title, el) {
+            document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('activeTitle').innerText = title;
+            
+            if (hls) hls.destroy();
+            hls = new Hls();
+            hls.loadSource(url);
+            hls.attachMedia(video);
+            video.play().catch(e => console.log("Engine active:", e));
+        }
+
+        // 🔄 ৪-ট্যাব ইন্টেলিজেন্ট কন্ট্রোল ফাংশন
+        function togglePanelTab(tabName, buttonElement) {
+            document.querySelectorAll('.tab-trigger').forEach(t => t.classList.remove('active'));
+            buttonElement.classList.add('active');
+
+            // সব গ্রিড প্যানেল প্রথমে হাইড করি
+            document.getElementById('fifaTabPanel').classList.add('panel-grid-hidden');
+            document.getElementById('sportsTabPanel').classList.add('panel-grid-hidden');
+            document.getElementById('entertainmentTabPanel').classList.add('panel-grid-hidden');
+            document.getElementById('newsMoviesTabPanel').classList.add('panel-grid-hidden');
+
+            // ক্লিক করা নির্দিষ্ট প্যানেলটি শো করি
+            if (tabName === 'fifa') {
+                document.getElementById('fifaTabPanel').classList.remove('panel-grid-hidden');
+            } else if (tabName === 'sports') {
+                document.getElementById('sportsTabPanel').classList.remove('panel-grid-hidden');
+            } else if (tabName === 'entertainment') {
+                document.getElementById('entertainmentTabPanel').classList.remove('panel-grid-hidden');
+            } else if (tabName === 'news-movies') {
+                document.getElementById('newsMoviesTabPanel').classList.remove('panel-grid-hidden');
+            }
+        }
+
+        // Boot
+        switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', document.querySelectorAll('.channel-card')[1]);
+    </script>
+</body>
+</html>
