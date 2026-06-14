@@ -69,13 +69,17 @@
 
         <div class="horizontal-panel">
             <div id="fifaTabPanel" class="channel-list-row">
-                <div class="channel-card drm-card" onclick="switchDrmChannel('https://d1g8wgjurz8via.cloudfront.net/bpk-tv/Zeebanglacinema/default/manifest.mpd', 'fbbfd9ce4bbe4d818b16df7dfe89f05b', '1e96d0f88ef740e982d6f6105721c8bc', 'FIFA BANGLA', this)">
-                    <div class="card-name">FIFA<br>BANGLA</div>
+                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/tsports/index.m3u8', '_blank')">
+                    <div class="card-name" style="color: #ef4444;"><i class="bi bi-box-arrow-up-right"></i> T Sports<br>(BDIX)</div>
                 </div>
                 <div class="channel-card active" onclick="switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', this)"><div class="card-name">Bein<br>Direct</div></div>
                 <div class="channel-card" onclick="switchStandardChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8', 'Caze TV', this)"><div class="card-name">Caze<br>TV</div></div>
                 <div class="channel-card" onclick="switchStandardChannel('https://tvsen5.aynaott.com/PtvSports/index.m3u8', 'PTV Sports', this)"><div class="card-name">PTV<br>Sports</div></div>
                 <div class="channel-card" onclick="switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/32/index.m3u8', 'WIN Premium', this)"><div class="card-name">WIN<br>Premium</div></div>
+                
+                <div class="channel-card drm-card" onclick="switchDrmChannel('https://d1g8wgjurz8via.cloudfront.net/bpk-tv/Zeebanglacinema/default/manifest.mpd', 'fbbfd9ce4bbe4d818b16df7dfe89f05b', '1e96d0f88ef740e982d6f6105721c8bc', 'FIFA BANGLA', this)">
+                    <div class="card-name">FIFA<br>BANGLA</div>
+                </div>
             </div>
 
             <div id="iptvTabPanel" class="iptv-grid-row d-none">
@@ -161,8 +165,8 @@
         }
 
         // Boot
-        // ডিফোল্ট বুটস্ট্র্যাপে সচল এইচএলএস সোর্স দেওয়া হলো যাতে প্রথম ক্লিকেই ভিডিও অন হয়ে যায়
-        switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', document.querySelector('.channel-card.active'));
+        // ডিফল্ট বুটস্ট্র্যাপে সচল Bein Direct লোড হবে যাতে প্রথম লোডেই ভিডিও অন হয়
+        switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', document.querySelectorAll('.channel-card')[1]);
     </script>
 </body>
 </html>
