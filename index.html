@@ -40,8 +40,6 @@
         .text-logo-icon { width: 45px; height: 45px; background: rgba(255,255,255,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #ef4444; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); }
         .channel-card.active .text-logo-icon { background: #ef4444; color: #fff; }
         .redirect-card .text-logo-icon { color: #f59e0b; }
-        .beta-card .text-logo-icon { color: #38bdf8; border-color: rgba(56, 189, 248, 0.2); }
-        .channel-card.beta-card.active .text-logo-icon { background: #38bdf8; color: #04070b; }
         
         .card-name { font-weight: 700; font-size: 11px; color: #cbd5e1; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2; }
 
@@ -68,7 +66,6 @@
             <button class="tab-trigger" onclick="togglePanelTab('sports', this)"><i class="bi bi-broadcast me-1"></i> Live Sports</button>
             <button class="tab-trigger" onclick="togglePanelTab('entertainment', this)"><i class="bi bi-mask me-1"></i> Entertainment</button>
             <button class="tab-trigger" onclick="togglePanelTab('news-movies', this)"><i class="bi bi-film me-1"></i> News & Movies</button>
-            <button class="tab-trigger" onclick="togglePanelTab('live-beta', this)" style="color: #38bdf8;"><i class="bi bi-cpu-fill me-1"></i> Live Beta</button>
         </div>
 
         <div class="horizontal-panel">
@@ -184,15 +181,6 @@
                 </div>
             </div>
 
-            <div id="liveBetaTabPanel" class="iptv-grid-row panel-grid-hidden">
-                <div class="channel-card beta-card" onclick="switchStandardChannel('https://tvsen5.aynaott.com/PtvSports/index.m3u8', 'PTV Sports HD', this)"><div class="text-logo-icon">PT</div><div class="card-name">PTV Sports HD</div></div>
-                <div class="channel-card beta-card" onclick="switchStandardChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8', 'Caze TV Global', this)"><div class="text-logo-icon">CZ</div><div class="card-name">Caze TV Global</div></div>
-                <div class="channel-card beta-card" onclick="switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Sports 1', this)"><div class="text-logo-icon">BN1</div><div class="card-name">Bein Sports 1</div></div>
-                <div class="channel-card beta-card" onclick="switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/32/index.m3u8', 'WIN Sports Premium', this)"><div class="text-logo-icon">WN</div><div class="card-name">WIN Premium</div></div>
-                <div class="channel-card beta-card" onclick="switchStandardChannel('https://unb.m3u8.xyz/live/sports1.m3u8', 'Astro SuperSport', this)"><div class="text-logo-icon">AST</div><div class="card-name">Astro Sports</div></div>
-                <div class="channel-card beta-card" onclick="switchStandardChannel('https://unb.m3u8.xyz/live/sports2.m3u8', 'Sky Sports Main Event', this)"><div class="text-logo-icon">SKY</div><div class="card-name">Sky Sports</div></div>
-            </div>
-
         </div>
         
         <div class="text-center mt-5 text-muted" style="font-size: 10px; opacity: 0.4;">© 2026 Zion Sports • Powered by GitHub Pages</div>
@@ -207,20 +195,18 @@
 
         const plyr = new Plyr(video, { autoplay: true, muted: true });
 
-        // স্ট্যান্ডার্ড এইচলএস স্ট্রিমিং কোর ইঞ্জিন
         function switchStandardChannel(url, title, el) {
             document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
-            if(el) el.classList.add('active');
+            el.classList.add('active');
             document.getElementById('activeTitle').innerText = title;
             
             if (hls) hls.destroy();
             hls = new Hls();
             hls.loadSource(url);
             hls.attachMedia(video);
-            video.play().catch(e => console.log("HLS Playback active:", e));
+            video.play().catch(e => console.log("Engine loaded:", e));
         }
 
-        // ট্যাব কন্ট্রোল ইঞ্জিন
         function togglePanelTab(tabName, buttonElement) {
             document.querySelectorAll('.tab-trigger').forEach(t => t.classList.remove('active'));
             buttonElement.classList.add('active');
@@ -229,7 +215,6 @@
             document.getElementById('sportsTabPanel').classList.add('panel-grid-hidden');
             document.getElementById('entertainmentTabPanel').classList.add('panel-grid-hidden');
             document.getElementById('newsMoviesTabPanel').classList.add('panel-grid-hidden');
-            document.getElementById('liveBetaTabPanel').classList.add('panel-grid-hidden');
 
             if (tabName === 'fifa') {
                 document.getElementById('fifaTabPanel').classList.remove('panel-grid-hidden');
@@ -239,12 +224,10 @@
                 document.getElementById('entertainmentTabPanel').classList.remove('panel-grid-hidden');
             } else if (tabName === 'news-movies') {
                 document.getElementById('newsMoviesTabPanel').classList.remove('panel-grid-hidden');
-            } else if (tabName === 'live-beta') {
-                document.getElementById('liveBetaTabPanel').classList.remove('panel-grid-hidden');
             }
         }
 
-        // Boot Init
+        // Auto Load First Channel
         switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', document.querySelectorAll('.channel-card')[1]);
     </script>
 </body>
