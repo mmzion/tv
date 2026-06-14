@@ -8,21 +8,21 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <style>
-        body { background-color: #04070b; color: #f8fafc; font-family: sans-serif; min-height: 100vh; padding-top: 60px; }
-        .ott-nav { background: rgba(4, 7, 11, 0.8); backdrop-filter: blur(20px); height: 60px; position: fixed; top: 0; width: 100%; z-index: 1050; display: flex; align-items: center; padding: 0 20px; }
-        .theater-screen { position: relative; background: #000; border-radius: 14px; overflow: hidden; width: 100%; aspect-ratio: 16 / 9; }
+        body { background-color: #04070b; color: #f8fafc; font-family: sans-serif; min-height: 100vh; padding-top: 60px; padding-bottom: 20px; }
+        .ott-nav { background: rgba(4, 7, 11, 0.8); backdrop-filter: blur(20px); height: 60px; position: fixed; top: 0; width: 100%; z-index: 1050; display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .theater-screen { position: relative; background: #000; border-radius: 14px; overflow: hidden; width: 100%; aspect-ratio: 16 / 9; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         #plyr-wrapper, #shaka-wrapper { width: 100%; height: 100%; position: absolute; top:0; left:0; }
         
         /* 🎬 ভিডিও ক্রপিং এবং কন্ট্রোল এরর ফিক্স */
         video { width: 100%; height: 100%; background: #000; object-fit: contain !important; }
         .plyr { width: 100%; height: 100%; }
 
-        .stream-details { margin-top: 15px; background: rgba(13, 18, 28, 0.4); padding: 14px; border-radius: 12px; }
-        .badge-live { background: #ef4444; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-right: 8px; text-transform: uppercase; }
-        .horizontal-panel { margin-top: 15px; background: rgba(13, 18, 28, 0.4); padding: 15px; border-radius: 14px; }
+        .stream-details { margin-top: 15px; background: rgba(13, 18, 28, 0.4); padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.03); }
+        .badge-live { background: #ef4444; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-right: 8px; text-transform: uppercase; font-weight: bold; }
+        .horizontal-panel { margin-top: 15px; background: rgba(13, 18, 28, 0.4); padding: 15px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.03); }
         
         /* 📑 ট্যাব বাটন স্টাইল */
-        .ott-tabs-wrapper { margin-top: 15px; background: rgba(13, 18, 28, 0.6); padding: 4px; border-radius: 10px; display: inline-flex; gap: 8px; }
+        .ott-tabs-wrapper { margin-top: 15px; background: rgba(13, 18, 28, 0.6); padding: 4px; border-radius: 10px; display: inline-flex; gap: 8px; border: 1px solid rgba(255,255,255,0.03); }
         .tab-trigger { background: transparent; color: #64748b; border: none; padding: 8px 16px; font-size: 12px; font-weight: 700; text-transform: uppercase; border-radius: 8px; transition: all 0.2s ease; }
         .tab-trigger.active { background: #ef4444; color: #fff; }
 
@@ -31,14 +31,14 @@
         .iptv-grid-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-height: 400px; overflow-y: auto; padding-right: 4px; }
         .cat-header-title { grid-column: span 4; font-size: 11px; font-weight: 800; color: #ef4444; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; margin-bottom: 5px; opacity: 0.6; }
 
-        .channel-card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; cursor: pointer; text-align: center; aspect-ratio: 1.2/1; display: flex; align-items: center; justify-content: center; border: 1px solid transparent; }
-        .channel-card.active { border: 2px solid #ef4444; }
+        .channel-card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; cursor: pointer; text-align: center; aspect-ratio: 1.2/1; display: flex; align-items: center; justify-content: center; border: 1px solid transparent; transition: all 0.2s ease; }
+        .channel-card.active { border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.05); }
         .drm-card { border: 1px solid rgba(16, 185, 129, 0.4); }
-        .drm-card.active { border: 2px solid #10b981; }
+        .drm-card.active { border: 2px solid #10b981; background: rgba(16, 185, 129, 0.05); }
         .redirect-card { border: 1px solid rgba(245, 158, 11, 0.3); }
         .redirect-card:hover { border-color: #f59e0b; background: rgba(245, 158, 11, 0.05); }
         
-        .card-name { font-weight: 800; font-size: 11px; text-transform: uppercase; }
+        .card-name { font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.3; }
         .d-none { display: none !important; }
 
         @media (max-width: 768px) { 
@@ -54,12 +54,12 @@
 
     <div class="container-fluid ott-dashboard">
         <div class="theater-screen">
-            <div id="plyr-wrapper"><video id="player" playsinline controls autoplay muted></video></div>
-            <div id="shaka-wrapper" class="d-none"><video id="shaka-video" autoplay playsinline controls></video></div>
+            <div id="plyr-wrapper" class="d-none"><video id="player" playsinline controls autoplay muted></video></div>
+            <div id="shaka-wrapper"><video id="shaka-video" autoplay playsinline controls></video></div>
         </div>
         
         <div class="stream-details">
-            <h1 class="h6 m-0"><span class="badge-live">Live</span><span id="activeTitle">Bein Direct</span></h1>
+            <h1 class="h6 m-0"><span class="badge-live">Live</span><span id="activeTitle">FIFA BANGLA</span></h1>
         </div>
 
         <div class="ott-tabs-wrapper">
@@ -69,10 +69,10 @@
 
         <div class="horizontal-panel">
             <div id="fifaTabPanel" class="channel-list-row">
-                <div class="channel-card drm-card" onclick="switchDrmChannel('https://d1g8wgjurz8via.cloudfront.net/bpk-tv/Zeebanglacinema/default/manifest.mpd', 'fbbfd9ce4bbe4d818b16df7dfe89f05b', '1e96d0f88ef740e982d6f6105721c8bc', 'FIFA BANGLA', this)">
+                <div class="channel-card drm-card active" onclick="switchDrmChannel('https://d1g8wgjurz8via.cloudfront.net/bpk-tv/Zeebanglacinema/default/manifest.mpd', 'fbbfd9ce4bbe4d818b16df7dfe89f05b', '1e96d0f88ef740e982d6f6105721c8bc', 'FIFA BANGLA', this)">
                     <div class="card-name">FIFA<br>BANGLA</div>
                 </div>
-                <div class="channel-card active" onclick="switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', this)"><div class="card-name">Bein<br>Direct</div></div>
+                <div class="channel-card" onclick="switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', this)"><div class="card-name">Bein<br>Direct</div></div>
                 <div class="channel-card" onclick="switchStandardChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8', 'Caze TV', this)"><div class="card-name">Caze<br>TV</div></div>
                 <div class="channel-card" onclick="switchStandardChannel('https://tvsen5.aynaott.com/PtvSports/index.m3u8', 'PTV Sports', this)"><div class="card-name">PTV<br>Sports</div></div>
                 <div class="channel-card" onclick="switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/32/index.m3u8', 'WIN Premium', this)"><div class="card-name">WIN<br>Premium</div></div>
@@ -94,6 +94,27 @@
                 <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/ptv/index.m3u8', '_blank')"><div class="card-name">PTV<br>Feed</div></div>
                 <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/euroSports/index.m3u8', '_blank')"><div class="card-name">Euro<br>Sports</div></div>
             </div>
+        </div>
+
+        <div class="text-center mt-4 p-3" style="background: rgba(13, 18, 28, 0.5); border: 1px solid rgba(255,255,255,0.03); border-radius: 12px;">
+            <div class="row g-3 align-items-center justify-content-center">
+                
+                <div class="col-6 col-md-4">
+                    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
+                        <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; font-weight: 700; margin-bottom: 4px;"><i class="bi bi-calendar-check text-warning me-1"></i>Today Visitors</div>
+                        <img src="https://hitwebcounter.com/counter/counter.php?page=10123456&style=0005&nbdigits=5&type=ip&initCount=350" title="Today Visitors" Alt="Visitors" border="0" style="height: 20px; filter: hue-rotate(140deg);">
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-4">
+                    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
+                        <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase; font-weight: 700; margin-bottom: 4px;"><i class="bi bi-graph-up-arrow text-success me-1"></i>Monthly Traffic</div>
+                        <img src="https://hitwebcounter.com/counter/counter.php?page=10123457&style=0005&nbdigits=6&type=page&initCount=4820" title="Total Views" Alt="Views" border="0" style="height: 20px; filter: hue-rotate(220deg);">
+                    </div>
+                </div>
+
+            </div>
+            <div class="mt-3 text-muted" style="font-size: 10px; opacity: 0.5;">© 2026 Zion Sports • Powered by GitHub Pages</div>
         </div>
     </div>
 
@@ -160,8 +181,15 @@
             }
         }
 
-        // Boot
-        switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', document.querySelector('.channel-card.active'));
+        // 🏁 Boot/Initial Load Fix: ডিফল্ট হিসেবে সোজা ফিফা বাংলা চালু হবে
+        const defaultCard = document.querySelector('.channel-card.drm-card');
+        switchDrmChannel(
+            'https://d1g8wgjurz8via.cloudfront.net/bpk-tv/Zeebanglacinema/default/manifest.mpd', 
+            'fbbfd9ce4bbe4d818b16df7dfe89f05b', 
+            '1e96d0f88ef740e982d6f6105721c8bc', 
+            'FIFA BANGLA', 
+            defaultCard
+        );
     </script>
 </body>
 </html>
