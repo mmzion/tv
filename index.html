@@ -5,35 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zion Sports — Ultimate OTT</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <style>
-        body { background-color: #04070b; color: #fff; font-family: sans-serif; padding-top: 60px; }
-        .theater-screen { position: relative; background: #000; border-radius: 14px; overflow: hidden; width: 100%; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; }
-        video { width: 100%; height: 100%; object-fit: contain; background: #000; }
-        .channel-list-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 15px; }
-        .channel-card { background: #111; padding: 15px; border-radius: 10px; cursor: pointer; text-align: center; aspect-ratio: 1.2/1; display: flex; align-items: center; justify-content: center; border: 1px solid #333; }
+        body { background-color: #04070b; color: #f8fafc; font-family: sans-serif; min-height: 100vh; padding-top: 60px; }
+        .ott-nav { background: rgba(4, 7, 11, 0.8); backdrop-filter: blur(20px); height: 60px; position: fixed; top: 0; width: 100%; z-index: 1050; display: flex; align-items: center; padding: 0 20px; }
+        .theater-screen { position: relative; background: #000; border-radius: 14px; overflow: hidden; width: 100%; aspect-ratio: 16 / 9; }
+        #plyr-wrapper, #shaka-wrapper { width: 100%; height: 100%; position: absolute; top:0; }
+        video { width: 100%; height: 100%; background: #000; }
+        .stream-details { margin-top: 15px; background: rgba(13, 18, 28, 0.4); padding: 14px; border-radius: 12px; }
+        .badge-live { background: #ef4444; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-right: 8px; text-transform: uppercase; }
+        .horizontal-panel { margin-top: 15px; background: rgba(13, 18, 28, 0.4); padding: 15px; border-radius: 14px; }
+        .channel-list-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .channel-card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; cursor: pointer; text-align: center; aspect-ratio: 1.2/1; display: flex; align-items: center; justify-content: center; }
         .channel-card.active { border: 2px solid #ef4444; }
-        .drm-card.active { border: 2px solid #10b981; }
+        .drm-card { border: 2px solid #10b981; }
         .card-name { font-weight: 800; font-size: 11px; text-transform: uppercase; }
         @media (max-width: 768px) { .channel-list-row { grid-template-columns: repeat(3, 1fr); } }
     </style>
 </head>
 <body>
 
-    <div class="container-fluid">
+    <nav class="ott-nav"><div class="text-white fw-bold"><i class="bi bi-play-circle text-danger"></i> ZION SPORTS</div></nav>
+
+    <div class="container-fluid ott-dashboard">
         <div class="theater-screen">
-            <video id="player" playsinline controls></video>
-            <video id="shaka-video" class="d-none" playsinline controls></video>
+            <div id="plyr-wrapper"><video id="player" playsinline controls autoplay muted></video></div>
+            <div id="shaka-wrapper" class="d-none"><video id="shaka-video" autoplay playsinline controls></video></div>
         </div>
         
-        <div class="channel-list-row">
-            <div class="channel-card drm-card" onclick="switchDrm('https://d1g8wgjurz8via.cloudfront.net/bpk-tv/Zeebanglacinema/default/manifest.mpd', 'fbbfd9ce4bbe4d818b16df7dfe89f05b', '1e96d0f88ef740e982d6f6105721c8bc', this)">
-                <div class="card-name">FIFA<br>BANGLA</div>
+        <div class="stream-details">
+            <h1 class="h6 m-0"><span class="badge-live">Live</span><span id="activeTitle">Bein Direct</span></h1>
+        </div>
+
+        <div class="horizontal-panel">
+            <div id="fifaTabPanel" class="channel-list-row">
+                <div class="channel-card drm-card" onclick="switchDrmChannel('https://d1g8wgjurz8via.cloudfront.net/bpk-tv/Zeebanglacinema/default/manifest.mpd', 'fbbfd9ce4bbe4d818b16df7dfe89f05b', '1e96d0f88ef740e982d6f6105721c8bc', 'FIFA BANGLA', this)">
+                    <div class="card-name">FIFA<br>BANGLA</div>
+                </div>
+                <div class="channel-card active" onclick="switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', this)"><div class="card-name">Bein<br>Direct</div></div>
+                <div class="channel-card" onclick="switchStandardChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8', 'Caze TV', this)"><div class="card-name">Caze<br>TV</div></div>
+                <div class="channel-card" onclick="switchStandardChannel('https://tvsen5.aynaott.com/PtvSports/index.m3u8', 'PTV Sports', this)"><div class="card-name">PTV<br>Sports</div></div>
+                <div class="channel-card" onclick="switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/32/index.m3u8', 'WIN Premium', this)"><div class="card-name">WIN<br>Premium</div></div>
             </div>
-            <div class="channel-card active" onclick="switchHls('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', this)"><div class="card-name">BEIN<br>DIRECT</div></div>
-            <div class="channel-card" onclick="switchHls('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8', this)"><div class="card-name">CAZE<br>TV</div></div>
-            <div class="channel-card" onclick="switchHls('https://tvsen5.aynaott.com/PtvSports/index.m3u8', this)"><div class="card-name">PTV<br>SPORTS</div></div>
-            <div class="channel-card" onclick="switchHls('https://1nyaler.streamhostingcdn.top/stream/32/index.m3u8', this)"><div class="card-name">WIN<br>PREMIUM</div></div>
         </div>
     </div>
 
@@ -44,17 +58,21 @@
     <script>
         const video = document.getElementById('player');
         const shakaVideo = document.getElementById('shaka-video');
-        let hls = null, shakaPlayer = null;
+        let hls = null;
+        let shakaPlayer = null;
 
-        const player = new Plyr(video, { controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'] });
+        const plyr = new Plyr(video, { autoplay: true, muted: true });
 
-        function switchHls(url, el) {
+        // Standard HLS
+        function switchStandardChannel(url, title, el) {
             document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
             el.classList.add('active');
+            document.getElementById('activeTitle').innerText = title;
+            
+            document.getElementById('shaka-wrapper').classList.add('d-none');
+            document.getElementById('plyr-wrapper').classList.remove('d-none');
             
             if(shakaPlayer) shakaPlayer.unload();
-            shakaVideo.classList.add('d-none');
-            video.classList.remove('d-none');
             
             if (hls) hls.destroy();
             hls = new Hls();
@@ -63,23 +81,27 @@
             video.play();
         }
 
-        async function switchDrm(url, keyId, keySecret, el) {
+        // Fixed DRM Shaka
+        async function switchDrmChannel(url, keyId, keySecret, title, el) {
             document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
             el.classList.add('active');
+            document.getElementById('activeTitle').innerText = title;
 
             if (hls) hls.destroy();
-            video.classList.add('d-none');
-            shakaVideo.classList.remove('d-none');
+            document.getElementById('plyr-wrapper').classList.add('d-none');
+            document.getElementById('shaka-wrapper').classList.remove('d-none');
 
             if (!shakaPlayer) shakaPlayer = new shaka.Player(shakaVideo);
             shakaPlayer.configure({ drm: { clearKeys: { [keyId]: keySecret } } });
             
-            await shakaPlayer.load(url);
-            shakaVideo.play();
+            try {
+                await shakaPlayer.load(url);
+                shakaVideo.play();
+            } catch(e) { console.error(e); }
         }
 
-        // Initial Load
-        switchHls('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', document.querySelector('.channel-card.active'));
+        // Boot
+        switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', document.querySelector('.channel-card.active'));
     </script>
 </body>
 </html>
