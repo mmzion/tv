@@ -17,7 +17,6 @@
             padding: 0;
         }
 
-        /* 👑 গ্লোয়িং ন্যাভবার */
         .ott-nav { 
             background: rgba(4, 7, 11, 0.8); 
             backdrop-filter: blur(20px); 
@@ -28,7 +27,7 @@
             border-bottom: 1px solid rgba(255,255,255,0.05); 
         }
 
-        /* 📺 📱 ইউটিউব স্টাইল স্টিকি প্লেয়ার কন্টেইনার (স্ক্রল করলেও উপরে আটকে থাকবে) */
+        /* 📺 ইউটিউব স্টাইল স্টিকি প্লেয়ার কন্টেইনার */
         .theater-screen-sticky-wrapper {
             position: -webkit-sticky;
             position: sticky;
@@ -50,7 +49,7 @@
         video { width: 100%; height: 100%; background: #000; object-fit: contain !important; }
         .plyr { width: 100%; height: 100%; }
 
-        /* 🖐️ শুধুমাত্র ডাবল-ট্যাপ সিক লেয়ার */
+        /* 🖐️ ডাবল-ট্যাপ সিক ওভারলে (কন্ট্রোল বাটন এরিয়া সম্পূর্ণ ফ্রী রাখা হয়েছে) */
         .player-gesture-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: calc(100% - 50px);
@@ -72,32 +71,25 @@
         }
         .show-notice { opacity: 1; }
 
-        /* 📋 ড্যাশবোর্ড স্ক্রলিং কন্টেন্ট এলাকা */
-        .ott-dashboard {
-            padding: 15px;
-        }
-
+        /* 📋 ড্যাশবোর্ড স্ক্রলিং এরিয়া */
+        .ott-dashboard { padding: 15px; }
         .stream-details { background: rgba(13, 18, 28, 0.4); padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.03); }
         .badge-live { background: #ef4444; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-right: 8px; text-transform: uppercase; font-weight: bold; }
         .horizontal-panel { margin-top: 15px; background: rgba(13, 18, 28, 0.4); padding: 15px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.03); }
         
-        /* 📑 ট্যাব বাটন */
         .ott-tabs-wrapper { margin-top: 15px; background: rgba(13, 18, 28, 0.6); padding: 4px; border-radius: 10px; display: inline-flex; gap: 6px; border: 1px solid rgba(255,255,255,0.03); width: 100%; overflow-x: auto; white-space: nowrap; }
         .ott-tabs-wrapper::-webkit-scrollbar { height: 0px; }
         .tab-trigger { background: transparent; color: #64748b; border: none; padding: 8px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; border-radius: 8px; transition: all 0.2s ease; display: inline-flex; align-items: center; }
         .tab-trigger.active { background: #ef4444; color: #fff; }
 
-        /* 📱 গ্রিড লেআউট */
         .iptv-grid-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
         .panel-grid-hidden { display: none !important; }
 
-        /* 👑 টেক্সট-লগো কার্ড স্টাইল */
         .channel-card { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; cursor: pointer; text-align: center; aspect-ratio: 1.1/1; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.05); transition: all 0.2s ease; }
         .channel-card.active { border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.08); }
         .redirect-card { border: 1px solid rgba(245, 158, 11, 0.15); }
         .redirect-card:hover { border-color: #f59e0b; background: rgba(245, 158, 11, 0.05); transform: translateY(-2px); }
         
-        /* 🎨 কাস্টম টেক্সট লগো আইকন */
         .text-logo-icon { width: 45px; height: 45px; background: rgba(255,255,255,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #ef4444; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); }
         .channel-card.active .text-logo-icon { background: #ef4444; color: #fff; }
         .redirect-card .text-logo-icon { color: #f59e0b; }
@@ -253,17 +245,17 @@
         const video = document.getElementById('player');
         let hls = null;
 
-        // প্লায়ার কনফিগারেশন
+        // 🛠️ সাউন্ড স্লাইডার ও মিউট বাটন প্লেয়ার কন্ট্রোল বার থেকে সম্পূর্ণ বাদ দেওয়া হলো
         const plyr = new Plyr(video, { 
             autoplay: true, 
             muted: true,
-            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen']
+            controls: ['play-large', 'play', 'progress', 'current-time', 'fullscreen'] 
         });
 
-        // 🔄 ১. অটো-রোটেশন ইন্টিগ্রেশন
+        // 🔄 ১. অটো-রোটেশন মেকানিজম
         plyr.on('enterfullscreen', () => {
             if (screen.orientation && screen.orientation.lock) {
-                screen.orientation.lock('landscape').catch(err => console.log("Orientation lock ignored:", err));
+                screen.orientation.lock('landscape').catch(err => console.log("Orientation lock skipped:", err));
             }
         });
         plyr.on('exitfullscreen', () => {
@@ -306,10 +298,10 @@
             setTimeout(() => element.classList.remove('show-notice'), 500);
         }
 
-        // 🔄 ৩. স্ট্যান্ডার্ড এইচলএস স্ট্রিম কোর ইঞ্জিন
+        // 🔄 ৩. স্ট্যান্ডার্ড এইচলএস কোর স্ট্রিম ইঞ্জিন
         function switchStandardChannel(url, title, el) {
             document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
+            if(el) el.classList.add('active');
             document.getElementById('activeTitle').innerText = title;
             
             if (hls) hls.destroy();
@@ -319,7 +311,7 @@
             video.play().catch(e => console.log("Engine loaded:", e));
         }
 
-        // 🔄 ৪. ট্যাব প্যানেল টগল
+        // 🔄 ৪. ট্যাব সুইচিং প্যানেল কন্ট্রোল
         function togglePanelTab(tabName, buttonElement) {
             document.querySelectorAll('.tab-trigger').forEach(t => t.classList.remove('active'));
             buttonElement.classList.add('active');
@@ -341,7 +333,10 @@
         }
 
         // Auto Load Initial Channel
-        switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', document.querySelectorAll('.channel-card')[1]);
+        window.addEventListener('DOMContentLoaded', () => {
+            const defaultCard = document.querySelectorAll('#fifaTabPanel .channel-card')[1];
+            switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', defaultCard);
+        });
     </script>
 </body>
 </html>
