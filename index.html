@@ -66,28 +66,14 @@
         video { width: 100%; height: 100%; background: #000; object-fit: contain !important; }
         .plyr { width: 100%; height: 100%; }
 
-        /* 🖐️ ওয়ান-ক্লিক কন্ট্রোল টগল এবং ডাবল-ট্যাপ সিক ওভারলে */
+        /* 🖐️ ওয়ান-ক্লিক কন্ট্রোল এবং প্লে-পজ টাচ ওভারলে */
         .player-click-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: calc(100% - 50px);
             z-index: 1;
-            display: flex;
             pointer-events: auto;
+            cursor: pointer;
         }
-        .gesture-zone { width: 50%; height: 100%; position: relative; }
-        
-        .seek-notice {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(9, 5, 20, 0.9);
-            padding: 8px 16px; border-radius: 30px;
-            font-size: 12px; font-weight: 700;
-            color: #a78bfa; display: flex; align-items: center; gap: 6px;
-            opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
-            border: 1px solid var(--purple-primary);
-            box-shadow: 0 0 15px var(--purple-glow);
-        }
-        .show-notice { opacity: 1; }
 
         /* 📋 ড্যাশবোর্ড এরিয়া */
         .ott-dashboard { padding: 15px; }
@@ -160,7 +146,6 @@
 
         .plyr--video { --plyr-color-main: var(--purple-primary); }
 
-        /* 👑 মাঝখানের বড় প্লে বাটনে ক্লিক এক্সেস দেওয়ার ফিক্স */
         .plyr__control--overlaid {
             z-index: 10 !important;
             pointer-events: auto !important;
@@ -219,11 +204,9 @@
             <div class="theater-screen-sticky-wrapper">
                 <div class="theater-screen">
                     <div id="plyr-wrapper">
-                        <video id="player" playsinline controls autoplay muted></video>
-                        <div class="player-click-overlay" id="player-overlay">
-                            <div class="gesture-zone" id="left-zone"><div class="seek-notice" id="left-seek"><i class="bi bi-backward-fill"></i> -10s</div></div>
-                            <div class="gesture-zone" id="right-zone"><div class="seek-notice" id="right-seek">10s <i class="bi bi-forward-fill"></i></div></div>
-                        </div>
+                        <video id="player" playsinline controls autoplay></video>
+                        <!-- জেসচার বাদ দিয়ে সাধারণ টাচ ওভারলে -->
+                        <div class="player-click-overlay" id="player-overlay"></div>
                     </div>
                 </div>
             </div>
@@ -233,7 +216,6 @@
                 <img id="activeLogo" src="https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg" class="active-logo-img" alt="logo" onerror="this.style.display='none'">
                 <h1 class="h6 m-0" id="activeTitle">Bein Direct</h1>
                 
-                <!-- 🔄 রিলোড স্ট্রিম বাটন যোগ করা হলো -->
                 <button class="btn-reload-stream" onclick="reloadCurrentStream()"><i class="bi bi-arrow-clockwise"></i> Reload</button>
             </div>
         </div>
@@ -411,12 +393,13 @@
     <script>
         const video = document.getElementById('player');
         let hls = null;
-        let currentActiveUrl = ''; // বর্তমান সচল লাইভ লিঙ্কের ট্র্যাক রাখার ভেরিয়েবল
+        let currentActiveUrl = ''; 
 
+        // 🔊 সাউন্ড অ্যাক্টিভেট করতে মিউটেড তুলে দেওয়া হলো (muted: false)
         const plyr = new Plyr(video, { 
             autoplay: true, 
-            muted: true,
-            controls: ['play-large', 'play', 'progress', 'current-time', 'fullscreen'] 
+            muted: false,
+            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'] 
         });
 
         plyr.on('enterfullscreen', () => {
@@ -431,70 +414,35 @@
         });
 
         const overlay = document.getElementById('player-overlay');
-        const leftZone = document.getElementById('left-zone');
-        const rightZone = document.getElementById('right-zone');
-        const leftSeekNotice = document.getElementById('left-seek');
-        const rightSeekNotice = document.getElementById('right-seek');
 
-        let lastTapLeft = 0;
-        let lastTapRight = 0;
-
-        // মাঝখানে ক্লিক করলে প্লে/পজ হওয়ার মেকানিজম এবং ডাবল-ট্যাপ সিকিং ম্যানেজমেন্ট
+        // 🖐️ নতুন টাচ/ক্লিক লজিক: কন্ট্রোল বার অন থাকা অবস্থায় যেকোনো জায়গায় টাচ করলে প্লে-পজ হবে
         overlay.addEventListener('click', (e) => {
-            const currentTime = new Date().getTime();
+            e.stopPropagation();
+            const controls = document.querySelector('.plyr__controls');
             
-            if (e.target === leftZone) {
-                if (currentTime - lastTapLeft < 300) {
-                    video.currentTime = Math.max(0, video.currentTime - 10);
-                    triggerNotice(leftSeekNotice);
+            if (controls) {
+                // চেক করা হচ্ছে কন্ট্রোল বারটি বর্তমানে স্ক্রিনে দৃশ্যমান কি না
+                const isControlsVisible = controls.style.opacity === '1' || 
+                                          window.getComputedStyle(controls).visibility === 'visible' ||
+                                          controls.classList.contains('plyr__controls--visible');
+                
+                if (isControlsVisible) {
+                    // কন্ট্রোল বার স্ক্রিনে থাকলে টাচ করার সাথে সাথে প্লে/পজ টগল হবে
+                    if (video.paused) {
+                        video.play();
+                    } else {
+                        video.pause();
+                    }
                 } else {
-                    if (video.paused) video.play(); else video.pause();
+                    // প্রথম টাচে কন্ট্রোল বার সচল হবে
+                    plyr.toggleControls(true);
                 }
-                lastTapLeft = currentTime;
-            }
-            
-            if (e.target === rightZone) {
-                if (currentTime - lastTapRight < 300) {
-                    video.currentTime = Math.min(video.duration || video.currentTime + 1000, video.currentTime + 10);
-                    triggerNotice(rightSeekNotice);
-                } else {
-                    if (video.paused) video.play(); else video.pause();
-                }
-                lastTapRight = currentTime;
             }
         });
 
-        // মোবাইল জেসচার হ্যান্ডলার
-        leftZone.addEventListener('touchend', (e) => {
-            let currentTime = new Date().getTime();
-            let tapLength = currentTime - lastTapLeft;
-            if (tapLength < 300 && tapLength > 0) {
-                e.preventDefault();
-                video.currentTime = Math.max(0, video.currentTime - 10);
-                triggerNotice(leftSeekNotice);
-            }
-            lastTapLeft = currentTime;
-        });
-
-        rightZone.addEventListener('touchend', (e) => {
-            let currentTime = new Date().getTime();
-            let tapLength = currentTime - lastTapRight;
-            if (tapLength < 300 && tapLength > 0) {
-                e.preventDefault();
-                video.currentTime = Math.min(video.duration || video.currentTime + 1000, video.currentTime + 10);
-                triggerNotice(rightSeekNotice);
-            }
-            lastTapRight = currentTime;
-        });
-
-        function triggerNotice(element) {
-            element.classList.add('show-notice');
-            setTimeout(() => element.classList.remove('show-notice'), 500);
-        }
-
-        // 🔄 স্ট্যান্ডার্ড ইন্টারনাল প্লেয়ার ইঞ্জিন (অটোপ্লে গ্যারান্টি লজিকসহ)
+        // 🔄 স্ট্যান্ডার্ড ইন্টারনাল প্লেয়ার ইঞ্জিন (সাউন্ড এনফোর্সমেন্ট সহ)
         function switchStandardChannel(url, title, logoUrl, el) {
-            currentActiveUrl = url; // ট্র্যাক আইডি আপডেট
+            currentActiveUrl = url; 
             document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
             if(el) el.classList.add('active');
             
@@ -513,12 +461,11 @@
             hls.loadSource(url);
             hls.attachMedia(video);
             
-            // 🚀 ব্রাউজার পলিসি বাইপাস করে ফোর্সড সরাসরি লাইভ প্লে লুপ
             hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                // ব্রাউজার যদি আনমিউটেড অটোপ্লে ব্লক করে, তবে ইউজারকে সাউন্ড বাটন অন করতে প্রম্পট করবে কিন্তু লাইভ রানিং থাকবে
                 video.play().catch(() => {
-                    // যদি ব্রাউজার আনমিউটেড ব্লক করে, তবে মিউট করে ব্যাকগ্রাউন্ডে হলেও ফোর্স প্লে করবে
                     video.muted = true;
-                    video.play().catch(err => console.log("Autoplay blocked entirely:", err));
+                    video.play().catch(err => console.log("Autoplay blocked:", err));
                 });
             });
         }
@@ -526,18 +473,17 @@
         // 🔄 লাইভ রিলোড বোতামের কোর লজিক
         function reloadCurrentStream() {
             if (currentActiveUrl) {
-                console.log("Reloading stream:", currentActiveUrl);
                 if (hls) hls.destroy();
                 hls = new Hls();
                 hls.loadSource(currentActiveUrl);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play().catch(e => console.log("Reload stream initialization skipped:", e));
+                    video.play().catch(e => console.log("Reload missed:", e));
                 });
             }
         }
 
-        // 🔀 রিডিরেক্ট চ্যানেল হ্যান্ডলার (আগের চ্যানেল পজ করার কোর লজিক)
+        // 🔀 রিডিরেক্ট চ্যানেল হ্যান্ডলার
         function handleRedirectChannel(targetUrl) {
             if (!video.paused) {
                 video.pause(); 
