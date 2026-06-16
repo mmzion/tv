@@ -205,7 +205,6 @@
                 <div class="theater-screen">
                     <div id="plyr-wrapper">
                         <video id="player" playsinline controls autoplay></video>
-                        <!-- জেসচার বাদ দিয়ে সাধারণ টাচ ওভারলে -->
                         <div class="player-click-overlay" id="player-overlay"></div>
                     </div>
                 </div>
@@ -395,11 +394,10 @@
         let hls = null;
         let currentActiveUrl = ''; 
 
-        // 🔊 সাউন্ড অ্যাক্টিভেট করতে মিউটেড তুলে দেওয়া হলো (muted: false)
+        // 🔊 কাস্টম ভলিউমবার ও মিউট সেটিংস রিমুভ করে সরাসরি ফুল ওরিজিনাল সাউন্ডে চলা নিশ্চিত করা হলো
         const plyr = new Plyr(video, { 
             autoplay: true, 
-            muted: false,
-            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'] 
+            controls: ['play-large', 'play', 'progress', 'current-time', 'fullscreen'] 
         });
 
         plyr.on('enterfullscreen', () => {
@@ -415,32 +413,29 @@
 
         const overlay = document.getElementById('player-overlay');
 
-        // 🖐️ নতুন টাচ/ক্লিক লজিক: কন্ট্রোল বার অন থাকা অবস্থায় যেকোনো জায়গায় টাচ করলে প্লে-পজ হবে
+        // 🖐️ টাচ/ক্লিক মেকানিজম: প্রথম ক্লিকে কন্ট্রোলবার অন হবে এবং সচল থাকা অবস্থায় ক্লিক করলে প্লে-পজ হবে
         overlay.addEventListener('click', (e) => {
             e.stopPropagation();
             const controls = document.querySelector('.plyr__controls');
             
             if (controls) {
-                // চেক করা হচ্ছে কন্ট্রোল বারটি বর্তমানে স্ক্রিনে দৃশ্যমান কি না
                 const isControlsVisible = controls.style.opacity === '1' || 
                                           window.getComputedStyle(controls).visibility === 'visible' ||
                                           controls.classList.contains('plyr__controls--visible');
                 
                 if (isControlsVisible) {
-                    // কন্ট্রোল বার স্ক্রিনে থাকলে টাচ করার সাথে সাথে প্লে/পজ টগল হবে
                     if (video.paused) {
                         video.play();
                     } else {
                         video.pause();
                     }
                 } else {
-                    // প্রথম টাচে কন্ট্রোল বার সচল হবে
                     plyr.toggleControls(true);
                 }
             }
         });
 
-        // 🔄 স্ট্যান্ডার্ড ইন্টারনাল প্লেয়ার ইঞ্জিন (সাউন্ড এনফোর্সমেন্ট সহ)
+        // 🔄 স্ট্যান্ডার্ড ইন্টারনাল প্লেয়ার ইঞ্জিন (সাউন্ড জোরপূর্বক রানিং করা হলো)
         function switchStandardChannel(url, title, logoUrl, el) {
             currentActiveUrl = url; 
             document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
@@ -462,10 +457,14 @@
             hls.attachMedia(video);
             
             hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                // ব্রাউজার যদি আনমিউটেড অটোপ্লে ব্লক করে, তবে ইউজারকে সাউন্ড বাটন অন করতে প্রম্পট করবে কিন্তু লাইভ রানিং থাকবে
+                video.volume = 1.0; // ফুল সাউন্ড লক
                 video.play().catch(() => {
+                    // ব্রাউজার যদি প্রথম লোডে আনমিউটেড ব্লক করে, তবে মিউট করে অটো চালু হবে, স্ক্রিনে টাচ করলেই সাউন্ড আনমিউট হয়ে যাবে
                     video.muted = true;
-                    video.play().catch(err => console.log("Autoplay blocked:", err));
+                    video.play().then(() => {
+                        // ব্যাকগ্রাউন্ডে অটোপ্লে সফল হলে প্রথম ইউজার ইন্টারঅ্যাকশনে অটো আনমিউট স্ক্রিপ্ট
+                        overlay.addEventListener('click', () => { video.muted = false; video.volume = 1.0; }, { once: true });
+                    }).catch(err => console.log("Engine initialization bypass:", err));
                 });
             });
         }
@@ -478,7 +477,8 @@
                 hls.loadSource(currentActiveUrl);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play().catch(e => console.log("Reload missed:", e));
+                    video.volume = 1.0;
+                    video.play().catch(e => console.log("Reload stream engine skipped:", e));
                 });
             }
         }
