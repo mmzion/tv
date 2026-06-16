@@ -136,6 +136,12 @@
 
         .plyr--video { --plyr-color-main: var(--purple-primary); }
 
+        /* 👑 মাঝখানের বড় প্লে বাটনে ক্লিক এক্সেস দেওয়ার ফিক্স */
+        .plyr__control--overlaid {
+            z-index: 10 !important;
+            pointer-events: auto !important;
+        }
+
         @media (max-width: 992px) { .iptv-grid-row { grid-template-columns: repeat(4, 1fr); } }
         @media (max-width: 768px) { .iptv-grid-row { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 480px) { .iptv-grid-row { grid-template-columns: repeat(2, 1fr); } }
@@ -181,8 +187,10 @@
 
     <nav class="ott-nav"><div class="text-white fw-bold"><i class="bi bi-play-circle text-purple-primary" style="color: var(--purple-primary);"></i> ZION SPORTS</div></nav>
 
+    <!-- পিসির জন্য গ্রিড র্যাপার শুরু -->
     <div class="ott-main-layout">
         
+        <!-- বাম পাশের কলাম: ভিডিও প্লেয়ার এবং লাইভ স্ট্যাটাস -->
         <div class="left-column-wrapper">
             <div class="theater-screen-sticky-wrapper">
                 <div class="theater-screen">
@@ -203,6 +211,7 @@
             </div>
         </div>
 
+        <!-- ডান পাশের কলাম: ক্যাটাগরি ট্যাব এবং চ্যানেল গ্রিড -->
         <div class="container-fluid ott-dashboard">
             
             <div class="ott-tabs-wrapper mt-0">
@@ -214,8 +223,9 @@
 
             <div class="horizontal-panel">
                 
+                <!-- ১. 🏆 FIFA Premium সেকশন -->
                 <div id="fifaTabPanel" class="iptv-grid-row">
-                    <div class="channel-card tsports-highlight redirect-card" onclick="window.open('http://198.195.239.50:8095/tsports/index.m3u8', '_blank')">
+                    <div class="channel-card tsports-highlight redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/tsports/index.m3u8')">
                         <div class="text-logo-icon">TS</div><div class="card-name" style="color: #f59e0b;">T Sports</div>
                     </div>
                     <div class="channel-card active" onclick="switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', '', this)">
@@ -232,6 +242,7 @@
                     </div>
                 </div>
 
+                <!-- ২. ⚽ Live Sports সেকশন -->
                 <div id="sportsTabPanel" class="iptv-grid-row panel-grid-hidden">
                     <div class="channel-card" onclick="switchStandardChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/720p-vtt/index.m3u8', 'Caze TV 720p', 'https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png', this)">
                         <img src="https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png" class="logo-img" alt="Caze 720">
@@ -293,67 +304,69 @@
                         <div class="card-name">Real Madrid TV ES</div>
                     </div>
 
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/tsports/index.m3u8', '_blank')"><div class="text-logo-icon">TS</div><div class="card-name">T Sports</div></div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSports1/index.m3u8', '_blank')"><div class="text-logo-icon">S1</div><div class="card-name">Star Sports 1</div></div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSports2/index.m3u8', '_blank')"><div class="text-logo-icon">S2</div><div class="card-name">Star Sports 2</div></div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSports3/index.m3u8', '_blank')"><div class="text-logo-icon">S3</div><div class="card-name">Star Sports 3</div></div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSportsSelect1/index.m3u8', '_blank')"><div class="text-logo-icon">SS1</div><div class="card-name">Star Select 1</div></div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSportsSelect2/index.m3u8', '_blank')"><div class="text-logo-icon">SS2</div><div class="card-name">Star Select 2</div></div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports1/index.m3u8', '_blank')"><div class="text-logo-icon">T1</div><div class="card-name">Sony Ten 1</div></div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports2/index.m3u8', '_blank')"><div class="text-logo-icon">T2</div><div class="card-name">Sony Ten 2</div></div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports3/index.m3u8', '_blank')"><div class="text-logo-icon">T3</div><div class="card-name">Sony Ten 3</div></div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports4/index.m3u8', '_blank')"><div class="text-logo-icon">T4</div><div class="card-name">Sony Ten 4</div></div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports5/index.m3u8', '_blank')"><div class="text-logo-icon">T5</div><div class="card-name">Sony Ten 5</div></div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/euroSports/index.m3u8', '_blank')"><div class="text-logo-icon">ES</div><div class="card-name">Euro Sports</div></div>
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/tsports/index.m3u8')"><div class="text-logo-icon">TS</div><div class="card-name">T Sports</div></div>
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/starSports1/index.m3u8')"><div class="text-logo-icon">S1</div><div class="card-name">Star Sports 1</div></div>
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/starSports2/index.m3u8')"><div class="text-logo-icon">S2</div><div class="card-name">Star Sports 2</div></div>
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/starSports3/index.m3u8')"><div class="text-logo-icon">S3</div><div class="card-name">Star Sports 3</div></div>
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/starSportsSelect1/index.m3u8')"><div class="text-logo-icon">SS1</div><div class="card-name">Star Select 1</div></div>
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/starSportsSelect2/index.m3u8')"><div class="text-logo-icon">SS2</div><div class="card-name">Star Select 2</div></div>
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/sonyTenSports1/index.m3u8')"><div class="text-logo-icon">T1</div><div class="card-name">Sony Ten 1</div></div>
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/sonyTenSports2/index.m3u8')"><div class="text-logo-icon">T2</div><div class="card-name">Sony Ten 2</div></div>
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/sonyTenSports3/index.m3u8')"><div class="text-logo-icon">T3</div><div class="card-name">Sony Ten 3</div></div>
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/sonyTenSports4/index.m3u8')"><div class="text-logo-icon">T4</div><div class="card-name">Sony Ten 4</div></div>
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/sonyTenSports5/index.m3u8')"><div class="text-logo-icon">T5</div><div class="card-name">Sony Ten 5</div></div>
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/euroSports/index.m3u8')"><div class="text-logo-icon">ES</div><div class="card-name">Euro Sports</div></div>
                 </div>
 
+                <!-- ③. 🎭 Entertainment সেকশন -->
                 <div id="entertainmentTabPanel" class="iptv-grid-row panel-grid-hidden">
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/zeeBangla/index.m3u8', '_blank')">
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/zeeBangla/index.m3u8')">
                         <div class="text-logo-icon">ZB</div><div class="card-name">Zee Bangla</div>
                     </div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starJalsha/index.m3u8', '_blank')">
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/starJalsha/index.m3u8')">
                         <div class="text-logo-icon">SJ</div><div class="card-name">Star Jalsha</div>
                     </div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/colorsBangla/index.m3u8', '_blank')">
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/colorsBangla/index.m3u8')">
                         <div class="text-logo-icon">CB</div><div class="card-name">Colors Bangla</div>
                     </div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyAath/index.m3u8', '_blank')">
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/sonyAath/index.m3u8')">
                         <div class="text-logo-icon">SA</div><div class="card-name">Sony Aath</div>
                     </div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starPlus/index.m3u8', '_blank')">
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/starPlus/index.m3u8')">
                         <div class="text-logo-icon">SP</div><div class="card-name">Star Plus</div>
                     </div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonySab/index.m3u8', '_blank')">
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/sonySab/index.m3u8')">
                         <div class="text-logo-icon">SB</div><div class="card-name">Sony Sab</div>
                     </div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/zeeTv/index.m3u8', '_blank')">
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/zeeTv/index.m3u8')">
                         <div class="text-logo-icon">ZT</div><div class="card-name">Zee TV</div>
                     </div>
                 </div>
 
+                <!-- ④. 📰 News & Movies সেকশন -->
                 <div id="newsMoviesTabPanel" class="iptv-grid-row panel-grid-hidden">
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/jalshaMovies/index.m3u8', '_blank')">
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/jalshaMovies/index.m3u8')">
                         <div class="text-logo-icon">JM</div><div class="card-name">Jalsha Movies</div>
                     </div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/zeeBanglaCinema/index.m3u8', '_blank')">
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/zeeBanglaCinema/index.m3u8')">
                         <div class="text-logo-icon">ZC</div><div class="card-name">Zee Cinema</div>
                     </div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyMax/index.m3u8', '_blank')">
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/sonyMax/index.m3u8')">
                         <div class="text-logo-icon">SM</div><div class="card-name">Sony Max</div>
                     </div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starGold/index.m3u8', '_blank')">
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/starGold/index.m3u8')">
                         <div class="text-logo-icon">SG</div><div class="card-name">Star Gold</div>
                     </div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/somoyTv/index.m3u8', '_blank')">
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/somoyTv/index.m3u8')">
                         <div class="text-logo-icon">ST</div><div class="card-name">Somoy TV</div>
                     </div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/jamunaTv/index.m3u8', '_blank')">
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/jamunaTv/index.m3u8')">
                         <div class="text-logo-icon">JT</div><div class="card-name">Jamuna TV</div>
                     </div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/independentTv/index.m3u8', '_blank')">
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/independentTv/index.m3u8')">
                         <div class="text-logo-icon">IT</div><div class="card-name">Independent</div>
                     </div>
-                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/ekattorTv/index.m3u8', '_blank')">
+                    <div class="channel-card redirect-card" onclick="handleRedirectChannel('http://198.195.239.50:8095/ekattorTv/index.m3u8')">
                         <div class="text-logo-icon">ET</div><div class="card-name">Ekattor TV</div>
                     </div>
                 </div>
@@ -363,7 +376,9 @@
             <div class="text-center mt-5 text-muted" style="font-size: 10px; opacity: 0.2;">© 2026 Zion Sports • Powered by GitHub Pages</div>
         </div>
 
-    </div> <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    </div> <!-- পিসির জন্য গ্রিড র্যাপার শেষ -->
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 
     <script>
@@ -396,20 +411,36 @@
         let lastTapLeft = 0;
         let lastTapRight = 0;
 
+        // মাঝখানে ক্লিক করলে প্লে/পজ হওয়ার মেকানিজম এবং ডাবল-ট্যাপ সিকিং ম্যানেজমেন্ট
         overlay.addEventListener('click', (e) => {
-            if (e.target === leftZone || e.target === rightZone) {
-                e.stopPropagation();
-                const controls = document.querySelector('.plyr__controls');
-                if (controls) {
-                    if (controls.style.opacity === '1' || controls.style.visibility === 'visible') {
-                        plyr.toggleControls(false);
-                    } else {
-                        plyr.toggleControls(true);
-                    }
+            const currentTime = new Date().getTime();
+            
+            if (e.target === leftZone) {
+                if (currentTime - lastTapLeft < 300) {
+                    // ডাবল ট্যাপ ইভেন্ট (ক্লিকের মাধ্যমে পিসি ব্যাকআপ)
+                    video.currentTime = Math.max(0, video.currentTime - 10);
+                    triggerNotice(leftSeekNotice);
+                } else {
+                    // সিঙ্গেল ক্লিক - প্লে/পজ টগল
+                    if (video.paused) video.play(); else video.pause();
                 }
+                lastTapLeft = currentTime;
+            }
+            
+            if (e.target === rightZone) {
+                if (currentTime - lastTapRight < 300) {
+                    // ডাবল ট্যাপ ইভেন্ট
+                    video.currentTime = Math.min(video.duration || video.currentTime + 1000, video.currentTime + 10);
+                    triggerNotice(rightSeekNotice);
+                } else {
+                    // সিঙ্গেল ক্লিক - প্লে/পজ টগল
+                    if (video.paused) video.play(); else video.pause();
+                }
+                lastTapRight = currentTime;
             }
         });
 
+        // মোবাইল জেসচার হ্যান্ডলার
         leftZone.addEventListener('touchend', (e) => {
             let currentTime = new Date().getTime();
             let tapLength = currentTime - lastTapLeft;
@@ -437,6 +468,7 @@
             setTimeout(() => element.classList.remove('show-notice'), 500);
         }
 
+        // 🔄 স্ট্যান্ডার্ড ইন্টারনাল প্লেয়ার ইঞ্জিন
         function switchStandardChannel(url, title, logoUrl, el) {
             document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
             if(el) el.classList.add('active');
@@ -456,6 +488,14 @@
             hls.loadSource(url);
             hls.attachMedia(video);
             video.play().catch(e => console.log("Stream init error:", e));
+        }
+
+        // 🔀 রিডিরেক্ট চ্যানেল হ্যান্ডলার (আগের চ্যানেল পজ করার কোর লজিক)
+        function handleRedirectChannel(targetUrl) {
+            if (!video.paused) {
+                video.pause(); // নিউ ট্যাবে যাওয়ার ঠিক আগে রানিং প্লেয়ার পজ হবে
+            }
+            window.open(targetUrl, '_blank');
         }
 
         function togglePanelTab(tabName, buttonElement) {
