@@ -91,12 +91,36 @@
 
         /* 📋 ড্যাশবোর্ড এরিয়া */
         .ott-dashboard { padding: 15px; }
-        .stream-details { background: var(--panel-bg); padding: 14px; border-radius: 14px; border: 1px solid rgba(124, 58, 237, 0.15); display: flex; align-items: center; gap: 12px; }
+        .stream-details { background: var(--panel-bg); padding: 14px; border-radius: 14px; border: 1px solid rgba(124, 58, 237, 0.15); display: flex; align-items: center; gap: 12px; position: relative; }
         .active-logo-img { width: 34px; height: 34px; object-fit: contain; border-radius: 8px; background: rgba(255,255,255,0.08); padding: 3px; border: 1px solid rgba(124, 58, 237, 0.3); }
         
         .badge-live { background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 5px; text-transform: uppercase; font-weight: bold; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
         .horizontal-panel { margin-top: 15px; background: var(--panel-bg); padding: 15px; border-radius: 16px; border: 1px solid rgba(124, 58, 237, 0.1); }
         
+        /* 🔄 কাস্টম রিলোড স্ট্রিম বাটন স্টাইল */
+        .btn-reload-stream {
+            margin-left: auto;
+            background: rgba(124, 58, 237, 0.1);
+            color: #c084fc;
+            border: 1px solid rgba(124, 58, 237, 0.4);
+            padding: 5px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-reload-stream:hover {
+            background: var(--purple-primary);
+            color: #fff;
+            box-shadow: 0 0 12px var(--purple-glow);
+            transform: scale(1.02);
+        }
+        .btn-reload-stream:active { transform: scale(0.98); }
+
         /* 📑 বেগুনী থিম ট্যাব বাটন */
         .ott-tabs-wrapper { margin-top: 15px; background: rgba(22, 14, 45, 0.8); padding: 5px; border-radius: 12px; display: inline-flex; gap: 6px; border: 1px solid rgba(124, 58, 237, 0.15); width: 100%; overflow-x: auto; white-space: nowrap; }
         .ott-tabs-wrapper::-webkit-scrollbar { height: 0px; }
@@ -208,6 +232,9 @@
                 <span class="badge-live">Live</span>
                 <img id="activeLogo" src="https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg" class="active-logo-img" alt="logo" onerror="this.style.display='none'">
                 <h1 class="h6 m-0" id="activeTitle">Bein Direct</h1>
+                
+                <!-- 🔄 রিলোড স্ট্রিম বাটন যোগ করা হলো -->
+                <button class="btn-reload-stream" onclick="reloadCurrentStream()"><i class="bi bi-arrow-clockwise"></i> Reload</button>
             </div>
         </div>
 
@@ -242,7 +269,7 @@
                     </div>
                 </div>
 
-                <!-- ২. ⚽ Live Sports সেকশন -->
+                <!-- ②. ⚽ Live Sports সেকশন -->
                 <div id="sportsTabPanel" class="iptv-grid-row panel-grid-hidden">
                     <div class="channel-card" onclick="switchStandardChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/720p-vtt/index.m3u8', 'Caze TV 720p', 'https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png', this)">
                         <img src="https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png" class="logo-img" alt="Caze 720">
@@ -384,6 +411,7 @@
     <script>
         const video = document.getElementById('player');
         let hls = null;
+        let currentActiveUrl = ''; // বর্তমান সচল লাইভ লিঙ্কের ট্র্যাক রাখার ভেরিয়েবল
 
         const plyr = new Plyr(video, { 
             autoplay: true, 
@@ -417,11 +445,9 @@
             
             if (e.target === leftZone) {
                 if (currentTime - lastTapLeft < 300) {
-                    // ডাবল ট্যাপ ইভেন্ট (ক্লিকের মাধ্যমে পিসি ব্যাকআপ)
                     video.currentTime = Math.max(0, video.currentTime - 10);
                     triggerNotice(leftSeekNotice);
                 } else {
-                    // সিঙ্গেল ক্লিক - প্লে/পজ টগল
                     if (video.paused) video.play(); else video.pause();
                 }
                 lastTapLeft = currentTime;
@@ -429,11 +455,9 @@
             
             if (e.target === rightZone) {
                 if (currentTime - lastTapRight < 300) {
-                    // ডাবল ট্যাপ ইভেন্ট
                     video.currentTime = Math.min(video.duration || video.currentTime + 1000, video.currentTime + 10);
                     triggerNotice(rightSeekNotice);
                 } else {
-                    // সিঙ্গেল ক্লিক - প্লে/পজ টগল
                     if (video.paused) video.play(); else video.pause();
                 }
                 lastTapRight = currentTime;
@@ -468,8 +492,9 @@
             setTimeout(() => element.classList.remove('show-notice'), 500);
         }
 
-        // 🔄 স্ট্যান্ডার্ড ইন্টারনাল প্লেয়ার ইঞ্জিন
+        // 🔄 স্ট্যান্ডার্ড ইন্টারনাল প্লেয়ার ইঞ্জিন (অটোপ্লে গ্যারান্টি লজিকসহ)
         function switchStandardChannel(url, title, logoUrl, el) {
+            currentActiveUrl = url; // ট্র্যাক আইডি আপডেট
             document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
             if(el) el.classList.add('active');
             
@@ -487,13 +512,35 @@
             hls = new Hls();
             hls.loadSource(url);
             hls.attachMedia(video);
-            video.play().catch(e => console.log("Stream init error:", e));
+            
+            // 🚀 ব্রাউজার পলিসি বাইপাস করে ফোর্সড সরাসরি লাইভ প্লে লুপ
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                video.play().catch(() => {
+                    // যদি ব্রাউজার আনমিউটেড ব্লক করে, তবে মিউট করে ব্যাকগ্রাউন্ডে হলেও ফোর্স প্লে করবে
+                    video.muted = true;
+                    video.play().catch(err => console.log("Autoplay blocked entirely:", err));
+                });
+            });
+        }
+
+        // 🔄 লাইভ রিলোড বোতামের কোর লজিক
+        function reloadCurrentStream() {
+            if (currentActiveUrl) {
+                console.log("Reloading stream:", currentActiveUrl);
+                if (hls) hls.destroy();
+                hls = new Hls();
+                hls.loadSource(currentActiveUrl);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    video.play().catch(e => console.log("Reload stream initialization skipped:", e));
+                });
+            }
         }
 
         // 🔀 রিডিরেক্ট চ্যানেল হ্যান্ডলার (আগের চ্যানেল পজ করার কোর লজিক)
         function handleRedirectChannel(targetUrl) {
             if (!video.paused) {
-                video.pause(); // নিউ ট্যাবে যাওয়ার ঠিক আগে রানিং প্লেয়ার পজ হবে
+                video.pause(); 
             }
             window.open(targetUrl, '_blank');
         }
