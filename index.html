@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zion Sports — Ultimate OTT</title>
+
+    <!-- 🌐 ফেসবুক ও সোশ্যাল মিডিয়া শেয়ারিং প্রিভিউ ফিক্স (Open Graph Meta Tags) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Zion Sports — Ultimate OTT">
+    <meta property="og:description" content="Watch Live FIFA Premium and Sports Streams smoothly on Zion Sports.">
+    <meta property="og:image" content="https://i.ibb.co.com/ymJhZWxG/1000075445-clean.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
@@ -66,7 +75,10 @@
             display: flex;
             pointer-events: auto;
         }
-        .gesture-zone { width: 50%; height: 100%; position: relative; }
+        .gesture-zone { height: 100%; position: relative; }
+        #left-zone { width: 30%; }
+        #center-zone { width: 40%; }
+        #right-zone { width: 30%; }
         
         .seek-notice {
             position: absolute; top: 50%; left: 50%;
@@ -128,10 +140,12 @@
 
         /* প্লাইয়ার কাস্টম বেগুনী এক্সসেন্ট সেটিংস */
         .plyr--video { --plyr-color-main: var(--purple-primary); }
-
-        @media (max-width: 992px) { .iptv-grid-row { grid-template-columns: repeat(4, 1fr); } }
-        @media (max-width: 768px) { .iptv-grid-row { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 480px) { .iptv-grid-row { grid-template-columns: repeat(2, 1fr); } }
+        
+        /* কাস্টম ইন-লাইন রিলোড বাটন সিএসএস */
+        .plyr__controls .plyr__control.plyr__custom-reload-btn {
+            order: 2;
+            margin-right: 5px;
+        }
     </style>
 </head>
 <body>
@@ -143,8 +157,10 @@
             <div id="plyr-wrapper">
                 <video id="player" playsinline controls autoplay muted></video>
                 
+                <!-- 🖐️ কাস্টম থ্রি-জোন ওভারলে ইন্টারফেস -->
                 <div class="player-click-overlay" id="player-overlay">
                     <div class="gesture-zone" id="left-zone"><div class="seek-notice" id="left-seek"><i class="bi bi-backward-fill"></i> -10s</div></div>
+                    <div class="gesture-zone" id="center-zone"></div>
                     <div class="gesture-zone" id="right-zone"><div class="seek-notice" id="right-seek">10s <i class="bi bi-forward-fill"></i></div></div>
                 </div>
             </div>
@@ -191,44 +207,34 @@
 
             <div id="sportsTabPanel" class="iptv-grid-row panel-grid-hidden">
                 <div class="channel-card" onclick="switchStandardChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/720p-vtt/index.m3u8', 'Caze TV 720p', 'https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png', this)">
-                    <img src="https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png" class="logo-img" alt="Caze 720">
-                    <div class="card-name">Caze TV 720p</div>
+                    <img src="https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png" class="logo-img" alt="Caze 720"><div class="card-name">Caze TV 720p</div>
                 </div>
                 <div class="channel-card" onclick="switchStandardChannel('https://d1jzu95oc8fgt3.cloudfront.net/FOX_Sports720p.m3u8', 'FOX Sports 720p', 'https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg', this)">
-                    <img src="https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg" class="logo-img" alt="FOX 720">
-                    <div class="card-name">FOX Sports 720p</div>
+                    <img src="https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg" class="logo-img" alt="FOX 720"><div class="card-name">FOX Sports 720p</div>
                 </div>
                 <div class="channel-card" onclick="switchStandardChannel('https://d9ssxzmclhfo4.cloudfront.net/bein_sports720p.m3u8', 'beIN Sports 720p', 'https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg', this)">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg" class="logo-img" alt="beIN 720">
-                    <div class="card-name">beIN Sports 720p</div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg" class="logo-img" alt="beIN 720"><div class="card-name">beIN Sports 720p</div>
                 </div>
                 <div class="channel-card" onclick="switchStandardChannel('https://nbculocallive.akamaized.net/hls/live/2037499/puertorico/stream1/master.m3u8', 'Telemundo 2', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Telemundo_logo_2018.svg/960px-Telemundo_logo_2018.svg.png', this)">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Telemundo_logo_2018.svg/960px-Telemundo_logo_2018.svg.png" class="logo-img" alt="Telemundo 2">
-                    <div class="card-name">Telemundo 2</div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Telemundo_logo_2018.svg/960px-Telemundo_logo_2018.svg.png" class="logo-img" alt="Telemundo 2"><div class="card-name">Telemundo 2</div>
                 </div>
                 <div class="channel-card" onclick="switchStandardChannel('https://nbculocallive.akamaized.net/hls/live/2037499/puertorico/stream1/master_720.m3u8', 'Telemundo 720', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Telemundo_logo_2018.svg/960px-Telemundo_logo_2018.svg.png', this)">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Telemundo_logo_2018.svg/960px-Telemundo_logo_2018.svg.png" class="logo-img" alt="Telemundo 720">
-                    <div class="card-name">Telemundo 720</div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Telemundo_logo_2018.svg/960px-Telemundo_logo_2018.svg.png" class="logo-img" alt="Telemundo 720"><div class="card-name">Telemundo 720</div>
                 </div>
                 <div class="channel-card" onclick="switchStandardChannel('https://linear-702.frequency.stream/dist/stirr/702/hls/master/playlist.m3u8', 'FOX 11', 'https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg', this)">
-                    <img src="https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg" class="logo-img" alt="FOX 11">
-                    <div class="card-name">FOX 11</div>
+                    <img src="https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg" class="logo-img" alt="FOX 11"><div class="card-name">FOX 11</div>
                 </div>
                 <div class="channel-card" onclick="switchStandardChannel('https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg00488-foxdigital-wnyw-lgus/playlist.m3u8', 'FOX NY', 'https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg', this)">
-                    <img src="https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg" class="logo-img" alt="FOX NY">
-                    <div class="card-name">FOX NY</div>
+                    <img src="https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg" class="logo-img" alt="FOX NY"><div class="card-name">FOX NY</div>
                 </div>
                 <div class="channel-card" onclick="switchStandardChannel('https://sm-monirul.top/toffee/play/rajdhani_tv.m3u8', 'Rajdhani TV', 'https://i.imgur.com/7GVp3fW.png', this)">
-                    <img src="https://i.imgur.com/7GVp3fW.png" class="logo-img" alt="Rajdhani">
-                    <div class="card-name">Rajdhani TV</div>
+                    <img src="https://i.imgur.com/7GVp3fW.png" class="logo-img" alt="Rajdhani"><div class="card-name">Rajdhani TV</div>
                 </div>
                 <div class="channel-card" onclick="switchStandardChannel('https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8', 'BTV National', 'https://upload.wikimedia.org/wikipedia/commons/4/4b/FIFA_WorldCup_logo.svg', this)">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/FIFA_WorldCup_logo.svg" class="logo-img" alt="BTV">
-                    <div class="card-name">BTV National</div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/FIFA_WorldCup_logo.svg" class="logo-img" alt="BTV"><div class="card-name">BTV National</div>
                 </div>
                 <div class="channel-card" onclick="switchStandardChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/Caze_TV.m3u8', 'Caze TV BR', 'https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png', this)">
-                    <img src="https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png" class="logo-img" alt="Caze BR">
-                    <div class="card-name">Caze TV BR</div>
+                    <img src="https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png" class="logo-img" alt="Caze BR"><div class="card-name">Caze TV BR</div>
                 </div>
                 <div class="channel-card" onclick="switchStandardChannel('https://tv.cdn.xsg.ge/gpb-2tv/index.m3u8', '2TV Sport', '', this)">
                     <div class="text-logo-icon">2T</div><div class="card-name">2TV Sport</div>
@@ -327,6 +333,7 @@
     <script>
         const video = document.getElementById('player');
         let hls = null;
+        let currentActiveUrl = '';
 
         // ভলিউম স্লাইডার ছাড়া কাস্টম প্লাইয়ার কন্ট্রোল
         const plyr = new Plyr(video, { 
@@ -335,10 +342,39 @@
             controls: ['play-large', 'play', 'progress', 'current-time', 'fullscreen'] 
         });
 
+        // 🔄 কাস্টম রিলোড (🔄) বাটন ইনজেকশন মেকানিজম (প্লে/পজ বাটনের ঠিক পাশে বামে সেট করা হয়েছে)
+        window.addEventListener('DOMContentLoaded', () => {
+            const plyrControls = document.querySelector('.plyr__controls');
+            if (plyrControls) {
+                const reloadBtn = document.createElement('button');
+                reloadBtn.className = 'plyr__custom-reload-btn plyr__control';
+                reloadBtn.setAttribute('type', 'button');
+                reloadBtn.innerHTML = '<i class="bi bi-arrow-clockwise" style="font-size: 18px;"></i>';
+                reloadBtn.style.color = '#fff';
+                
+                reloadBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    if(currentActiveUrl) {
+                        if (hls) hls.destroy();
+                        hls = new Hls();
+                        hls.loadSource(currentActiveUrl);
+                        hls.attachMedia(video);
+                        video.play().catch(err => console.log("Reload active:", err));
+                    }
+                };
+                const playBtn = plyrControls.querySelector('[data-plyr="play"]');
+                if (playBtn) {
+                    playBtn.after(reloadBtn);
+                } else {
+                    plyrControls.appendChild(reloadBtn);
+                }
+            }
+        });
+
         // 🔄 ১. ওরিয়েন্টেশন ল্যান্ডস্কেপ লক মেকানিজম
         plyr.on('enterfullscreen', () => {
             if (screen.orientation && screen.orientation.lock) {
-                screen.orientation.lock('landscape').catch(err => console.log("Orientation auto-skip:", err));
+                screen.orientation.lock('landscape').catch(err => console.log("Orientation skipped:", err));
             }
         });
         plyr.on('exitfullscreen', () => {
@@ -347,9 +383,10 @@
             }
         });
 
-        // 🖐️ ২. ওয়ান-ট্যাপ কন্ট্রোল এবং ডাবল-ট্যাপ ১০ সেকেন্ড সিক মেকানিজম
+        // 🖐️ ২. থ্রি-জোন ওয়ান-ট্যাপ কন্ট্রোল টগল, সেন্টার প্লে/পজ এবং ডাবল-ট্যাপ সিক
         const overlay = document.getElementById('player-overlay');
         const leftZone = document.getElementById('left-zone');
+        const centerZone = document.getElementById('center-zone');
         const rightZone = document.getElementById('right-zone');
         const leftSeekNotice = document.getElementById('left-seek');
         const rightSeekNotice = document.getElementById('right-seek');
@@ -357,9 +394,16 @@
         let lastTapLeft = 0;
         let lastTapRight = 0;
 
-        // মেইন প্লেয়ার ওভারলে ক্লিক করলে ইউটিউবের মতো কন্ট্রোল বার টগল হবে
         overlay.addEventListener('click', (e) => {
-            if (e.target === leftZone || e.target === rightZone) {
+            if (e.target === centerZone) {
+                e.stopPropagation();
+                if (video.paused) {
+                    video.play().catch(err => console.log(err));
+                } else {
+                    video.pause();
+                }
+            } 
+            else if (e.target === leftZone || e.target === rightZone) {
                 e.stopPropagation();
                 const controls = document.querySelector('.plyr__controls');
                 if (controls) {
@@ -401,6 +445,7 @@
 
         // 🔄 ৩. এইচলএস স্ট্রিম সুইচিং কোর ইঞ্জিন
         function switchStandardChannel(url, title, logoUrl, el) {
+            currentActiveUrl = url;
             document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
             if(el) el.classList.add('active');
             
@@ -444,7 +489,7 @@
 
         // 🚀 বুটস্ট্র্যাপ: সাইট ওপেন হলেই প্রথম ট্যাব (FIFA Premium) এবং Bein Direct অটো-লোড হবে
         window.addEventListener('DOMContentLoaded', () => {
-            const defaultCard = document.querySelectorAll('#fifaTabPanel .channel-card')[1]; // Bein Direct বাটন ইনডেক্স
+            const defaultCard = document.querySelectorAll('#fifaTabPanel .channel-card')[1]; 
             switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', 'https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg', defaultCard);
         });
     </script>
