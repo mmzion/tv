@@ -97,7 +97,7 @@
         .badge-live { background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 5px; text-transform: uppercase; font-weight: bold; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
         .horizontal-panel { margin-top: 15px; background: var(--panel-bg); padding: 15px; border-radius: 16px; border: 1px solid rgba(124, 58, 237, 0.1); }
         
-        /* 📑 বেগუნী থিম ট্যাব বাটন */
+        /* 📑 বেগুনী থিম ট্যাব বাটন */
         .ott-tabs-wrapper { margin-top: 15px; background: rgba(22, 14, 45, 0.8); padding: 5px; border-radius: 12px; display: inline-flex; gap: 6px; border: 1px solid rgba(124, 58, 237, 0.15); width: 100%; overflow-x: auto; white-space: nowrap; }
         .ott-tabs-wrapper::-webkit-scrollbar { height: 0px; }
         .tab-trigger { background: transparent; color: #7c7299; border: none; padding: 9px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; border-radius: 9px; transition: all 0.25s ease; display: inline-flex; align-items: center; }
@@ -140,13 +140,13 @@
         @media (max-width: 768px) { .iptv-grid-row { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 480px) { .iptv-grid-row { grid-template-columns: repeat(2, 1fr); } }
 
-        /* 💻 পিসি এবং বড় স্ক্রিনের জন্য বিশেষ ২-কলাম স্প্লিট মেকানিজম */
+        /* 💻 পিসি এবং বড় স্ক্রিনের জন্য থিয়েটার মোড (৬০% প্লেয়ার, ৪০% চ্যানেল লিস্ট) */
         @media (min-width: 992px) {
             .ott-main-layout {
                 display: grid;
-                grid-template-columns: 45% 55%;
-                gap: 20px;
-                padding: 20px;
+                grid-template-columns: 60% 40%;
+                gap: 25px;
+                padding: 25px;
                 align-items: start;
             }
             .theater-screen-sticky-wrapper {
@@ -172,6 +172,7 @@
             }
             .iptv-grid-row {
                 grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
             }
         }
     </style>
@@ -180,10 +181,8 @@
 
     <nav class="ott-nav"><div class="text-white fw-bold"><i class="bi bi-play-circle text-purple-primary" style="color: var(--purple-primary);"></i> ZION SPORTS</div></nav>
 
-    <!-- পিসির জন্য গ্রিড র্যাপার শুরু -->
     <div class="ott-main-layout">
         
-        <!-- বাম পাশের কলাম: ভিডিও প্লেয়ার এবং লাইভ স্ট্যাটাস -->
         <div class="left-column-wrapper">
             <div class="theater-screen-sticky-wrapper">
                 <div class="theater-screen">
@@ -204,10 +203,9 @@
             </div>
         </div>
 
-        <!-- ডান পাশের কলাম: ক্যাটাগরি ট্যাব এবং চ্যানেল গ্রিড -->
         <div class="container-fluid ott-dashboard">
             
-            <div class="ott-tabs-wrapper m-0">
+            <div class="ott-tabs-wrapper mt-0">
                 <button class="tab-trigger active" onclick="togglePanelTab('fifa', this)"><i class="bi bi-trophy-fill me-1"></i> FIFA Premium</button>
                 <button class="tab-trigger" onclick="togglePanelTab('sports', this)"><i class="bi bi-broadcast me-1"></i> Live Sports</button>
                 <button class="tab-trigger" onclick="togglePanelTab('entertainment', this)"><i class="bi bi-mask me-1"></i> Entertainment</button>
@@ -242,8 +240,8 @@
                     <div class="channel-card" onclick="switchStandardChannel('https://d1jzu95oc8fgt3.cloudfront.net/FOX_Sports720p.m3u8', 'FOX Sports 720p', 'https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg', this)">
                         <img src="https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg" class="logo-img" alt="FOX 720">
                         <div class="card-name">FOX Sports 720p</div>
-                </div>
-                <div class="channel-card" onclick="switchStandardChannel('https://d9ssxzmclhfo4.cloudfront.net/bein_sports720p.m3u8', 'beIN Sports 720p', 'https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg', this)">
+                    </div>
+                    <div class="channel-card" onclick="switchStandardChannel('https://d9ssxzmclhfo4.cloudfront.net/bein_sports720p.m3u8', 'beIN Sports 720p', 'https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg', this)">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg" class="logo-img" alt="beIN 720">
                         <div class="card-name">beIN Sports 720p</div>
                     </div>
@@ -365,9 +363,7 @@
             <div class="text-center mt-5 text-muted" style="font-size: 10px; opacity: 0.2;">© 2026 Zion Sports • Powered by GitHub Pages</div>
         </div>
 
-    </div> <!-- পিসির জন্য গ্রিড র্যাপার শেষ -->
-
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    </div> <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 
     <script>
