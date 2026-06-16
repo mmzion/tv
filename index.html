@@ -44,18 +44,6 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
 
-
-        .ott-nav { 
-            background: rgba(9, 5, 20, 0.85); 
-            backdrop-filter: blur(20px); 
-            height: 55px; 
-            display: flex; 
-            align-items: center; 
-            padding: 0 15px; 
-            border-bottom: 1px solid rgba(124, 58, 237, 0.2); 
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-        }
-
         /* 📺 ইউটিউব স্টাইল স্টিকি প্লেয়ার কন্টেইনার */
         .theater-screen-sticky-wrapper {
             position: -webkit-sticky;
@@ -109,7 +97,7 @@
         .badge-live { background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 5px; text-transform: uppercase; font-weight: bold; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
         .horizontal-panel { margin-top: 15px; background: var(--panel-bg); padding: 15px; border-radius: 16px; border: 1px solid rgba(124, 58, 237, 0.1); }
         
-        /* 📑 বেগুনী থিম ট্যাব বাটন */
+        /* 📑 বেগუნী থিম ট্যাব বাটন */
         .ott-tabs-wrapper { margin-top: 15px; background: rgba(22, 14, 45, 0.8); padding: 5px; border-radius: 12px; display: inline-flex; gap: 6px; border: 1px solid rgba(124, 58, 237, 0.15); width: 100%; overflow-x: auto; white-space: nowrap; }
         .ott-tabs-wrapper::-webkit-scrollbar { height: 0px; }
         .tab-trigger { background: transparent; color: #7c7299; border: none; padding: 9px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; border-radius: 9px; transition: all 0.25s ease; display: inline-flex; align-items: center; }
@@ -146,202 +134,238 @@
         
         .card-name { font-weight: 700; font-size: 11px; color: #cbd5e1; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2; }
 
-        /* প্লাইয়ার কাস্টম বেগুনী এক্সসেন্ট সেটিংস */
         .plyr--video { --plyr-color-main: var(--purple-primary); }
 
         @media (max-width: 992px) { .iptv-grid-row { grid-template-columns: repeat(4, 1fr); } }
         @media (max-width: 768px) { .iptv-grid-row { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 480px) { .iptv-grid-row { grid-template-columns: repeat(2, 1fr); } }
+
+        /* 💻 পিসি এবং বড় স্ক্রিনের জন্য বিশেষ ২-কলাম স্প্লিট মেকানিজম */
+        @media (min-width: 992px) {
+            .ott-main-layout {
+                display: grid;
+                grid-template-columns: 45% 55%;
+                gap: 20px;
+                padding: 20px;
+                align-items: start;
+            }
+            .theater-screen-sticky-wrapper {
+                position: sticky;
+                top: 75px;
+                border-radius: 16px;
+                overflow: hidden;
+            }
+            .ott-dashboard {
+                padding: 0 !important;
+            }
+            .horizontal-panel {
+                max-height: calc(100vh - 210px);
+                overflow-y: auto;
+                padding-right: 10px;
+            }
+            .horizontal-panel::-webkit-scrollbar {
+                width: 6px;
+            }
+            .horizontal-panel::-webkit-scrollbar-thumb {
+                background: var(--purple-primary);
+                border-radius: 10px;
+            }
+            .iptv-grid-row {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
 
     <nav class="ott-nav"><div class="text-white fw-bold"><i class="bi bi-play-circle text-purple-primary" style="color: var(--purple-primary);"></i> ZION SPORTS</div></nav>
 
-    <div class="theater-screen-sticky-wrapper">
-        <div class="theater-screen">
-            <div id="plyr-wrapper">
-                <video id="player" playsinline controls autoplay muted></video>
-                
-                <div class="player-click-overlay" id="player-overlay">
-                    <div class="gesture-zone" id="left-zone"><div class="seek-notice" id="left-seek"><i class="bi bi-backward-fill"></i> -10s</div></div>
-                    <div class="gesture-zone" id="right-zone"><div class="seek-notice" id="right-seek">10s <i class="bi bi-forward-fill"></i></div></div>
+    <!-- পিসির জন্য গ্রিড র্যাপার শুরু -->
+    <div class="ott-main-layout">
+        
+        <!-- বাম পাশের কলাম: ভিডিও প্লেয়ার এবং লাইভ স্ট্যাটাস -->
+        <div class="left-column-wrapper">
+            <div class="theater-screen-sticky-wrapper">
+                <div class="theater-screen">
+                    <div id="plyr-wrapper">
+                        <video id="player" playsinline controls autoplay muted></video>
+                        <div class="player-click-overlay" id="player-overlay">
+                            <div class="gesture-zone" id="left-zone"><div class="seek-notice" id="left-seek"><i class="bi bi-backward-fill"></i> -10s</div></div>
+                            <div class="gesture-zone" id="right-zone"><div class="seek-notice" id="right-seek">10s <i class="bi bi-forward-fill"></i></div></div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="container-fluid ott-dashboard">
-        
-        <div class="stream-details">
-            <span class="badge-live">Live</span>
-            <img id="activeLogo" src="https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg" class="active-logo-img" alt="logo" onerror="this.style.display='none'">
-            <h1 class="h6 m-0" id="activeTitle">Bein Direct</h1>
-        </div>
-
-        <div class="ott-tabs-wrapper">
-            <button class="tab-trigger active" onclick="togglePanelTab('fifa', this)"><i class="bi bi-trophy-fill me-1"></i> FIFA Premium</button>
-            <button class="tab-trigger" onclick="togglePanelTab('sports', this)"><i class="bi bi-broadcast me-1"></i> Live Sports</button>
-            <button class="tab-trigger" onclick="togglePanelTab('entertainment', this)"><i class="bi bi-mask me-1"></i> Entertainment</button>
-            <button class="tab-trigger" onclick="togglePanelTab('news-movies', this)"><i class="bi bi-film me-1"></i> News & Movies</button>
-        </div>
-
-        <div class="horizontal-panel">
             
-            <div id="fifaTabPanel" class="iptv-grid-row">
-                <div class="channel-card tsports-highlight redirect-card" onclick="window.open('http://198.195.239.50:8095/tsports/index.m3u8', '_blank')">
-                    <div class="text-logo-icon">TS</div><div class="card-name" style="color: #f59e0b;">T Sports</div>
-                </div>
-                <div class="channel-card active" onclick="switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', '', this)">
-    <div class="text-logo-icon">BN</div>
-    <div class="card-name">Bein Direct</div>
-</div>
-
-                <div class="channel-card" onclick="switchStandardChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8', 'Caze TV', 'https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png', this)">
-                    <img src="https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png" class="logo-img" alt="Caze">
-                    <div class="card-name">Caze TV</div>
-                </div>
-                <div class="channel-card" onclick="switchStandardChannel('https://tvsen5.aynaott.com/PtvSports/index.m3u8', 'PTV Sports', '', this)">
-                    <div class="text-logo-icon">PT</div><div class="card-name">PTV Sports</div>
-                </div>
-                <div class="channel-card" onclick="switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/32/index.m3u8', 'WIN Premium', 'https://images.seeklogo.com/logo-png/25/1/win-sports-logo-png_seeklogo-259337.png', this)">
-                    <img src="https://images.seeklogo.com/logo-png/25/1/win-sports-logo-png_seeklogo-259337.png" class="logo-img" alt="WIN">
-                    <div class="card-name">WIN Premium</div>
-                </div>
+            <div class="stream-details mt-3">
+                <span class="badge-live">Live</span>
+                <img id="activeLogo" src="https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg" class="active-logo-img" alt="logo" onerror="this.style.display='none'">
+                <h1 class="h6 m-0" id="activeTitle">Bein Direct</h1>
             </div>
-
-            <div id="sportsTabPanel" class="iptv-grid-row panel-grid-hidden">
-                <div class="channel-card" onclick="switchStandardChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/720p-vtt/index.m3u8', 'Caze TV 720p', 'https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png', this)">
-                    <img src="https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png" class="logo-img" alt="Caze 720">
-                    <div class="card-name">Caze TV 720p</div>
-                </div>
-                <div class="channel-card" onclick="switchStandardChannel('https://d1jzu95oc8fgt3.cloudfront.net/FOX_Sports720p.m3u8', 'FOX Sports 720p', 'https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg', this)">
-                    <img src="https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg" class="logo-img" alt="FOX 720">
-                    <div class="card-name">FOX Sports 720p</div>
-                </div>
-             <div class="channel-card active" onclick="switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', '', this)">
-    <div class="text-logo-icon">BN</div>
-    <div class="card-name">Bein Direct</div>
-</div>
-
-                <div class="channel-card" onclick="switchStandardChannel('https://nbculocallive.akamaized.net/hls/live/2037499/puertorico/stream1/master.m3u8', 'Telemundo 2', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Telemundo_logo_2018.svg/960px-Telemundo_logo_2018.svg.png', this)">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Telemundo_logo_2018.svg/960px-Telemundo_logo_2018.svg.png" class="logo-img" alt="Telemundo 2">
-                    <div class="card-name">Telemundo 2</div>
-                </div>
-                <div class="channel-card" onclick="switchStandardChannel('https://nbculocallive.akamaized.net/hls/live/2037499/puertorico/stream1/master_720.m3u8', 'Telemundo 720', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Telemundo_logo_2018.svg/960px-Telemundo_logo_2018.svg.png', this)">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Telemundo_logo_2018.svg/960px-Telemundo_logo_2018.svg.png" class="logo-img" alt="Telemundo 720">
-                    <div class="card-name">Telemundo 720</div>
-                </div>
-                <div class="channel-card" onclick="switchStandardChannel('https://linear-702.frequency.stream/dist/stirr/702/hls/master/playlist.m3u8', 'FOX 11', 'https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg', this)">
-                    <img src="https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg" class="logo-img" alt="FOX 11">
-                    <div class="card-name">FOX 11</div>
-                </div>
-                <div class="channel-card" onclick="switchStandardChannel('https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg00488-foxdigital-wnyw-lgus/playlist.m3u8', 'FOX NY', 'https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg', this)">
-                    <img src="https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg" class="logo-img" alt="FOX NY">
-                    <div class="card-name">FOX NY</div>
-                </div>
-                <div class="channel-card" onclick="switchStandardChannel('https://sm-monirul.top/toffee/play/rajdhani_tv.m3u8', 'Rajdhani TV', 'https://i.imgur.com/7GVp3fW.png', this)">
-                    <img src="https://i.imgur.com/7GVp3fW.png" class="logo-img" alt="Rajdhani">
-                    <div class="card-name">Rajdhani TV</div>
-                </div>
-                <div class="channel-card" onclick="switchStandardChannel('https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8', 'BTV National', 'https://upload.wikimedia.org/wikipedia/commons/4/4b/FIFA_WorldCup_logo.svg', this)">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/FIFA_WorldCup_logo.svg" class="logo-img" alt="BTV">
-                    <div class="card-name">BTV National</div>
-                </div>
-                <div class="channel-card" onclick="switchStandardChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/Caze_TV.m3u8', 'Caze TV BR', 'https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png', this)">
-                    <img src="https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png" class="logo-img" alt="Caze BR">
-                    <div class="card-name">Caze TV BR</div>
-                </div>
-                <div class="channel-card" onclick="switchStandardChannel('https://tv.cdn.xsg.ge/gpb-2tv/index.m3u8', '2TV Sport', '', this)">
-                    <div class="text-logo-icon">2T</div><div class="card-name">2TV Sport</div>
-                </div>
-                <div class="channel-card" onclick="switchStandardChannel('https://bein-esp-xumo.amagi.tv/playlistR720P.m3u8', 'beIN EXTRA Ñ 720p', 'https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg', this)">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg" class="logo-img" alt="beIN Extra">
-                    <div class="card-name">beIN EXTRA Ñ 720p</div>
-                </div>
-                <div class="channel-card" onclick="switchStandardChannel('https://bein-esp-xumo.amagi.tv/playlistR1080p.m3u8', 'beIN EXTRA Ñ 1080p', 'https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg', this)">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg" class="logo-img" alt="beIN Extra 10">
-                    <div class="card-name">beIN EXTRA Ñ 1080p</div>
-                </div>
-                <div class="channel-card" onclick="switchStandardChannel('https://rmtv.akamaized.net/hls/live/2043154/rmtv-en-web/master.m3u8', 'Real Madrid TV EN', 'https://upload.wikimedia.org/wikipedia/commons/1/13/Real_Madrid_CF.svg', this)">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/13/Real_Madrid_CF.svg" class="logo-img" alt="RM EN">
-                    <div class="card-name">Real Madrid TV EN</div>
-                </div>
-                <div class="channel-card" onclick="switchStandardChannel('https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/bitrate_3.m3u8', 'Real Madrid TV ES', 'https://upload.wikimedia.org/wikipedia/commons/1/13/Real_Madrid_CF.svg', this)">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/1/13/Real_Madrid_CF.svg" class="logo-img" alt="RM ES">
-                    <div class="card-name">Real Madrid TV ES</div>
-                </div>
-
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/tsports/index.m3u8', '_blank')"><div class="text-logo-icon">TS</div><div class="card-name">T Sports</div></div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSports1/index.m3u8', '_blank')"><div class="text-logo-icon">S1</div><div class="card-name">Star Sports 1</div></div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSports2/index.m3u8', '_blank')"><div class="text-logo-icon">S2</div><div class="card-name">Star Sports 2</div></div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSports3/index.m3u8', '_blank')"><div class="text-logo-icon">S3</div><div class="card-name">Star Sports 3</div></div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSportsSelect1/index.m3u8', '_blank')"><div class="text-logo-icon">SS1</div><div class="card-name">Star Select 1</div></div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSportsSelect2/index.m3u8', '_blank')"><div class="text-logo-icon">SS2</div><div class="card-name">Star Select 2</div></div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports1/index.m3u8', '_blank')"><div class="text-logo-icon">T1</div><div class="card-name">Sony Ten 1</div></div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports2/index.m3u8', '_blank')"><div class="text-logo-icon">T2</div><div class="card-name">Sony Ten 2</div></div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports3/index.m3u8', '_blank')"><div class="text-logo-icon">T3</div><div class="card-name">Sony Ten 3</div></div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports4/index.m3u8', '_blank')"><div class="text-logo-icon">T4</div><div class="card-name">Sony Ten 4</div></div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports5/index.m3u8', '_blank')"><div class="text-logo-icon">T5</div><div class="card-name">Sony Ten 5</div></div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/ptv/index.m3u8', '_blank')"><div class="text-logo-icon">PT</div><div class="card-name">PTV Feed</div></div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/euroSports/index.m3u8', '_blank')"><div class="text-logo-icon">ES</div><div class="card-name">Euro Sports</div></div>
-            </div>
-
-            <div id="entertainmentTabPanel" class="iptv-grid-row panel-grid-hidden">
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/zeeBangla/index.m3u8', '_blank')">
-                    <div class="text-logo-icon">ZB</div><div class="card-name">Zee Bangla</div>
-                </div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starJalsha/index.m3u8', '_blank')">
-                    <div class="text-logo-icon">SJ</div><div class="card-name">Star Jalsha</div>
-                </div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/colorsBangla/index.m3u8', '_blank')">
-                    <div class="text-logo-icon">CB</div><div class="card-name">Colors Bangla</div>
-                </div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyAath/index.m3u8', '_blank')">
-                    <div class="text-logo-icon">SA</div><div class="card-name">Sony Aath</div>
-                </div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starPlus/index.m3u8', '_blank')">
-                    <div class="text-logo-icon">SP</div><div class="card-name">Star Plus</div>
-                </div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonySab/index.m3u8', '_blank')">
-                    <div class="text-logo-icon">SB</div><div class="card-name">Sony Sab</div>
-                </div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/zeeTv/index.m3u8', '_blank')">
-                    <div class="text-logo-icon">ZT</div><div class="card-name">Zee TV</div>
-                </div>
-            </div>
-
-            <div id="newsMoviesTabPanel" class="iptv-grid-row panel-grid-hidden">
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/jalshaMovies/index.m3u8', '_blank')">
-                    <div class="text-logo-icon">JM</div><div class="card-name">Jalsha Movies</div>
-                </div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/zeeBanglaCinema/index.m3u8', '_blank')">
-                    <div class="text-logo-icon">ZC</div><div class="card-name">Zee Cinema</div>
-                </div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyMax/index.m3u8', '_blank')">
-                    <div class="text-logo-icon">SM</div><div class="card-name">Sony Max</div>
-                </div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starGold/index.m3u8', '_blank')">
-                    <div class="text-logo-icon">SG</div><div class="card-name">Star Gold</div>
-                </div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/somoyTv/index.m3u8', '_blank')">
-                    <div class="text-logo-icon">ST</div><div class="card-name">Somoy TV</div>
-                </div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/jamunaTv/index.m3u8', '_blank')">
-                    <div class="text-logo-icon">JT</div><div class="card-name">Jamuna TV</div>
-                </div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/independentTv/index.m3u8', '_blank')">
-                    <div class="text-logo-icon">IT</div><div class="card-name">Independent</div>
-                </div>
-                <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/ekattorTv/index.m3u8', '_blank')">
-                    <div class="text-logo-icon">ET</div><div class="card-name">Ekattor TV</div>
-                </div>
-            </div>
-
         </div>
-        
-        <div class="text-center mt-5 text-muted" style="font-size: 10px; opacity: 0.2;">© 2026 Zion Sports • Powered by GitHub Pages</div>
-    </div>
+
+        <!-- ডান পাশের কলাম: ক্যাটাগরি ট্যাব এবং চ্যানেল গ্রিড -->
+        <div class="container-fluid ott-dashboard">
+            
+            <div class="ott-tabs-wrapper m-0">
+                <button class="tab-trigger active" onclick="togglePanelTab('fifa', this)"><i class="bi bi-trophy-fill me-1"></i> FIFA Premium</button>
+                <button class="tab-trigger" onclick="togglePanelTab('sports', this)"><i class="bi bi-broadcast me-1"></i> Live Sports</button>
+                <button class="tab-trigger" onclick="togglePanelTab('entertainment', this)"><i class="bi bi-mask me-1"></i> Entertainment</button>
+                <button class="tab-trigger" onclick="togglePanelTab('news-movies', this)"><i class="bi bi-film me-1"></i> News & Movies</button>
+            </div>
+
+            <div class="horizontal-panel">
+                
+                <div id="fifaTabPanel" class="iptv-grid-row">
+                    <div class="channel-card tsports-highlight redirect-card" onclick="window.open('http://198.195.239.50:8095/tsports/index.m3u8', '_blank')">
+                        <div class="text-logo-icon">TS</div><div class="card-name" style="color: #f59e0b;">T Sports</div>
+                    </div>
+                    <div class="channel-card active" onclick="switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', '', this)">
+                        <div class="text-logo-icon">BN</div>
+                        <div class="card-name">Bein Direct</div>
+                    </div>
+                    <div class="channel-card" onclick="switchStandardChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8', 'Caze TV', 'https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png', this)">
+                        <img src="https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png" class="logo-img" alt="Caze">
+                        <div class="card-name">Caze TV</div>
+                    </div>
+                    <div class="channel-card" onclick="switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/32/index.m3u8', 'WIN Premium', 'https://images.seeklogo.com/logo-png/25/1/win-sports-logo-png_seeklogo-259337.png', this)">
+                        <img src="https://images.seeklogo.com/logo-png/25/1/win-sports-logo-png_seeklogo-259337.png" class="logo-img" alt="WIN">
+                        <div class="card-name">WIN Premium</div>
+                    </div>
+                </div>
+
+                <div id="sportsTabPanel" class="iptv-grid-row panel-grid-hidden">
+                    <div class="channel-card" onclick="switchStandardChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/720p-vtt/index.m3u8', 'Caze TV 720p', 'https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png', this)">
+                        <img src="https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png" class="logo-img" alt="Caze 720">
+                        <div class="card-name">Caze TV 720p</div>
+                    </div>
+                    <div class="channel-card" onclick="switchStandardChannel('https://d1jzu95oc8fgt3.cloudfront.net/FOX_Sports720p.m3u8', 'FOX Sports 720p', 'https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg', this)">
+                        <img src="https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg" class="logo-img" alt="FOX 720">
+                        <div class="card-name">FOX Sports 720p</div>
+                </div>
+                <div class="channel-card" onclick="switchStandardChannel('https://d9ssxzmclhfo4.cloudfront.net/bein_sports720p.m3u8', 'beIN Sports 720p', 'https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg', this)">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg" class="logo-img" alt="beIN 720">
+                        <div class="card-name">beIN Sports 720p</div>
+                    </div>
+                    <div class="channel-card" onclick="switchStandardChannel('https://nbculocallive.akamaized.net/hls/live/2037499/puertorico/stream1/master.m3u8', 'Telemundo 2', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Telemundo_logo_2018.svg/960px-Telemundo_logo_2018.svg.png', this)">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Telemundo_logo_2018.svg/960px-Telemundo_logo_2018.svg.png" class="logo-img" alt="Telemundo 2">
+                        <div class="card-name">Telemundo 2</div>
+                    </div>
+                    <div class="channel-card" onclick="switchStandardChannel('https://nbculocallive.akamaized.net/hls/live/2037499/puertorico/stream1/master_720.m3u8', 'Telemundo 720', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Telemundo_logo_2018.svg/960px-Telemundo_logo_2018.svg.png', this)">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Telemundo_logo_2018.svg/960px-Telemundo_logo_2018.svg.png" class="logo-img" alt="Telemundo 720">
+                        <div class="card-name">Telemundo 720</div>
+                    </div>
+                    <div class="channel-card" onclick="switchStandardChannel('https://linear-702.frequency.stream/dist/stirr/702/hls/master/playlist.m3u8', 'FOX 11', 'https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg', this)">
+                        <img src="https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg" class="logo-img" alt="FOX 11">
+                        <div class="card-name">FOX 11</div>
+                    </div>
+                    <div class="channel-card" onclick="switchStandardChannel('https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg00488-foxdigital-wnyw-lgus/playlist.m3u8', 'FOX NY', 'https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg', this)">
+                        <img src="https://cdn.broadbandtvnews.com/wp-content/uploads/2025/05/13115423/Fox-One-Logo.jpg" class="logo-img" alt="FOX NY">
+                        <div class="card-name">FOX NY</div>
+                    </div>
+                    <div class="channel-card" onclick="switchStandardChannel('https://sm-monirul.top/toffee/play/rajdhani_tv.m3u8', 'Rajdhani TV', 'https://i.imgur.com/7GVp3fW.png', this)">
+                        <img src="https://i.imgur.com/7GVp3fW.png" class="logo-img" alt="Rajdhani">
+                        <div class="card-name">Rajdhani TV</div>
+                    </div>
+                    <div class="channel-card" onclick="switchStandardChannel('https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8', 'BTV National', 'https://upload.wikimedia.org/wikipedia/commons/4/4b/FIFA_WorldCup_logo.svg', this)">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/FIFA_WorldCup_logo.svg" class="logo-img" alt="BTV">
+                        <div class="card-name">BTV National</div>
+                    </div>
+                    <div class="channel-card" onclick="switchStandardChannel('https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/Caze_TV.m3u8', 'Caze TV BR', 'https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png', this)">
+                        <img src="https://images.seeklogo.com/logo-png/61/1/cazetv-logo-png_seeklogo-619708.png" class="logo-img" alt="Caze BR">
+                        <div class="card-name">Caze TV BR</div>
+                    </div>
+                    <div class="channel-card" onclick="switchStandardChannel('https://tv.cdn.xsg.ge/gpb-2tv/index.m3u8', '2TV Sport', '', this)">
+                        <div class="text-logo-icon">2T</div><div class="card-name">2TV Sport</div>
+                    </div>
+                    <div class="channel-card" onclick="switchStandardChannel('https://bein-esp-xumo.amagi.tv/playlistR720P.m3u8', 'beIN EXTRA Ñ 720p', 'https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg', this)">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg" class="logo-img" alt="beIN Extra">
+                        <div class="card-name">beIN EXTRA Ñ 720p</div>
+                    </div>
+                    <div class="channel-card" onclick="switchStandardChannel('https://bein-esp-xumo.amagi.tv/playlistR1080p.m3u8', 'beIN EXTRA Ñ 1080p', 'https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg', this)">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg" class="logo-img" alt="beIN Extra 10">
+                        <div class="card-name">beIN EXTRA Ñ 1080p</div>
+                    </div>
+                    <div class="channel-card" onclick="switchStandardChannel('https://rmtv.akamaized.net/hls/live/2043154/rmtv-en-web/master.m3u8', 'Real Madrid TV EN', 'https://upload.wikimedia.org/wikipedia/commons/1/13/Real_Madrid_CF.svg', this)">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/13/Real_Madrid_CF.svg" class="logo-img" alt="RM EN">
+                        <div class="card-name">Real Madrid TV EN</div>
+                    </div>
+                    <div class="channel-card" onclick="switchStandardChannel('https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/bitrate_3.m3u8', 'Real Madrid TV ES', 'https://upload.wikimedia.org/wikipedia/commons/1/13/Real_Madrid_CF.svg', this)">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/13/Real_Madrid_CF.svg" class="logo-img" alt="RM ES">
+                        <div class="card-name">Real Madrid TV ES</div>
+                    </div>
+
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/tsports/index.m3u8', '_blank')"><div class="text-logo-icon">TS</div><div class="card-name">T Sports</div></div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSports1/index.m3u8', '_blank')"><div class="text-logo-icon">S1</div><div class="card-name">Star Sports 1</div></div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSports2/index.m3u8', '_blank')"><div class="text-logo-icon">S2</div><div class="card-name">Star Sports 2</div></div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSports3/index.m3u8', '_blank')"><div class="text-logo-icon">S3</div><div class="card-name">Star Sports 3</div></div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSportsSelect1/index.m3u8', '_blank')"><div class="text-logo-icon">SS1</div><div class="card-name">Star Select 1</div></div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starSportsSelect2/index.m3u8', '_blank')"><div class="text-logo-icon">SS2</div><div class="card-name">Star Select 2</div></div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports1/index.m3u8', '_blank')"><div class="text-logo-icon">T1</div><div class="card-name">Sony Ten 1</div></div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports2/index.m3u8', '_blank')"><div class="text-logo-icon">T2</div><div class="card-name">Sony Ten 2</div></div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports3/index.m3u8', '_blank')"><div class="text-logo-icon">T3</div><div class="card-name">Sony Ten 3</div></div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports4/index.m3u8', '_blank')"><div class="text-logo-icon">T4</div><div class="card-name">Sony Ten 4</div></div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyTenSports5/index.m3u8', '_blank')"><div class="text-logo-icon">T5</div><div class="card-name">Sony Ten 5</div></div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/euroSports/index.m3u8', '_blank')"><div class="text-logo-icon">ES</div><div class="card-name">Euro Sports</div></div>
+                </div>
+
+                <div id="entertainmentTabPanel" class="iptv-grid-row panel-grid-hidden">
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/zeeBangla/index.m3u8', '_blank')">
+                        <div class="text-logo-icon">ZB</div><div class="card-name">Zee Bangla</div>
+                    </div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starJalsha/index.m3u8', '_blank')">
+                        <div class="text-logo-icon">SJ</div><div class="card-name">Star Jalsha</div>
+                    </div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/colorsBangla/index.m3u8', '_blank')">
+                        <div class="text-logo-icon">CB</div><div class="card-name">Colors Bangla</div>
+                    </div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyAath/index.m3u8', '_blank')">
+                        <div class="text-logo-icon">SA</div><div class="card-name">Sony Aath</div>
+                    </div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starPlus/index.m3u8', '_blank')">
+                        <div class="text-logo-icon">SP</div><div class="card-name">Star Plus</div>
+                    </div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonySab/index.m3u8', '_blank')">
+                        <div class="text-logo-icon">SB</div><div class="card-name">Sony Sab</div>
+                    </div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/zeeTv/index.m3u8', '_blank')">
+                        <div class="text-logo-icon">ZT</div><div class="card-name">Zee TV</div>
+                    </div>
+                </div>
+
+                <div id="newsMoviesTabPanel" class="iptv-grid-row panel-grid-hidden">
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/jalshaMovies/index.m3u8', '_blank')">
+                        <div class="text-logo-icon">JM</div><div class="card-name">Jalsha Movies</div>
+                    </div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/zeeBanglaCinema/index.m3u8', '_blank')">
+                        <div class="text-logo-icon">ZC</div><div class="card-name">Zee Cinema</div>
+                    </div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/sonyMax/index.m3u8', '_blank')">
+                        <div class="text-logo-icon">SM</div><div class="card-name">Sony Max</div>
+                    </div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/starGold/index.m3u8', '_blank')">
+                        <div class="text-logo-icon">SG</div><div class="card-name">Star Gold</div>
+                    </div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/somoyTv/index.m3u8', '_blank')">
+                        <div class="text-logo-icon">ST</div><div class="card-name">Somoy TV</div>
+                    </div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/jamunaTv/index.m3u8', '_blank')">
+                        <div class="text-logo-icon">JT</div><div class="card-name">Jamuna TV</div>
+                    </div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/independentTv/index.m3u8', '_blank')">
+                        <div class="text-logo-icon">IT</div><div class="card-name">Independent</div>
+                    </div>
+                    <div class="channel-card redirect-card" onclick="window.open('http://198.195.239.50:8095/ekattorTv/index.m3u8', '_blank')">
+                        <div class="text-logo-icon">ET</div><div class="card-name">Ekattor TV</div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="text-center mt-5 text-muted" style="font-size: 10px; opacity: 0.2;">© 2026 Zion Sports • Powered by GitHub Pages</div>
+        </div>
+
+    </div> <!-- পিসির জন্য গ্রিড র্যাপার শেষ -->
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
@@ -350,14 +374,12 @@
         const video = document.getElementById('player');
         let hls = null;
 
-        // ভলিউম স্লাইডার ছাড়া কাস্টম প্লাইয়ার কন্ট্রোল
         const plyr = new Plyr(video, { 
             autoplay: true, 
             muted: true,
             controls: ['play-large', 'play', 'progress', 'current-time', 'fullscreen'] 
         });
 
-        // 🔄 ১. ওরিয়েন্টেশন ল্যান্ডস্কেপ লক মেকানিজম
         plyr.on('enterfullscreen', () => {
             if (screen.orientation && screen.orientation.lock) {
                 screen.orientation.lock('landscape').catch(err => console.log("Orientation auto-skip:", err));
@@ -369,7 +391,6 @@
             }
         });
 
-        // 🖐️ ২. ওয়ান-ট্যাপ কন্ট্রোল এবং ডাবল-ট্যাপ ১০ সেকেন্ড সিক মেকানিজম
         const overlay = document.getElementById('player-overlay');
         const leftZone = document.getElementById('left-zone');
         const rightZone = document.getElementById('right-zone');
@@ -379,7 +400,6 @@
         let lastTapLeft = 0;
         let lastTapRight = 0;
 
-        // মেইন প্লেয়ার ওভারলে ক্লিক করলে ইউটিউবের মতো কন্ট্রোল বার টগল হবে
         overlay.addEventListener('click', (e) => {
             if (e.target === leftZone || e.target === rightZone) {
                 e.stopPropagation();
@@ -421,7 +441,6 @@
             setTimeout(() => element.classList.remove('show-notice'), 500);
         }
 
-        // 🔄 ৩. এইচলএস স্ট্রিম সুইচিং কোর ইঞ্জিন
         function switchStandardChannel(url, title, logoUrl, el) {
             document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
             if(el) el.classList.add('active');
@@ -443,7 +462,6 @@
             video.play().catch(e => console.log("Stream init error:", e));
         }
 
-        // 🔄 ৪. ওটিটি ট্যাব প্যানেল কন্ট্রোল লজিক
         function togglePanelTab(tabName, buttonElement) {
             document.querySelectorAll('.tab-trigger').forEach(t => t.classList.remove('active'));
             buttonElement.classList.add('active');
@@ -464,10 +482,9 @@
             }
         }
 
-        // 🚀 বুটস্ট্র্যাপ: সাইট ওপেন হলেই প্রথম ট্যাব (FIFA Premium) এবং Bein Direct অটো-লোড হবে
         window.addEventListener('DOMContentLoaded', () => {
-            const defaultCard = document.querySelectorAll('#fifaTabPanel .channel-card')[1]; // Bein Direct বাটন ইনডেক্স
-            switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', 'https://upload.wikimedia.org/wikipedia/commons/e/e5/BeIN_Sports_logo.svg', defaultCard);
+            const defaultCard = document.querySelectorAll('#fifaTabPanel .channel-card')[1]; 
+            switchStandardChannel('https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8', 'Bein Direct', '', defaultCard);
         });
     </script>
 </body>
