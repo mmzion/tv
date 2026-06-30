@@ -13,6 +13,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --purple-primary: #7c3aed;
@@ -20,14 +23,20 @@
             --purple-bg-dark: #090514;
             --panel-bg: rgba(22, 14, 45, 0.6);
             --card-border: rgba(124, 58, 237, 0.15);
+            --font-display: 'Manrope', 'Segoe UI', sans-serif;
+            --font-body: 'Inter', 'Segoe UI', Roboto, sans-serif;
         }
 
         * { box-sizing: border-box; }
 
         body { 
-            background-color: var(--purple-bg-dark) !important; 
+            background:
+                radial-gradient(ellipse 900px 480px at 50% -8%, rgba(124, 58, 237, 0.20), transparent 60%),
+                radial-gradient(ellipse 700px 400px at 100% 10%, rgba(236, 72, 153, 0.08), transparent 55%),
+                var(--purple-bg-dark) !important;
+            background-attachment: fixed;
             color: #f1f5f9 !important; 
-            font-family: 'Segoe UI', Roboto, sans-serif; 
+            font-family: var(--font-body); 
             min-height: 100vh; 
             margin: 0;
             padding: 0;
@@ -42,9 +51,20 @@
             padding: 0 15px; 
             border-bottom: 1px solid rgba(124, 58, 237, 0.2); 
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 2200;
         }
-        .ott-nav .brand { font-weight: 800; letter-spacing: 0.5px; }
-        .ott-nav .brand i { color: var(--purple-primary); }
+        .ott-nav .brand { font-weight: 800; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
+        .ott-nav .brand i { color: var(--purple-primary); font-size: 18px; }
+        .ott-nav .brand-text {
+            font-family: var(--font-display);
+            font-weight: 800;
+            background: linear-gradient(135deg, #d8b4fe, #7c3aed 55%, #f472b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
 
        
         .theater-screen-sticky-wrapper {
@@ -54,11 +74,58 @@
             z-index: 2090; 
             background: #000;
             width: 100%;
-            transition: box-shadow .25s ease;
+            transition: box-shadow .25s ease, border-radius .25s ease;
         }
         .theater-screen-sticky-wrapper.is-stuck {
             box-shadow: 0 12px 28px rgba(0,0,0,0.85);
         }
+
+        /* ---- Mini player (mobile only): shrinks into a corner box once the
+             user scrolls well past the player + stream details. ---- */
+        .theater-screen-sticky-wrapper.mini-player {
+            position: fixed !important;
+            top: auto !important;
+            bottom: 84px;
+            right: 10px;
+            width: 152px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 28px rgba(0,0,0,0.65);
+            border: 1px solid rgba(124, 58, 237, 0.45);
+            z-index: 2500;
+        }
+        .theater-screen-sticky-wrapper.mini-player .theater-screen { aspect-ratio: 16 / 9; }
+        .theater-screen-sticky-wrapper.mini-player .plyr__controls,
+        .theater-screen-sticky-wrapper.mini-player .unmute-overlay { display: none !important; }
+
+        .mini-player-tap-zone {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            display: none;
+            cursor: pointer;
+            background: transparent;
+        }
+        .theater-screen-sticky-wrapper.mini-player .mini-player-tap-zone { display: block; }
+
+        .mini-player-close {
+            position: absolute;
+            top: 4px; right: 4px;
+            z-index: 6;
+            background: rgba(0,0,0,0.75);
+            color: #fff;
+            border: none;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            cursor: pointer;
+        }
+        .theater-screen-sticky-wrapper.mini-player .mini-player-close { display: flex; }
+
+        #miniPlayerSentinel { height: 1px; width: 100%; }
 
         .theater-screen { 
             position: relative; 
@@ -95,7 +162,7 @@
             animation: spin 0.8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .player-loader span { font-size: 11px; color: #a78bfa; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .player-loader span { font-family: var(--font-display); font-size: 11px; color: #a78bfa; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
 
         /* simple first-tap unmute lay (removes itself after one tap) */
         .unmute-overlay {
@@ -120,17 +187,17 @@
         .ott-dashboard { padding: 12px; }
 
         .stream-details { 
-            background: var(--panel-bg); 
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(22, 14, 45, 0.75));
             padding: 10px 14px; 
             border-radius: 12px; 
-            border: 1px solid rgba(124, 58, 237, 0.15); 
+            border: 1px solid rgba(124, 58, 237, 0.18); 
             display: flex; 
             align-items: center; 
             gap: 12px; 
             position: relative; 
         }
         .active-logo-img { width: 32px; height: 32px; object-fit: contain; border-radius: 6px; background: rgba(255,255,255,0.08); padding: 3px; border: 1px solid rgba(124, 58, 237, 0.3); flex-shrink: 0; }
-        #activeTitle { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        #activeTitle { font-family: var(--font-display); font-size: 14px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         .badge-live { 
             background: linear-gradient(135deg, #ef4444, #dc2626); 
@@ -146,9 +213,10 @@
         @keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
         .horizontal-panel { margin-top: 12px; background: var(--panel-bg); padding: 12px; border-radius: 14px; border: 1px solid rgba(124, 58, 237, 0.1); }
-        
+
+        .stream-actions { margin-left: auto; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
         .btn-reload-stream {
-            margin-left: auto;
             background: rgba(124, 58, 237, 0.1);
             color: #c084fc;
             border: 1px solid rgba(124, 58, 237, 0.4);
@@ -166,10 +234,15 @@
         .btn-reload-stream:hover { background: rgba(124, 58, 237, 0.25); }
         .btn-reload-stream:active { transform: scale(0.95); }
         .btn-reload-stream.spinning i { animation: spin 0.6s linear; }
+        .btn-reload-stream.icon-only { padding: 6px 9px; }
+        .btn-reload-stream.active-toggle { background: var(--purple-primary); color: #fff; border-color: var(--purple-primary); box-shadow: 0 0 10px var(--purple-glow); }
+
+        @media (min-width: 992px) { #autoRotateBtn { display: none; } }
 
         .ott-tabs-wrapper { margin-top: 12px; background: rgba(22, 14, 45, 0.8); padding: 4px; border-radius: 10px; display: inline-flex; gap: 4px; border: 1px solid rgba(124, 58, 237, 0.15); width: 100%; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
         .ott-tabs-wrapper::-webkit-scrollbar { display: none; }
         .tab-trigger { background: transparent; color: #7c7299; border: none; padding: 9px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; border-radius: 7px; transition: all 0.2s; }
+        .tab-trigger:hover:not(.active) { color: #c4b5fd; background: rgba(124, 58, 237, 0.08); }
         .tab-trigger.active { background: var(--purple-primary); color: #fff; box-shadow: 0 0 10px var(--purple-glow); }
 
         /* tab body wrapper: holds heading + grid sections, no grid of its own */
@@ -178,6 +251,7 @@
 
         /* section headings (Trending Now / All Channels / Browse by Country) */
         .section-heading {
+            font-family: var(--font-display);
             font-size: 11px;
             font-weight: 800;
             text-transform: uppercase;
@@ -193,6 +267,19 @@
 
         .trending-row .channel-card { border-color: rgba(245, 158, 11, 0.3); }
         .trending-row .channel-card.active { border-color: var(--purple-primary); }
+        .trending-row .channel-card::before {
+            content: '🔥';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            font-size: 10px;
+            width: 17px; height: 17px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.45);
+            z-index: 2;
+        }
 
         /* country pill selector */
         .country-pill-row {
@@ -230,6 +317,11 @@
         }
         .panel-grid-hidden { display: none !important; }
 
+        @keyframes cardFadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .channel-card { 
             position: relative;
             background: rgba(255,255,255,0.02); 
@@ -244,12 +336,14 @@
             gap: 6px;
             aspect-ratio: 1.1 / 1;
             border: 1px solid var(--card-border); 
-            transition: all 0.2s ease; 
+            transition: transform 0.2s cubic-bezier(.4,0,.2,1), border-color 0.2s, background 0.2s, box-shadow 0.2s; 
             width: 100%;
             min-width: 0;
+            animation: cardFadeIn 0.3s ease backwards;
+            animation-delay: calc(var(--i, 0) * 18ms);
         }
-        .channel-card:hover { border-color: rgba(124, 58, 237, 0.3); background: rgba(124, 58, 237, 0.02); }
-        .channel-card.active { border: 1.5px solid var(--purple-primary); background: rgba(124, 58, 237, 0.12); box-shadow: 0 0 15px rgba(124, 58, 237, 0.15); }
+        .channel-card:hover { transform: translateY(-3px); border-color: rgba(124, 58, 237, 0.4); background: rgba(124, 58, 237, 0.05); box-shadow: 0 8px 18px rgba(124, 58, 237, 0.18); }
+        .channel-card.active { border: 1.5px solid var(--purple-primary); background: rgba(124, 58, 237, 0.12); box-shadow: 0 0 18px rgba(124, 58, 237, 0.3); }
         
         .logo-img { width: 34px; height: 34px; object-fit: contain; border-radius: 6px; padding: 2px; background: rgba(255,255,255,0.04); }
         .card-info-box { display: flex; flex-direction: column; align-items: center; width: 100%; overflow: hidden; }
@@ -269,6 +363,10 @@
         .dot-good { background: #22c55e; box-shadow: 0 0 5px #22c55e; }
         .dot-bad { background: #ef4444; }
         .dot-unknown { background: #6b7280; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .channel-card { animation: none !important; }
+        }
 
         /* Plyr theme polish */
         .plyr--video { --plyr-color-main: var(--purple-primary); }
@@ -311,13 +409,13 @@
 </head>
 <body>
 
-    <nav class="ott-nav"><div class="text-white brand"><i class="bi bi-play-circle"></i> ZION SPORTS</div></nav>
+    <nav class="ott-nav"><div class="text-white brand"><i class="bi bi-play-circle"></i> <span class="brand-text">ZION SPORTS</span></div></nav>
 
     <div class="ott-main-layout">
         
         <div class="left-column-wrapper">
             <div class="theater-screen-sticky-wrapper" id="stickyWrapper">
-                <div class="theater-screen">
+                <div class="theater-screen" id="theaterScreen">
                     <div id="plyr-wrapper">
                         <video id="player" playsinline controls autoplay></video>
                     </div>
@@ -326,6 +424,8 @@
                         <span>Loading Stream</span>
                     </div>
                     <button class="unmute-overlay" id="unmuteBtn"><i class="bi bi-volume-mute-fill"></i> Tap to unmute</button>
+                    <button class="mini-player-close" id="miniPlayerClose" aria-label="Close mini player"><i class="bi bi-x-lg"></i></button>
+                    <div class="mini-player-tap-zone" id="miniTapZone" aria-label="Expand player"></div>
                 </div>
             </div>
             
@@ -333,9 +433,13 @@
                 <span class="badge-live">Live</span>
                 <img id="activeLogo" src="" class="active-logo-img" alt="logo" onerror="this.style.display='none'">
                 <h1 class="h6 m-0" id="activeTitle">Loading Server...</h1>
-                
-                <button class="btn-reload-stream" id="reloadBtn" onclick="reloadCurrentStream()"><i class="bi bi-arrow-clockwise"></i> Reload</button>
+
+                <div class="stream-actions">
+                    <button class="btn-reload-stream icon-only" id="autoRotateBtn" onclick="toggleAutoRotate()" title="Auto-rotate to landscape"><i class="bi bi-arrow-repeat"></i></button>
+                    <button class="btn-reload-stream" id="reloadBtn" onclick="reloadCurrentStream()"><i class="bi bi-arrow-clockwise"></i> Reload</button>
+                </div>
             </div>
+            <div id="miniPlayerSentinel" aria-hidden="true"></div>
         </div>
 
         <div class="container-fluid ott-dashboard">
@@ -376,6 +480,7 @@
         const MAX_AUTO_ATTEMPTS = 6;     // how many channels to auto-try for the default FIFA pick
         const MAX_MIRROR_ATTEMPTS = 8;   // how many mirrors to try when a manually-picked channel fails
         const PLAY_TIMEOUT_MS = 14000;   // if nothing plays within this time, treat as a failure
+        const MOBILE_BREAKPOINT = 992;
 
         let database = { fifa: [], sports: [], bangla: [], channels: [] };
         const video = document.getElementById('player');
@@ -416,6 +521,111 @@
             { threshold: [1] }
         );
         stickyObserver.observe(stickyWrapper);
+
+        /* =========================================================
+           MINI PLAYER (mobile only)
+           Once the user scrolls past the player + stream-details
+           block, shrink the video into a small corner box so the
+           channel list has room to breathe. Tap it to jump back up,
+           or close it to pause playback.
+        ========================================================= */
+        const miniPlayerClose = document.getElementById('miniPlayerClose');
+        const miniTapZone = document.getElementById('miniTapZone');
+        const miniSentinel = document.getElementById('miniPlayerSentinel');
+        let miniPlayerActive = false;
+        let miniPlayerManuallyClosed = false;
+
+        function activateMiniPlayer() {
+            if (miniPlayerActive || miniPlayerManuallyClosed || window.innerWidth >= MOBILE_BREAKPOINT) return;
+            miniPlayerActive = true;
+            stickyWrapper.classList.add('mini-player');
+        }
+        function deactivateMiniPlayer() {
+            if (!miniPlayerActive) return;
+            miniPlayerActive = false;
+            stickyWrapper.classList.remove('mini-player');
+        }
+        function expandMiniPlayer() {
+            stickyWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        if (miniTapZone) miniTapZone.addEventListener('click', expandMiniPlayer);
+        if (miniPlayerClose) {
+            miniPlayerClose.addEventListener('click', (e) => {
+                e.stopPropagation();
+                miniPlayerManuallyClosed = true;
+                deactivateMiniPlayer();
+                video.pause();
+            });
+        }
+        if (miniSentinel) {
+            const miniObserver = new IntersectionObserver(([entry]) => {
+                if (window.innerWidth >= MOBILE_BREAKPOINT) { deactivateMiniPlayer(); return; }
+                if (miniPlayerManuallyClosed) return;
+                if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+                    activateMiniPlayer();
+                } else {
+                    deactivateMiniPlayer();
+                }
+            }, { threshold: 0 });
+            miniObserver.observe(miniSentinel);
+        }
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= MOBILE_BREAKPOINT) deactivateMiniPlayer();
+        });
+
+        /* =========================================================
+           AUTO-ROTATE
+           Toggle saved in localStorage. When ON and the phone is
+           rotated to landscape, the player auto-enters fullscreen;
+           rotating back to portrait exits it. Also tries to lock the
+           screen orientation while fullscreen is active.
+           Note: iOS Safari restricts fullscreen requests that aren't
+           directly triggered by a tap, so this works best on Android.
+        ========================================================= */
+        const AUTO_ROTATE_KEY = 'zionAutoRotate_v1';
+        let autoRotateEnabled = true;
+        try {
+            const stored = localStorage.getItem(AUTO_ROTATE_KEY);
+            autoRotateEnabled = stored === null ? true : stored === '1';
+        } catch (e) { /* storage unavailable, default stays true */ }
+
+        function updateAutoRotateButton() {
+            const btn = document.getElementById('autoRotateBtn');
+            if (!btn) return;
+            btn.classList.toggle('active-toggle', autoRotateEnabled);
+            btn.title = autoRotateEnabled ? 'Auto-rotate: ON' : 'Auto-rotate: OFF';
+        }
+        function toggleAutoRotate() {
+            autoRotateEnabled = !autoRotateEnabled;
+            try { localStorage.setItem(AUTO_ROTATE_KEY, autoRotateEnabled ? '1' : '0'); } catch (e) {}
+            updateAutoRotateButton();
+        }
+        function handleOrientationChange(isLandscape) {
+            if (!autoRotateEnabled || window.innerWidth >= MOBILE_BREAKPOINT) return;
+            try {
+                if (isLandscape) {
+                    if (plyr && plyr.fullscreen && !plyr.fullscreen.active) plyr.fullscreen.enter();
+                } else {
+                    if (plyr && plyr.fullscreen && plyr.fullscreen.active) plyr.fullscreen.exit();
+                }
+            } catch (e) { /* fullscreen request blocked by browser, ignore */ }
+        }
+        if (window.matchMedia) {
+            const orientationMq = window.matchMedia('(orientation: landscape)');
+            const orientationHandler = (e) => handleOrientationChange(e.matches);
+            if (orientationMq.addEventListener) orientationMq.addEventListener('change', orientationHandler);
+            else if (orientationMq.addListener) orientationMq.addListener(orientationHandler);
+        }
+        plyr.on('enterfullscreen', () => {
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(() => {});
+            }
+        });
+        plyr.on('exitfullscreen', () => {
+            if (screen.orientation && screen.orientation.unlock) {
+                try { screen.orientation.unlock(); } catch (e) {}
+            }
+        });
 
         /* =========================================================
            HEALTH / TRENDING SYSTEM
@@ -480,6 +690,7 @@
             document.getElementById('activeTitle').innerText = "Syncing All Live Servers...";
             showLoader();
             loadHealth();
+            updateAutoRotateButton();
             try {
                 const [fifaRes, sportsRes, banglaRes, channelsRes] = await Promise.all([
                     fetch(apiUrls.fifa).then(r => r.json()).catch(() => []),
@@ -509,9 +720,10 @@
         /* =========================================================
            RENDERING
         ========================================================= */
-        function buildCard(ch) {
+        function buildCard(ch, index) {
             const card = document.createElement('div');
             card.className = 'channel-card';
+            card.style.setProperty('--i', index || 0);
             card.dataset.url = ch.url;
             card.dataset.name = ch.name || '';
             card.onclick = function () { playWithMirrorFallback(ch); };
@@ -536,7 +748,7 @@
                 container.innerHTML = `<div class="text-muted text-center p-3" style="grid-column: 1 / -1;">No channels live.</div>`;
                 return;
             }
-            channels.forEach(ch => container.appendChild(buildCard(ch)));
+            channels.forEach((ch, i) => container.appendChild(buildCard(ch, i)));
         }
 
         // Renders a tab body: Trending Now row on top, then either the full
@@ -640,6 +852,7 @@
         function switchStandardChannel(channelObj, onResult) {
             const myToken = ++playToken;
             savedCurrentChannelData = channelObj;
+            miniPlayerManuallyClosed = false; // a fresh channel pick re-enables the mini player
             showLoader();
             loader.querySelector('span').innerText = 'Loading Stream';
 
