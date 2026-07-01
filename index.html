@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Zion TV — Cloud OTT</title>
+    <title>Zion Sports — Ultimate OTT</title>
 
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Zion TV — Cloud OTT Platform">
-    <meta property="og:description" content="Watch Live Premium Streams powered by Cloud Backend.">
+    <meta property="og:title" content="Zion Sports — Ultimate OTT">
+    <meta property="og:description" content="Watch Live Premium Streams on Zion Sports.">
     <meta property="og:image" content="https://i.ibb.co.com/ymJhZWxG/1000075445-clean.png">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -16,7 +16,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    
     <style>
         :root {
             --purple-primary: #7c3aed;
@@ -49,7 +48,6 @@
             height: 55px; 
             display: flex; 
             align-items: center; 
-            justify-content: space-between;
             padding: 0 15px; 
             border-bottom: 1px solid rgba(124, 58, 237, 0.2); 
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
@@ -68,41 +66,28 @@
             color: transparent;
         }
 
-        .live-counter-badge {
-            background: rgba(34, 197, 94, 0.15);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            color: #4ade80;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .counter-dot {
-            width: 6px; height: 6px; background: #22c55e; border-radius: 50%;
-            animation: pulse-green 1.5s infinite;
-        }
-        @keyframes pulse-green { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-
+       
         .theater-screen-sticky-wrapper {
             position: -webkit-sticky;
             position: sticky;
-            top: 55px;
+            top: 0;
             z-index: 2090; 
             background: #000;
             width: 100%;
-            transition: box-shadow .25s ease;
+            transition: box-shadow .25s ease, border-radius .25s ease;
         }
-        .theater-screen-sticky-wrapper.is-stuck { box-shadow: 0 12px 28px rgba(0,0,0,0.85); }
+        .theater-screen-sticky-wrapper.is-stuck {
+            box-shadow: 0 12px 28px rgba(0,0,0,0.85);
+        }
 
+        /* ---- Mini player (mobile only): shrinks into a corner box once the
+             user scrolls well past the player + stream details. ---- */
         .theater-screen-sticky-wrapper.mini-player {
             position: fixed !important;
             top: auto !important;
-            bottom: 20px;
+            bottom: 84px;
             right: 10px;
-            width: 160px;
+            width: 152px;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 10px 28px rgba(0,0,0,0.65);
@@ -113,36 +98,89 @@
         .theater-screen-sticky-wrapper.mini-player .plyr__controls,
         .theater-screen-sticky-wrapper.mini-player .unmute-overlay { display: none !important; }
 
-        .mini-player-tap-zone { position: absolute; inset: 0; z-index: 5; display: none; cursor: pointer; background: transparent; }
+        .mini-player-tap-zone {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            display: none;
+            cursor: pointer;
+            background: transparent;
+        }
         .theater-screen-sticky-wrapper.mini-player .mini-player-tap-zone { display: block; }
 
         .mini-player-close {
-            position: absolute; top: 4px; right: 4px; z-index: 6; background: rgba(0,0,0,0.75); color: #fff;
-            border: none; width: 20px; height: 20px; border-radius: 50%; display: none; align-items: center;
-            justify-content: center; font-size: 10px; cursor: pointer;
+            position: absolute;
+            top: 4px; right: 4px;
+            z-index: 6;
+            background: rgba(0,0,0,0.75);
+            color: #fff;
+            border: none;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            cursor: pointer;
         }
         .theater-screen-sticky-wrapper.mini-player .mini-player-close { display: flex; }
 
         #miniPlayerSentinel { height: 1px; width: 100%; }
 
-        .theater-screen { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: #000; }
+        .theater-screen { 
+            position: relative; 
+            width: 100%; 
+            aspect-ratio: 16 / 9; 
+            overflow: hidden; 
+            background: #000;
+        }
+        
         #plyr-wrapper { width: 100%; height: 100%; position: absolute; top:0; left:0; z-index: 1; }
         video { width: 100% !important; height: 100% !important; background: #000; object-fit: contain !important; }
+        .plyr { width: 100%; height: 100%; }
 
+        /* Loading spinner shown while stream  */
         .player-loader {
-            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-            flex-direction: column; gap: 10px; background: radial-gradient(ellipse at center, rgba(124,58,237,0.08), #000 75%);
-            z-index: 3; pointer-events: none; transition: opacity .25s ease;
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+            background: radial-gradient(ellipse at center, rgba(124,58,237,0.08), #000 75%);
+            z-index: 3;
+            pointer-events: none;
+            transition: opacity .25s ease;
         }
         .player-loader.hidden { opacity: 0; visibility: hidden; }
-        .spinner-ring { width: 36px; height: 36px; border: 3px solid rgba(124, 58, 237, 0.2); border-top-color: var(--purple-primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .spinner-ring {
+            width: 36px; height: 36px;
+            border: 3px solid rgba(124, 58, 237, 0.2);
+            border-top-color: var(--purple-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
         @keyframes spin { to { transform: rotate(360deg); } }
         .player-loader span { font-family: var(--font-display); font-size: 11px; color: #a78bfa; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
 
+        /* simple first-tap unmute lay (removes itself after one tap) */
         .unmute-overlay {
-            position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 4;
-            background: rgba(0,0,0,0.7); border: 1px solid rgba(124,58,237,0.5); color: #fff; font-size: 12px;
-            font-weight: 600; padding: 7px 16px; border-radius: 30px; cursor: pointer; display: none; align-items: center; gap: 6px; backdrop-filter: blur(6px);
+            position: absolute;
+            bottom: 14px; left: 50%; transform: translateX(-50%);
+            z-index: 4;
+            background: rgba(0,0,0,0.7);
+            border: 1px solid rgba(124,58,237,0.5);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 7px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(6px);
         }
         .unmute-overlay.show { display: inline-flex; }
 
@@ -150,72 +188,228 @@
 
         .stream-details { 
             background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(22, 14, 45, 0.75));
-            padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(124, 58, 237, 0.18); display: flex; align-items: center; gap: 12px; position: relative; 
+            padding: 10px 14px; 
+            border-radius: 12px; 
+            border: 1px solid rgba(124, 58, 237, 0.18); 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            position: relative; 
         }
         .active-logo-img { width: 32px; height: 32px; object-fit: contain; border-radius: 6px; background: rgba(255,255,255,0.08); padding: 3px; border: 1px solid rgba(124, 58, 237, 0.3); flex-shrink: 0; }
         #activeTitle { font-family: var(--font-display); font-size: 14px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         .badge-live { 
-            background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; font-size: 9px; padding: 3px 7px; border-radius: 4px; text-transform: uppercase; font-weight: bold; flex-shrink: 0; display: flex; align-items: center; gap: 4px;
+            background: linear-gradient(135deg, #ef4444, #dc2626); 
+            color: #fff; font-size: 9px; padding: 3px 7px; 
+            border-radius: 4px; text-transform: uppercase; font-weight: bold; 
+            flex-shrink: 0;
+            display: flex; align-items: center; gap: 4px;
         }
-        .badge-live::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #fff; animation: pulse-dot 1.4s infinite; }
+        .badge-live::before {
+            content: ''; width: 5px; height: 5px; border-radius: 50%; background: #fff;
+            animation: pulse-dot 1.4s infinite;
+        }
         @keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
         .horizontal-panel { margin-top: 12px; background: var(--panel-bg); padding: 12px; border-radius: 14px; border: 1px solid rgba(124, 58, 237, 0.1); }
+
         .stream-actions { margin-left: auto; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 
         .btn-reload-stream {
-            background: rgba(124, 58, 237, 0.1); color: #c084fc; border: 1px solid rgba(124, 58, 237, 0.4);
-            padding: 6px 12px; font-size: 11px; font-weight: 700; border-radius: 8px; display: flex; align-items: center; gap: 5px; cursor: pointer; flex-shrink: 0; transition: all 0.2s;
+            background: rgba(124, 58, 237, 0.1);
+            color: #c084fc;
+            border: 1px solid rgba(124, 58, 237, 0.4);
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s;
         }
         .btn-reload-stream:hover { background: rgba(124, 58, 237, 0.25); }
+        .btn-reload-stream:active { transform: scale(0.95); }
         .btn-reload-stream.spinning i { animation: spin 0.6s linear; }
+        .btn-reload-stream.icon-only { padding: 6px 9px; }
+        .btn-reload-stream.active-toggle { background: var(--purple-primary); color: #fff; border-color: var(--purple-primary); box-shadow: 0 0 10px var(--purple-glow); }
+
+        @media (min-width: 992px) { #autoRotateBtn { display: none; } }
 
         .ott-tabs-wrapper { margin-top: 12px; background: rgba(22, 14, 45, 0.8); padding: 4px; border-radius: 10px; display: inline-flex; gap: 4px; border: 1px solid rgba(124, 58, 237, 0.15); width: 100%; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
         .ott-tabs-wrapper::-webkit-scrollbar { display: none; }
         .tab-trigger { background: transparent; color: #7c7299; border: none; padding: 9px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; border-radius: 7px; transition: all 0.2s; }
+        .tab-trigger:hover:not(.active) { color: #c4b5fd; background: rgba(124, 58, 237, 0.08); }
         .tab-trigger.active { background: var(--purple-primary); color: #fff; box-shadow: 0 0 10px var(--purple-glow); }
 
-        .tab-panel-content { width: 100%; display: none; }
-        .tab-panel-content.active { display: block; }
+        /* tab body wrapper: holds heading + grid sections, no grid of its own */
+        .tab-panel-content { width: 100%; }
+        .tab-panel-content.panel-grid-hidden { display: none !important; }
 
-        .section-heading { font-family: var(--font-display); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: #a78bfa; margin: 14px 0 8px; display: flex; align-items: center; gap: 6px; }
+        /* section headings (Trending Now / All Channels / Browse by Country) */
+        .section-heading {
+            font-family: var(--font-display);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #a78bfa;
+            margin: 14px 0 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .section-heading:first-child { margin-top: 0; }
         .section-heading i { color: #f59e0b; }
 
-        .iptv-grid-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; width: 100%; }
+        .trending-row .channel-card { border-color: rgba(245, 158, 11, 0.3); }
+        .trending-row .channel-card.active { border-color: var(--purple-primary); }
+        .trending-row .channel-card::before {
+            content: '🔥';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            font-size: 10px;
+            width: 17px; height: 17px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.45);
+            z-index: 2;
+        }
+
+        /* country pill selector */
+        .country-pill-row {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 6px;
+            padding-bottom: 6px;
+            margin-bottom: 4px;
+            scrollbar-width: none;
+        }
+        .country-pill-row::-webkit-scrollbar { display: none; }
+        .country-pill {
+            flex-shrink: 0;
+            background: rgba(124, 58, 237, 0.08);
+            border: 1px solid rgba(124, 58, 237, 0.25);
+            color: #c4b5fd;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+        }
+        .country-pill:hover { background: rgba(124, 58, 237, 0.18); }
+        .country-pill.active { background: var(--purple-primary); color: #fff; border-color: var(--purple-primary); box-shadow: 0 0 10px var(--purple-glow); }
+
+        /* 📦 রেসপনসিভ চ্যানেল গ্রিড */
+        .iptv-grid-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            width: 100%;
+        }
+        .panel-grid-hidden { display: none !important; }
+
+        @keyframes cardFadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         .channel-card { 
-            position: relative; background: rgba(255,255,255,0.02); padding: 10px 6px; border-radius: 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 6px; aspect-ratio: 1.1 / 1; border: 1px solid var(--card-border); transition: transform 0.2s cubic-bezier(.4,0,.2,1), border-color 0.2s; width: 100%; min-width: 0;
+            position: relative;
+            background: rgba(255,255,255,0.02); 
+            padding: 10px 6px; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center;
+            gap: 6px;
+            aspect-ratio: 1.1 / 1;
+            border: 1px solid var(--card-border); 
+            transition: transform 0.2s cubic-bezier(.4,0,.2,1), border-color 0.2s, background 0.2s, box-shadow 0.2s; 
+            width: 100%;
+            min-width: 0;
+            animation: cardFadeIn 0.3s ease backwards;
+            animation-delay: calc(var(--i, 0) * 18ms);
         }
-        .channel-card:hover { transform: translateY(-3px); border-color: rgba(124, 58, 237, 0.4); background: rgba(124, 58, 237, 0.05); }
+        .channel-card:hover { transform: translateY(-3px); border-color: rgba(124, 58, 237, 0.4); background: rgba(124, 58, 237, 0.05); box-shadow: 0 8px 18px rgba(124, 58, 237, 0.18); }
         .channel-card.active { border: 1.5px solid var(--purple-primary); background: rgba(124, 58, 237, 0.12); box-shadow: 0 0 18px rgba(124, 58, 237, 0.3); }
         
         .logo-img { width: 34px; height: 34px; object-fit: contain; border-radius: 6px; padding: 2px; background: rgba(255,255,255,0.04); }
+        .card-info-box { display: flex; flex-direction: column; align-items: center; width: 100%; overflow: hidden; }
         .card-name { font-weight: 600; font-size: 10px; color: #cbd5e1; text-transform: uppercase; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: 100%; }
 
-        .health-dot { position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; border-radius: 50%; }
-        .dot-online { background: #22c55e; box-shadow: 0 0 5px #22c55e; }
-        .dot-offline { background: #ef4444; }
+        /* health status dot on each card */
+        .health-dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #6b7280;
+            box-shadow: 0 0 4px rgba(0,0,0,0.6);
+        }
+        .dot-good { background: #22c55e; box-shadow: 0 0 5px #22c55e; }
+        .dot-bad { background: #ef4444; }
+        .dot-unknown { background: #6b7280; }
 
-        .btn-load-more { background: rgba(124, 58, 237, 0.15); border: 1px solid rgba(124, 58, 237, 0.3); color: #c4b5fd; font-size: 12px; font-weight: 700; padding: 10px 24px; border-radius: 8px; width: 100%; margin-top: 15px; cursor: pointer; transition: all 0.2s; }
-        .btn-load-more:hover { background: var(--purple-primary); color: #fff; }
+        @media (prefers-reduced-motion: reduce) {
+            .channel-card { animation: none !important; }
+        }
 
+        /* Plyr theme polish */
         .plyr--video { --plyr-color-main: var(--purple-primary); }
+        .plyr__control--overlaid { background: rgba(124, 58, 237, 0.85) !important; }
+        .plyr__control--overlaid:hover { background: var(--purple-primary) !important; }
+        .plyr--video .plyr__controls { background: linear-gradient(transparent, rgba(0,0,0,0.85)); }
 
         @media (min-width: 992px) {
-            .ott-main-layout { display: grid; grid-template-columns: 60% 40%; gap: 20px; padding: 20px; max-width: 1300px; margin: 0 auto; }
-            .left-column-wrapper { position: sticky; top: 75px; z-index: 10; }
-            .theater-screen-sticky-wrapper { position: relative; border-radius: 14px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid rgba(124, 58, 237, 0.2); top: 0; }
-            .horizontal-panel { max-height: calc(100vh - 160px); overflow-y: auto; }
+            .ott-main-layout {
+                display: grid;
+                grid-template-columns: 60% 40%;
+                gap: 20px;
+                padding: 20px;
+                max-width: 1300px;
+                margin: 0 auto;
+                align-items: start;
+            }
+            .left-column-wrapper {
+                position: sticky;
+                top: 20px;
+                z-index: 10;
+            }
+            .theater-screen-sticky-wrapper {
+                position: relative; 
+                border-radius: 14px;
+                overflow: hidden;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                border: 1px solid rgba(124, 58, 237, 0.2);
+            }
+            .ott-dashboard { padding: 0 !important; }
+            .horizontal-panel {
+                max-height: calc(100vh - 150px);
+                overflow-y: auto;
+                padding-right: 5px;
+            }
+            .horizontal-panel::-webkit-scrollbar { width: 5px; }
+            .horizontal-panel::-webkit-scrollbar-thumb { background: var(--purple-primary); border-radius: 10px; }
         }
     </style>
 </head>
 <body>
 
-    <nav class="ott-nav">
-        <div class="text-white brand"><i class="bi bi-play-circle"></i> <span class="brand-text">ZION TV</span></div>
-        <div class="live-counter-badge"><span class="counter-dot"></span>Online: <span id="globalUserCount">1</span></div>
-    </nav>
+    <nav class="ott-nav"><div class="text-white brand"><i class="bi bi-play-circle"></i> <span class="brand-text">ZION SPORTS</span></div></nav>
 
     <div class="ott-main-layout">
         
@@ -227,434 +421,601 @@
                     </div>
                     <div class="player-loader" id="playerLoader">
                         <div class="spinner-ring"></div>
-                        <span>Connecting Cloud</span>
+                        <span>Loading Stream</span>
                     </div>
                     <button class="unmute-overlay" id="unmuteBtn"><i class="bi bi-volume-mute-fill"></i> Tap to unmute</button>
-                    <button class="mini-player-close" id="miniPlayerClose"><i class="bi bi-x-lg"></i></button>
-                    <div class="mini-player-tap-zone" id="miniTapZone"></div>
+                    <button class="mini-player-close" id="miniPlayerClose" aria-label="Close mini player"><i class="bi bi-x-lg"></i></button>
+                    <div class="mini-player-tap-zone" id="miniTapZone" aria-label="Expand player"></div>
                 </div>
             </div>
             
             <div class="stream-details mt-3">
                 <span class="badge-live">Live</span>
                 <img id="activeLogo" src="" class="active-logo-img" alt="logo" onerror="this.style.display='none'">
-                <h1 class="h6 m-0" id="activeTitle">Select a Channel</h1>
+                <h1 class="h6 m-0" id="activeTitle">Loading Server...</h1>
 
                 <div class="stream-actions">
-                    <button class="btn-reload-stream" id="reloadBtn" onclick="reloadStream()"><i class="bi bi-arrow-clockwise"></i> Reload</button>
+                    <button class="btn-reload-stream icon-only" id="autoRotateBtn" onclick="toggleAutoRotate()" title="Auto-rotate to landscape"><i class="bi bi-arrow-repeat"></i></button>
+                    <button class="btn-reload-stream" id="reloadBtn" onclick="reloadCurrentStream()"><i class="bi bi-arrow-clockwise"></i> Reload</button>
                 </div>
             </div>
-            <div id="miniPlayerSentinel"></div>
+            <div id="miniPlayerSentinel" aria-hidden="true"></div>
         </div>
 
         <div class="container-fluid ott-dashboard">
+            
             <div class="ott-tabs-wrapper mt-0">
-                <button class="tab-trigger active" onclick="switchTab('trending', this)"><i class="bi bi-fire me-1"></i> Trending</button>
-                <button class="tab-trigger" onclick="switchTab('fifa', this)"><i class="bi bi-trophy-fill me-1"></i> FIFA Premium</button>
-                <button class="tab-trigger" onclick="switchTab('sports', this)"><i class="bi bi-broadcast me-1"></i> Live Sports</button>
-                <button class="tab-trigger" onclick="switchTab('bangla', this)"><i class="bi bi-flag-fill me-1"></i> Bangla TV</button>
-                <button class="tab-trigger" onclick="switchTab('all-channels', this)"><i class="bi bi-tv me-1"></i> 6000+ Channels</button>
+                <button id="tabFifa" class="tab-trigger active" onclick="togglePanelTab('fifa', this)"><i class="bi bi-trophy-fill me-1"></i> FIFA Premium</button>
+                <button id="tabSports" class="tab-trigger" onclick="togglePanelTab('sports', this)"><i class="bi bi-broadcast me-1"></i> Live Sports</button>
+                <button id="tabBangla" class="tab-trigger" onclick="togglePanelTab('bangla', this)"><i class="bi bi-flag-fill me-1"></i> Bangla TV</button>
+                <button id="tabChannels" class="tab-trigger" onclick="togglePanelTab('channels', this)"><i class="bi bi-tv me-1"></i> Live Channels</button>
             </div>
 
             <div class="horizontal-panel">
-                <div id="trendingPanel" class="tab-panel-content active">
-                    <div class="section-heading"><i class="bi bi-graph-up-arrow"></i> Real-time Trending Now</div>
-                    <div class="iptv-grid-row" id="trendingGrid"></div>
-                </div>
+                
+                <div id="fifaTabPanel" class="tab-panel-content"></div>
+                <div id="sportsTabPanel" class="tab-panel-content panel-grid-hidden"></div>
+                <div id="banglaTabPanel" class="tab-panel-content panel-grid-hidden"></div>
+                <div id="channelsTabPanel" class="tab-panel-content panel-grid-hidden"></div>
 
-                <div id="fifaPanel" class="tab-panel-content">
-                    <div class="section-heading"><i class="bi bi-trophy-fill"></i> FIFA Premium</div>
-                    <div class="iptv-grid-row" id="fifaGrid"></div>
-                </div>
-
-                <div id="sportsPanel" class="tab-panel-content">
-                    <div class="section-heading"><i class="bi bi-broadcast"></i> Live Sports</div>
-                    <div class="iptv-grid-row" id="sportsGrid"></div>
-                </div>
-
-                <div id="banglaPanel" class="tab-panel-content">
-                    <div class="section-heading"><i class="bi bi-flag-fill"></i> Bangla TV</div>
-                    <div class="iptv-grid-row" id="banglaGrid"></div>
-                </div>
-
-                <div id="allChannelsPanel" class="tab-panel-content">
-                    <div class="section-heading"><i class="bi bi-hdd-network"></i> Cloud Database</div>
-                    <div class="iptv-grid-row" id="allChannelsGrid"></div>
-                    <button class="btn-load-more" id="loadMoreBtn" onclick="loadNextBatch()">Load More Channels</button>
-                </div>
             </div>
-            <div class="text-center mt-5 text-muted" style="font-size: 10px; opacity: 0.3;">© 2026 Zion TV • Powered by Firebase Cloud</div>
+            <div class="text-center mt-5 text-muted" style="font-size: 10px; opacity: 0.2;">© 2026 Zion Sports • Powered by GitHub Pages</div>
         </div>
-    </div>
 
-    <script type="importmap">
-      {
-        "imports": {
-          "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
-          "firebase/firestore": "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js",
-          "firebase/database": "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
-        }
-      }
-    </script>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
     <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 
-    <script type="module">
-        import { initializeApp } from "firebase/app";
-        import { getFirestore, collection, query, where, orderBy, limit, startAfter, getDocs, getDoc, setDoc, doc, increment, updateDoc, writeBatch } from "firebase/firestore";
-        import { getDatabase, ref, set, onValue, onDisconnect, serverTimestamp } from "firebase/database";
-
-        // ⚡ Zion, সিঙ্গাপুর জোনের সঠিক রিয়েল-টাইম ডাটাবেস URL এখানে কনফিগার করা হলো
-        const firebaseConfig = {
-            apiKey: "AIzaSyAspnAvpfPl3_L25kuTX-U3_Hv6kGA8dk8",
-            authDomain: "mmziontv.firebaseapp.com",
-            databaseURL: "https://mmziontv-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "mmziontv",
-            storageBucket: "mmziontv.firebasestorage.app",
-            messagingSenderId: "150853898946",
-            appId: "1:150853898946:web:2518220fee850e1a5b215b"
+    <script>
+        const apiUrls = {
+            fifa: "https://iamshajon.com/playlist/fifa.json",
+            sports: "https://iamshajon.com/playlist/sports.json",
+            bangla: "https://iamshajon.com/playlist/bangla.json",
+            channels: "https://iamshajon.com/playlist/channels.json"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const rtdb = getDatabase(app);
+        const FALLBACK_LOGO = "https://upload.wikimedia.org/wikipedia/en/thumb/1/17/2026_FIFA_World_Cup_emblem.svg/250px-2026_FIFA_World_Cup_emblem.svg.png";
+        const MAX_AUTO_ATTEMPTS = 6;     // how many channels to auto-try for the default FIFA pick
+        const MAX_MIRROR_ATTEMPTS = 8;   // how many mirrors to try when a manually-picked channel fails
+        const PLAY_TIMEOUT_MS = 14000;   // if nothing plays within this time, treat as a failure
+        const MOBILE_BREAKPOINT = 992;
 
-        const FALLBACK_LOGO = "https://i.ibb.co.com/ymJhZWxG/1000075445-clean.png";
-        let hlsPlayer = null;
-        let dashPlayer = null;
-        let currentChannel = null;
-        let lastVisibleDoc = null; 
-        const BATCH_LIMIT = 50;
-
-        // Source playlists tagged with the category they belong to. Used both
-        // for the initial cloud sync AND for the one-time migration below.
-        const CATEGORY_SOURCES = [
-            { url: "https://iamshajon.com/playlist/fifa.json", category: "fifa" },
-            { url: "https://iamshajon.com/playlist/sports.json", category: "sports" },
-            { url: "https://iamshajon.com/playlist/bangla.json", category: "bangla" },
-            { url: "https://iamshajon.com/playlist/channels.json", category: "channels" }
-        ];
-
+        let database = { fifa: [], sports: [], bangla: [], channels: [] };
         const video = document.getElementById('player');
         const loader = document.getElementById('playerLoader');
         const unmuteBtn = document.getElementById('unmuteBtn');
-        const plyr = new Plyr(video, { autoplay: true, controls: ['play-large', 'play', 'progress', 'mute', 'volume', 'fullscreen'] });
+        const reloadBtn = document.getElementById('reloadBtn');
+        let hls = null;
+        let dashPlayer = null;
+        let savedCurrentChannelData = null;
+        let activeCountryFilter = null; // currently selected country pill inside "Live Channels" tab
 
-        window.switchTab = function(tabId, btn) {
-            document.querySelectorAll('.tab-trigger').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-panel-content').forEach(p => p.classList.remove('active'));
-            btn.classList.add('active');
-            if(tabId === 'trending') document.getElementById('trendingPanel').classList.add('active');
-            if(tabId === 'fifa') document.getElementById('fifaPanel').classList.add('active');
-            if(tabId === 'sports') document.getElementById('sportsPanel').classList.add('active');
-            if(tabId === 'bangla') document.getElementById('banglaPanel').classList.add('active');
-            if(tabId === 'all-channels') document.getElementById('allChannelsPanel').classList.add('active');
-        };
+        const plyr = new Plyr(video, { 
+            autoplay: true, 
+            clickToPlay: true,
+            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'pip', 'fullscreen']
+        });
 
-        // --- Real-time Presence & User Counter System ---
-        function setupPresenceTrack(channelName = "Idle") {
-            const sessionUserId = "user_" + Math.random().toString(36).substring(2, 11);
-            const userRef = ref(rtdb, `onlineUsers/${sessionUserId}`);
-            
-            set(userRef, {
-                channel: channelName,
-                lastSeen: serverTimestamp()
-            });
-            onDisconnect(userRef).remove();
+        function showLoader() { loader.classList.remove('hidden'); }
+        function hideLoader() { loader.classList.add('hidden'); }
+
+        video.addEventListener('waiting', showLoader);
+        video.addEventListener('playing', () => { hideLoader(); checkMuteState(); });
+        video.addEventListener('canplay', hideLoader);
+
+        function checkMuteState() {
+            unmuteBtn.classList.toggle('show', video.muted);
         }
+        unmuteBtn.addEventListener('click', () => {
+            video.muted = false;
+            video.volume = 1.0;
+            unmuteBtn.classList.remove('show');
+        });
 
-        function listenLiveUsers() {
-            const countRef = ref(rtdb, 'onlineUsers');
-            onValue(countRef, (snapshot) => {
-                const total = snapshot.exists() ? Object.keys(snapshot.val()).length : 1;
-                document.getElementById('globalUserCount').innerText = total;
+        // Sticky shadow toggle (YouTube-style stuck indicator on mobile)
+        const stickyWrapper = document.getElementById('stickyWrapper');
+        const stickyObserver = new IntersectionObserver(
+            ([e]) => stickyWrapper.classList.toggle('is-stuck', e.intersectionRatio < 1),
+            { threshold: [1] }
+        );
+        stickyObserver.observe(stickyWrapper);
+
+        /* =========================================================
+           MINI PLAYER (mobile only)
+           Once the user scrolls past the player + stream-details
+           block, shrink the video into a small corner box so the
+           channel list has room to breathe. Tap it to jump back up,
+           or close it to pause playback.
+        ========================================================= */
+        const miniPlayerClose = document.getElementById('miniPlayerClose');
+        const miniTapZone = document.getElementById('miniTapZone');
+        const miniSentinel = document.getElementById('miniPlayerSentinel');
+        let miniPlayerActive = false;
+        let miniPlayerManuallyClosed = false;
+
+        function activateMiniPlayer() {
+            if (miniPlayerActive || miniPlayerManuallyClosed || window.innerWidth >= MOBILE_BREAKPOINT) return;
+            miniPlayerActive = true;
+            stickyWrapper.classList.add('mini-player');
+        }
+        function deactivateMiniPlayer() {
+            if (!miniPlayerActive) return;
+            miniPlayerActive = false;
+            stickyWrapper.classList.remove('mini-player');
+        }
+        function expandMiniPlayer() {
+            stickyWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        if (miniTapZone) miniTapZone.addEventListener('click', expandMiniPlayer);
+        if (miniPlayerClose) {
+            miniPlayerClose.addEventListener('click', (e) => {
+                e.stopPropagation();
+                miniPlayerManuallyClosed = true;
+                deactivateMiniPlayer();
+                video.pause();
             });
         }
+        if (miniSentinel) {
+            const miniObserver = new IntersectionObserver(([entry]) => {
+                if (window.innerWidth >= MOBILE_BREAKPOINT) { deactivateMiniPlayer(); return; }
+                if (miniPlayerManuallyClosed) return;
+                if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+                    activateMiniPlayer();
+                } else {
+                    deactivateMiniPlayer();
+                }
+            }, { threshold: 0 });
+            miniObserver.observe(miniSentinel);
+        }
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= MOBILE_BREAKPOINT) deactivateMiniPlayer();
+        });
 
-        // --- Stream Loading Engine ---
-        window.playChannel = async function(chString) {
-            const ch = JSON.parse(decodeURIComponent(chString));
-            currentChannel = ch;
-            loader.classList.remove('hidden');
-            
-            document.getElementById('activeTitle').innerText = ch.name;
-            document.getElementById('activeLogo').src = ch.logo || FALLBACK_LOGO;
+        /* =========================================================
+           AUTO-ROTATE
+           Toggle saved in localStorage. When ON and the phone is
+           rotated to landscape, the player auto-enters fullscreen;
+           rotating back to portrait exits it. Also tries to lock the
+           screen orientation while fullscreen is active.
+           Note: iOS Safari restricts fullscreen requests that aren't
+           directly triggered by a tap, so this works best on Android.
+        ========================================================= */
+        const AUTO_ROTATE_KEY = 'zionAutoRotate_v1';
+        let autoRotateEnabled = true;
+        try {
+            const stored = localStorage.getItem(AUTO_ROTATE_KEY);
+            autoRotateEnabled = stored === null ? true : stored === '1';
+        } catch (e) { /* storage unavailable, default stays true */ }
 
-            document.querySelectorAll('.channel-card').forEach(c => c.classList.toggle('active', c.dataset.url === ch.url));
-
-            if(hlsPlayer) { hlsPlayer.destroy(); hlsPlayer = null; }
-            if(dashPlayer) { dashPlayer.reset(); dashPlayer = null; }
-
-            // Increment Watch Count Analytics in Cloud
+        function updateAutoRotateButton() {
+            const btn = document.getElementById('autoRotateBtn');
+            if (!btn) return;
+            btn.classList.toggle('active-toggle', autoRotateEnabled);
+            btn.title = autoRotateEnabled ? 'Auto-rotate: ON' : 'Auto-rotate: OFF';
+        }
+        function toggleAutoRotate() {
+            autoRotateEnabled = !autoRotateEnabled;
+            try { localStorage.setItem(AUTO_ROTATE_KEY, autoRotateEnabled ? '1' : '0'); } catch (e) {}
+            updateAutoRotateButton();
+        }
+        function handleOrientationChange(isLandscape) {
+            if (!autoRotateEnabled || window.innerWidth >= MOBILE_BREAKPOINT) return;
             try {
-                const chDocRef = doc(db, "channels", ch.id);
-                updateDoc(chDocRef, { views: increment(1) });
-            } catch(e) {}
-
-            setupPresenceTrack(ch.name);
-
-            if (ch.url.includes('.mpd')) {
-                dashPlayer = dashjs.MediaPlayer().create();
-                dashPlayer.initialize(video, ch.url, true);
-            } else if (Hls.isSupported()) {
-                hlsPlayer = new Hls();
-                hlsPlayer.loadSource(ch.url);
-                hlsPlayer.attachMedia(video);
-            } else {
-                video.src = ch.url;
+                if (isLandscape) {
+                    if (plyr && plyr.fullscreen && !plyr.fullscreen.active) plyr.fullscreen.enter();
+                } else {
+                    if (plyr && plyr.fullscreen && plyr.fullscreen.active) plyr.fullscreen.exit();
+                }
+            } catch (e) { /* fullscreen request blocked by browser, ignore */ }
+        }
+        if (window.matchMedia) {
+            const orientationMq = window.matchMedia('(orientation: landscape)');
+            const orientationHandler = (e) => handleOrientationChange(e.matches);
+            if (orientationMq.addEventListener) orientationMq.addEventListener('change', orientationHandler);
+            else if (orientationMq.addListener) orientationMq.addListener(orientationHandler);
+        }
+        plyr.on('enterfullscreen', () => {
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(() => {});
             }
-            loader.classList.add('hidden');
-        };
+        });
+        plyr.on('exitfullscreen', () => {
+            if (screen.orientation && screen.orientation.unlock) {
+                try { screen.orientation.unlock(); } catch (e) {}
+            }
+        });
 
-        window.reloadStream = function() {
-            if(currentChannel) playChannel(encodeURIComponent(JSON.stringify(currentChannel)));
-        };
+        /* =========================================================
+           HEALTH / TRENDING SYSTEM
+           Every real play attempt (success or failure) is recorded
+           in localStorage so the "Trending Now" ranking and the
+           default FIFA channel always reflect what is *actually*
+           working right now, automatically, with no manual curation.
+        ========================================================= */
+        const HEALTH_KEY = 'zionStreamHealth_v1';
+        let healthData = {};
 
-        // --- UI Card Generator ---
-        function createCard(ch) {
+        function loadHealth() {
+            try {
+                const raw = localStorage.getItem(HEALTH_KEY);
+                healthData = raw ? JSON.parse(raw) : {};
+            } catch (e) {
+                healthData = {};
+            }
+        }
+        function saveHealth() {
+            try { localStorage.setItem(HEALTH_KEY, JSON.stringify(healthData)); } catch (e) { /* storage unavailable, ignore */ }
+        }
+        function getHealth(url) {
+            return healthData[url] || { success: 0, fail: 0, last: null };
+        }
+        function recordHealth(url, ok) {
+            const h = getHealth(url);
+            if (ok) { h.success += 1; h.last = 'ok'; } else { h.fail += 1; h.last = 'fail'; }
+            h.ts = Date.now();
+            healthData[url] = h;
+            saveHealth();
+        }
+        // tier 0 = confirmed working, 1 = untested / mixed, 2 = confirmed failing
+        function healthRank(ch) {
+            const h = getHealth(ch.url);
+            let tier = 1;
+            if (h.success > 0 && h.last === 'ok') tier = 0;
+            else if (h.fail > 0 && h.last === 'fail' && h.success === 0) tier = 2;
+            return { tier, score: h.success - h.fail };
+        }
+        function sortByTrending(list) {
+            return [...list].sort((a, b) => {
+                const ra = healthRank(a), rb = healthRank(b);
+                if (ra.tier !== rb.tier) return ra.tier - rb.tier;
+                if (rb.score !== ra.score) return rb.score - ra.score;
+                return 0;
+            });
+        }
+        function refreshHealthDots() {
+            document.querySelectorAll('.channel-card').forEach(card => {
+                const url = card.dataset.url;
+                const h = getHealth(url);
+                let tier = 1;
+                if (h.success > 0 && h.last === 'ok') tier = 0;
+                else if (h.fail > 0 && h.last === 'fail' && h.success === 0) tier = 2;
+                const dot = card.querySelector('.health-dot');
+                if (dot) dot.className = 'health-dot ' + (tier === 0 ? 'dot-good' : tier === 2 ? 'dot-bad' : 'dot-unknown');
+            });
+        }
+
+        async function fetchAllPlaylists() {
+            document.getElementById('activeTitle').innerText = "Syncing All Live Servers...";
+            showLoader();
+            loadHealth();
+            updateAutoRotateButton();
+            try {
+                const [fifaRes, sportsRes, banglaRes, channelsRes] = await Promise.all([
+                    fetch(apiUrls.fifa).then(r => r.json()).catch(() => []),
+                    fetch(apiUrls.sports).then(r => r.json()).catch(() => []),
+                    fetch(apiUrls.bangla).then(r => r.json()).catch(() => []),
+                    fetch(apiUrls.channels).then(r => r.json()).catch(() => [])
+                ]);
+
+                database.fifa = Array.isArray(fifaRes) ? fifaRes : [];
+                database.sports = Array.isArray(sportsRes) ? sportsRes : [];
+                database.bangla = Array.isArray(banglaRes) ? banglaRes : [];
+                database.channels = Array.isArray(channelsRes) ? channelsRes : [];
+
+                renderTabWithTrending('fifa', 'fifaTabPanel');
+                renderTabWithTrending('sports', 'sportsTabPanel');
+                renderTabWithTrending('bangla', 'banglaTabPanel');
+                renderTabWithTrending('channels', 'channelsTabPanel');
+
+                autoPlayDefaultChannel();
+            } catch (error) {
+                console.error("Playlist sync failed:", error);
+                document.getElementById('activeTitle').innerText = "Sync Failed. Please Reload Page!";
+                hideLoader();
+            }
+        }
+
+        /* =========================================================
+           RENDERING
+        ========================================================= */
+        function buildCard(ch, index) {
             const card = document.createElement('div');
             card.className = 'channel-card';
+            card.style.setProperty('--i', index || 0);
             card.dataset.url = ch.url;
-            card.onclick = () => playChannel(encodeURIComponent(JSON.stringify(ch)));
-            
-            const statusDot = ch.status === 'online' ? 'dot-online' : 'dot-offline';
+            card.dataset.name = ch.name || '';
+            card.onclick = function () { playWithMirrorFallback(ch); };
+
+            const logoSrc = ch.logo && ch.logo !== "" ? ch.logo : FALLBACK_LOGO;
+            const rank = healthRank(ch);
+            const dotClass = rank.tier === 0 ? 'dot-good' : rank.tier === 2 ? 'dot-bad' : 'dot-unknown';
+
             card.innerHTML = `
-                <span class="health-dot ${statusDot}"></span>
-                <img src="${ch.logo || FALLBACK_LOGO}" class="logo-img" onerror="this.src='${FALLBACK_LOGO}'">
-                <div class="card-name">${ch.name}</div>
+                <span class="health-dot ${dotClass}"></span>
+                <img src="${logoSrc}" class="logo-img" alt="${ch.name}" onerror="this.src='${FALLBACK_LOGO}'">
+                <div class="card-info-box">
+                    <div class="card-name">${ch.name}</div>
+                </div>
             `;
             return card;
         }
 
-        // --- Data Fetch Engine (Pagination & Trending) ---
-        async function loadTrendingNow() {
-            const grid = document.getElementById('trendingGrid');
-            try {
-                const q = query(collection(db, "channels"), orderBy("trendingScore", "desc"), limit(10));
-                const snap = await getDocs(q);
-                grid.innerHTML = "";
-                if(snap.empty) {
-                    grid.innerHTML = "<div class='text-muted p-2'>Waiting for channels to sync...</div>";
-                    return;
-                }
-                snap.forEach(doc => {
-                    grid.appendChild(createCard({id: doc.id, ...doc.data()}));
-                });
-            } catch(e) {
-                grid.innerHTML = "<div class='text-muted p-2'>Syncing Cloud Setup...</div>";
-            }
-        }
-
-        // Loads channels for one of the restored FIFA / Sports / Bangla tabs.
-        // Uses a plain equality filter (no orderBy in the query itself) so no
-        // Firestore composite index needs to be created — sorting by
-        // trendingScore happens on the client instead.
-        async function loadCategoryPanel(category, gridId) {
-            const grid = document.getElementById(gridId);
-            try {
-                const q = query(collection(db, "channels"), where("category", "==", category), limit(300));
-                const snap = await getDocs(q);
-                grid.innerHTML = "";
-                if (snap.empty) {
-                    grid.innerHTML = "<div class='text-muted p-2'>No channels found in this group yet.</div>";
-                    return [];
-                }
-                const list = [];
-                snap.forEach(docSnap => list.push({ id: docSnap.id, ...docSnap.data() }));
-                list.sort((a, b) => (b.trendingScore || 0) - (a.trendingScore || 0));
-                list.forEach(ch => grid.appendChild(createCard(ch)));
-                return list;
-            } catch (e) {
-                console.error(`Failed to load ${category} channels:`, e);
-                grid.innerHTML = "<div class='text-muted p-2'>Syncing Cloud Setup...</div>";
-                return [];
-            }
-        }
-
-        // Tries to auto-play the best-ranked channel in a list; if playback
-        // doesn't start (error or timeout), automatically moves to the next
-        // best channel in the same list. Fully automatic, no reload needed.
-        function attemptPlayWithFallback(list, idx = 0) {
-            if (!list || list.length === 0) return;
-            if (idx >= Math.min(list.length, 6)) {
-                playChannel(encodeURIComponent(JSON.stringify(list[0]))); // last resort
+        function renderGrid(channels, container) {
+            container.innerHTML = "";
+            if (!channels || channels.length === 0) {
+                container.innerHTML = `<div class="text-muted text-center p-3" style="grid-column: 1 / -1;">No channels live.</div>`;
                 return;
             }
-            const ch = list[idx];
-            let settled = false;
-            const cleanup = () => {
-                video.removeEventListener('playing', onOk);
-                video.removeEventListener('error', onFail);
-                clearTimeout(t);
-            };
-            const onOk = () => { if (settled) return; settled = true; cleanup(); };
-            const onFail = () => { if (settled) return; settled = true; cleanup(); attemptPlayWithFallback(list, idx + 1); };
-            video.addEventListener('playing', onOk, { once: true });
-            video.addEventListener('error', onFail, { once: true });
-            const t = setTimeout(onFail, 12000);
-            playChannel(encodeURIComponent(JSON.stringify(ch)));
+            channels.forEach((ch, i) => container.appendChild(buildCard(ch, i)));
         }
 
-        window.loadNextBatch = async function() {
-            const grid = document.getElementById('allChannelsGrid');
-            const btn = document.getElementById('loadMoreBtn');
-            btn.innerText = "Loading Cloud...";
+        // Renders a tab body: Trending Now row on top, then either the full
+        // sorted list (fifa/sports/bangla) or the country browser (channels).
+        function renderTabWithTrending(key, panelId) {
+            const panel = document.getElementById(panelId);
+            if (!panel) return;
 
-            try {
-                let q = query(collection(db, "channels"), orderBy("name"), limit(BATCH_LIMIT));
-                if (lastVisibleDoc) {
-                    q = query(collection(db, "channels"), orderBy("name"), startAfter(lastVisibleDoc), limit(BATCH_LIMIT));
-                }
+            const channels = database[key] || [];
+            panel.innerHTML = "";
 
-                const snap = await getDocs(q);
-                if(snap.docs.length > 0) {
-                    lastVisibleDoc = snap.docs[snap.docs.length - 1];
-                    snap.forEach(doc => {
-                        grid.appendChild(createCard({id: doc.id, ...doc.data()}));
-                    });
-                }
-                btn.innerText = "Load More Channels";
-                if(snap.docs.length < BATCH_LIMIT) btn.style.display = 'none';
-            } catch(e) {
-                btn.innerText = "Syncing Cloud...";
+            if (channels.length === 0) {
+                panel.innerHTML = `<div class="text-muted text-center p-3">No channels live.</div>`;
+                return;
             }
-        };
 
-        // --- 🚀 One-Time Auto Cloud Syncer Script ---
-        // এটি প্রথমবার রান হয়ে ক্লাউডে ডেটা সাবমিট করবে, ডেটা থাকলে আর রান হবে না।
-        async function runAutoCloudSync() {
+            const sorted = sortByTrending(channels);
+            let trending = sorted.filter(ch => healthRank(ch).tier !== 2).slice(0, 8);
+            if (trending.length === 0) trending = sorted.slice(0, 8);
+
+            const trendHeading = document.createElement('div');
+            trendHeading.className = 'section-heading';
+            trendHeading.innerHTML = `<i class="bi bi-fire"></i> Trending Now`;
+            panel.appendChild(trendHeading);
+
+            const trendGrid = document.createElement('div');
+            trendGrid.className = 'iptv-grid-row trending-row';
+            renderGrid(trending, trendGrid);
+            panel.appendChild(trendGrid);
+
+            if (key === 'channels') {
+                renderCountryBrowser(channels, panel);
+            } else {
+                const allHeading = document.createElement('div');
+                allHeading.className = 'section-heading';
+                allHeading.innerText = 'All Channels';
+                panel.appendChild(allHeading);
+
+                const allGrid = document.createElement('div');
+                allGrid.className = 'iptv-grid-row';
+                renderGrid(sorted, allGrid);
+                panel.appendChild(allGrid);
+            }
+        }
+
+        // Country/category browser for the "Live Channels" tab, grouped by
+        // the playlist's "group" field (mostly country names in this feed).
+        function renderCountryBrowser(channels, panel) {
+            const groups = {};
+            channels.forEach(ch => {
+                const g = (ch.group && ch.group.trim()) ? ch.group.trim() : 'Other';
+                if (!groups[g]) groups[g] = [];
+                groups[g].push(ch);
+            });
+            const countryNames = Object.keys(groups).sort((a, b) => a.localeCompare(b));
+
+            const browseHeading = document.createElement('div');
+            browseHeading.className = 'section-heading';
+            browseHeading.innerText = 'Browse by Country';
+            panel.appendChild(browseHeading);
+
+            const pillRow = document.createElement('div');
+            pillRow.className = 'country-pill-row';
+
+            const allPill = document.createElement('button');
+            allPill.type = 'button';
+            allPill.className = 'country-pill' + (activeCountryFilter === null ? ' active' : '');
+            allPill.innerText = `All (${channels.length})`;
+            allPill.onclick = () => { activeCountryFilter = null; renderTabWithTrending('channels', 'channelsTabPanel'); };
+            pillRow.appendChild(allPill);
+
+            countryNames.forEach(name => {
+                const pill = document.createElement('button');
+                pill.type = 'button';
+                pill.className = 'country-pill' + (activeCountryFilter === name ? ' active' : '');
+                pill.innerText = `${name} (${groups[name].length})`;
+                pill.onclick = () => { activeCountryFilter = name; renderTabWithTrending('channels', 'channelsTabPanel'); };
+                pillRow.appendChild(pill);
+            });
+            panel.appendChild(pillRow);
+
+            const gridHeading = document.createElement('div');
+            gridHeading.className = 'section-heading';
+            gridHeading.innerText = activeCountryFilter ? activeCountryFilter : 'All Channels';
+            panel.appendChild(gridHeading);
+
+            const grid = document.createElement('div');
+            grid.className = 'iptv-grid-row';
+            const listToShow = activeCountryFilter ? sortByTrending(groups[activeCountryFilter]) : sortByTrending(channels);
+            renderGrid(listToShow, grid);
+            panel.appendChild(grid);
+        }
+
+        /* =========================================================
+           PLAYBACK + AUTOMATIC FAILOVER
+        ========================================================= */
+        let playToken = 0;
+
+        // Plays one specific channel object. Calls onResult(true/false) exactly
+        // once, based on whether playback actually started or failed/timed out.
+        function switchStandardChannel(channelObj, onResult) {
+            const myToken = ++playToken;
+            savedCurrentChannelData = channelObj;
+            miniPlayerManuallyClosed = false; // a fresh channel pick re-enables the mini player
+            showLoader();
+            loader.querySelector('span').innerText = 'Loading Stream';
+
+            document.querySelectorAll('.channel-card').forEach(c => {
+                c.classList.toggle('active', c.dataset.url === channelObj.url);
+            });
+
+            document.getElementById('activeTitle').innerText = channelObj.name;
+            const activeLogo = document.getElementById('activeLogo');
+            activeLogo.src = channelObj.logo && channelObj.logo !== "" ? channelObj.logo : FALLBACK_LOGO;
+            activeLogo.style.display = 'inline-block';
+
+            if (hls) { hls.destroy(); hls = null; }
+            if (dashPlayer) { dashPlayer.reset(); dashPlayer = null; }
+
+            let settled = false;
+            let watchdog;
+            const finish = (ok) => {
+                if (settled || myToken !== playToken) return;
+                settled = true;
+                clearTimeout(watchdog);
+                video.removeEventListener('playing', onPlaying);
+                video.removeEventListener('error', onError);
+                recordHealth(channelObj.url, ok);
+                refreshHealthDots();
+                if (onResult) onResult(ok);
+            };
+            const onPlaying = () => finish(true);
+            const onError = () => finish(false);
+            video.addEventListener('playing', onPlaying);
+            video.addEventListener('error', onError);
+            watchdog = setTimeout(() => finish(false), PLAY_TIMEOUT_MS);
+
             try {
-                const checkSnap = await getDocs(query(collection(db, "channels"), limit(1)));
-                if (!checkSnap.empty) {
-                    console.log("Cloud Database already has data. Skipping Auto-Sync.");
-                    return;
-                }
-                
-                console.log("Empty Cloud DB detected. Initializing data transfer from playlists...");
+                if (channelObj.type === 'dash' || channelObj.url.includes('.mpd')) {
+                    dashPlayer = dashjs.MediaPlayer().create();
 
-                let rawChannels = [];
-                for (let src of CATEGORY_SOURCES) {
-                    try {
-                        const res = await fetch(src.url);
-                        const data = await res.json();
-                        if (Array.isArray(data)) {
-                            data.forEach(ch => rawChannels.push({ ...ch, category: src.category }));
-                        }
-                    } catch(e) { console.error("Source load failed: " + src.url); }
-                }
-
-                const uniqueUrls = new Set();
-                const cleanChannels = [];
-                rawChannels.forEach(ch => {
-                    if (ch.url && !uniqueUrls.has(ch.url)) {
-                        uniqueUrls.add(ch.url);
-                        cleanChannels.push({
-                            name: ch.name || "Unknown Channel",
-                            logo: ch.logo || "",
-                            url: ch.url,
-                            group: ch.group || "General",
-                            category: ch.category || "channels",
-                            status: "online",
-                            trendingScore: Math.floor(Math.random() * 80) + 20,
-                            views: 0
+                    if (channelObj.kid && channelObj.key) {
+                        dashPlayer.setProtectionData({
+                            "org.w3.clearkey": {
+                                "clearkeys": { [channelObj.kid]: channelObj.key }
+                            }
                         });
                     }
-                });
 
-                console.log(`Pushing ${cleanChannels.length} unique channels to Firestore...`);
-                let batch = writeBatch(db);
-                let count = 0;
-
-                for (let ch of cleanChannels) {
-                    const docRef = doc(collection(db, "channels"));
-                    batch.set(docRef, ch);
-                    count++;
-
-                    if (count % 300 === 0) {
-                        await batch.commit();
-                        batch = writeBatch(db);
-                        console.log(`Uploaded batch ${count}...`);
+                    dashPlayer.initialize(video, channelObj.url, true);
+                    dashPlayer.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, function () {
+                        video.muted = false;
+                        video.volume = 1.0;
+                    });
+                    dashPlayer.on(dashjs.MediaPlayer.events.ERROR, function () { finish(false); });
+                } else {
+                    if (Hls.isSupported()) {
+                        hls = new Hls({
+                            maxBufferLength: 40,
+                            maxMaxBufferLength: 80,
+                            enableWorker: true,
+                            liveSyncDurationCount: 3
+                        });
+                        hls.loadSource(channelObj.url);
+                        hls.attachMedia(video);
+                        hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                            video.muted = false;
+                            video.volume = 1.0;
+                            video.play().catch(() => {
+                                video.muted = true;
+                                video.play().then(checkMuteState);
+                            });
+                        });
+                        hls.on(Hls.Events.ERROR, function (event, data) {
+                            if (data.fatal) {
+                                loader.querySelector('span').innerText = 'Stream Error — switching source';
+                                showLoader();
+                                finish(false);
+                            }
+                        });
+                    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                        video.src = channelObj.url;
+                        video.play().catch(() => finish(false));
+                    } else {
+                        finish(false);
                     }
                 }
-                if (count % 300 !== 0) await batch.commit();
-
-                // Fresh sync already tags every channel with a category, so the
-                // migration step below can be skipped for this database.
-                try { await setDoc(doc(db, "meta", "categorySync"), { done: true, migratedAt: Date.now() }); } catch(e) {}
-                
-                console.log("🚀 Sync Done! Reloading lists.");
-            } catch(err) {
-                console.error("Sync system interrupted: ", err);
-            }
-        }
-
-        // --- 🔄 One-Time Category Migration ---
-        // Handles databases that were synced BEFORE the fifa/sports/bangla
-        // split existed. Matches each existing channel's URL against the
-        // source playlists and tags it with the right category, once.
-        async function ensureCategoryMigration() {
-            const metaRef = doc(db, "meta", "categorySync");
-            try {
-                const metaSnap = await getDoc(metaRef);
-                if (metaSnap.exists() && metaSnap.data().done) return;
-            } catch (e) { /* meta doc may not exist yet — proceed with migration */ }
-
-            console.log("Running one-time category migration for existing channels...");
-            const urlToCategory = {};
-            for (let src of CATEGORY_SOURCES) {
-                if (src.category === 'channels') continue; // default fallback, no need to map
-                try {
-                    const res = await fetch(src.url);
-                    const data = await res.json();
-                    if (Array.isArray(data)) data.forEach(ch => { if (ch.url) urlToCategory[ch.url] = src.category; });
-                } catch (e) { console.error("Migration source failed: " + src.url); }
-            }
-
-            try {
-                const allSnap = await getDocs(collection(db, "channels"));
-                let batch = writeBatch(db);
-                let pending = 0;
-                let updated = 0;
-
-                for (const docSnap of allSnap.docs) {
-                    const data = docSnap.data();
-                    if (!data.category) {
-                        const cat = urlToCategory[data.url] || "channels";
-                        batch.update(doc(db, "channels", docSnap.id), { category: cat });
-                        pending++; updated++;
-                        if (pending % 300 === 0) {
-                            await batch.commit();
-                            batch = writeBatch(db);
-                        }
-                    }
-                }
-                if (pending % 300 !== 0) await batch.commit();
-                console.log(`Category migration complete. Updated ${updated} channels.`);
             } catch (e) {
-                console.error("Category migration failed:", e);
+                finish(false);
             }
-
-            try { await setDoc(metaRef, { done: true, migratedAt: Date.now() }); } catch (e) {}
         }
 
-        // --- Init Systems ---
-        document.addEventListener('DOMContentLoaded', async () => {
-            setupPresenceTrack();
-            listenLiveUsers();
-            await runAutoCloudSync();
-            await ensureCategoryMigration();
+        // Finds every entry across all categories that shares the same channel
+        // name (i.e. mirrors/duplicate servers for the same channel).
+        function getMirrorsForChannel(channelObj) {
+            const all = [...database.fifa, ...database.sports, ...database.bangla, ...database.channels];
+            const target = (channelObj.name || '').trim().toLowerCase();
+            const matches = all.filter(c => (c.name || '').trim().toLowerCase() === target);
+            const others = matches.filter(c => c.url !== channelObj.url);
+            return [channelObj, ...sortByTrending(others)];
+        }
 
-            // Load FIFA first so the best-ranked FIFA channel can auto-play
-            // by default, with automatic fallback if it fails to load.
-            const fifaList = await loadCategoryPanel('fifa', 'fifaGrid');
-            if (fifaList.length > 0) attemptPlayWithFallback(fifaList, 0);
+        // Plays the channel the user picked; if it fails, automatically tries
+        // the next best mirror of the SAME channel until one works.
+        function playWithMirrorFallback(channelObj, attemptIndex = 0, mirrorList = null) {
+            const list = mirrorList || getMirrorsForChannel(channelObj);
+            if (attemptIndex >= Math.min(list.length, MAX_MIRROR_ATTEMPTS)) {
+                loader.querySelector('span').innerText = 'All sources failed — try another channel';
+                showLoader();
+                return;
+            }
+            const candidate = list[attemptIndex];
+            switchStandardChannel(candidate, (ok) => {
+                if (!ok) playWithMirrorFallback(channelObj, attemptIndex + 1, list);
+            });
+        }
 
-            loadTrendingNow();
-            loadNextBatch();
-            loadCategoryPanel('sports', 'sportsGrid');
-            loadCategoryPanel('bangla', 'banglaGrid');
+        // Used only for the automatic FIFA default pick on page load: walks
+        // down a trending-sorted list of DIFFERENT channels until one plays.
+        function autoPlayBestChannel(list, attemptIndex = 0) {
+            if (!list || list.length === 0) return;
+            if (attemptIndex >= Math.min(list.length, MAX_AUTO_ATTEMPTS)) {
+                if (list[0]) switchStandardChannel(list[0]); // last resort: just show the top pick
+                return;
+            }
+            const candidate = list[attemptIndex];
+            switchStandardChannel(candidate, (ok) => {
+                if (!ok) autoPlayBestChannel(list, attemptIndex + 1);
+            });
+        }
+
+        function reloadCurrentStream() {
+            if (savedCurrentChannelData) {
+                reloadBtn.classList.add('spinning');
+                playWithMirrorFallback(savedCurrentChannelData);
+                setTimeout(() => reloadBtn.classList.remove('spinning'), 600);
+            }
+        }
+
+        function togglePanelTab(tabName, buttonElement) {
+            document.querySelectorAll('.tab-trigger').forEach(t => t.classList.remove('active'));
+            buttonElement.classList.add('active');
+
+            document.getElementById('fifaTabPanel').classList.add('panel-grid-hidden');
+            document.getElementById('sportsTabPanel').classList.add('panel-grid-hidden');
+            document.getElementById('banglaTabPanel').classList.add('panel-grid-hidden');
+            document.getElementById('channelsTabPanel').classList.add('panel-grid-hidden');
+
+            if (tabName === 'fifa') {
+                document.getElementById('fifaTabPanel').classList.remove('panel-grid-hidden');
+            } else if (tabName === 'sports') {
+                document.getElementById('sportsTabPanel').classList.remove('panel-grid-hidden');
+            } else if (tabName === 'bangla') {
+                document.getElementById('banglaTabPanel').classList.remove('panel-grid-hidden');
+            } else if (tabName === 'channels') {
+                document.getElementById('channelsTabPanel').classList.remove('panel-grid-hidden');
+            }
+        }
+
+        function autoPlayDefaultChannel() {
+            if (!database.fifa || database.fifa.length === 0) return;
+            const sorted = sortByTrending(database.fifa);
+            autoPlayBestChannel(sorted, 0);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchAllPlaylists();
         });
     </script>
 </body>
