@@ -80,8 +80,6 @@
             box-shadow: 0 12px 28px rgba(0,0,0,0.85);
         }
 
-        /* ---- Mini player (mobile only): shrinks into a corner box once the
-             user scrolls well past the player + stream details. ---- */
         .theater-screen-sticky-wrapper.mini-player {
             position: fixed !important;
             top: auto !important;
@@ -139,7 +137,6 @@
         video { width: 100% !important; height: 100% !important; background: #000; object-fit: contain !important; }
         .plyr { width: 100%; height: 100%; }
 
-        /* Loading spinner shown while stream  */
         .player-loader {
             position: absolute;
             inset: 0;
@@ -164,7 +161,6 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .player-loader span { font-family: var(--font-display); font-size: 11px; color: #a78bfa; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
 
-        /* simple first-tap unmute lay (removes itself after one tap) */
         .unmute-overlay {
             position: absolute;
             bottom: 14px; left: 50%; transform: translateX(-50%);
@@ -245,11 +241,9 @@
         .tab-trigger:hover:not(.active) { color: #c4b5fd; background: rgba(124, 58, 237, 0.08); }
         .tab-trigger.active { background: var(--purple-primary); color: #fff; box-shadow: 0 0 10px var(--purple-glow); }
 
-        /* tab body wrapper: holds heading + grid sections, no grid of its own */
         .tab-panel-content { width: 100%; }
         .tab-panel-content.panel-grid-hidden { display: none !important; }
 
-        /* section headings (Trending Now / All Channels / Browse by Country) */
         .section-heading {
             font-family: var(--font-display);
             font-size: 11px;
@@ -281,7 +275,6 @@
             z-index: 2;
         }
 
-        /* country pill selector */
         .country-pill-row {
             display: flex;
             flex-wrap: nowrap;
@@ -308,7 +301,6 @@
         .country-pill:hover { background: rgba(124, 58, 237, 0.18); }
         .country-pill.active { background: var(--purple-primary); color: #fff; border-color: var(--purple-primary); box-shadow: 0 0 10px var(--purple-glow); }
 
-        /* 📦 রেসপনসিভ চ্যানেল গ্রিড */
         .iptv-grid-row {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
@@ -349,7 +341,6 @@
         .card-info-box { display: flex; flex-direction: column; align-items: center; width: 100%; overflow: hidden; }
         .card-name { font-weight: 600; font-size: 10px; color: #cbd5e1; text-transform: uppercase; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: 100%; }
 
-        /* health status dot on each card */
         .health-dot {
             position: absolute;
             top: 6px;
@@ -368,7 +359,6 @@
             .channel-card { animation: none !important; }
         }
 
-        /* Plyr theme polish */
         .plyr--video { --plyr-color-main: var(--purple-primary); }
         .plyr__control--overlaid { background: rgba(124, 58, 237, 0.85) !important; }
         .plyr__control--overlaid:hover { background: var(--purple-primary) !important; }
@@ -477,9 +467,9 @@
         };
 
         const FALLBACK_LOGO = "https://upload.wikimedia.org/wikipedia/en/thumb/1/17/2026_FIFA_World_Cup_emblem.svg/250px-2026_FIFA_World_Cup_emblem.svg.png";
-        const MAX_AUTO_ATTEMPTS = 6;     // how many channels to auto-try for the default FIFA pick
-        const MAX_MIRROR_ATTEMPTS = 8;   // how many mirrors to try when a manually-picked channel fails
-        const PLAY_TIMEOUT_MS = 14000;   // if nothing plays within this time, treat as a failure
+        const MAX_AUTO_ATTEMPTS = 6;     
+        const MAX_MIRROR_ATTEMPTS = 8;   
+        const PLAY_TIMEOUT_MS = 14000;   
         const MOBILE_BREAKPOINT = 992;
 
         let database = { fifa: [], sports: [], bangla: [], channels: [] };
@@ -490,7 +480,7 @@
         let hls = null;
         let dashPlayer = null;
         let savedCurrentChannelData = null;
-        let activeCountryFilter = null; // currently selected country pill inside "Live Channels" tab
+        let activeCountryFilter = null; 
 
         const plyr = new Plyr(video, { 
             autoplay: true, 
@@ -514,7 +504,6 @@
             unmuteBtn.classList.remove('show');
         });
 
-        // Sticky shadow toggle (YouTube-style stuck indicator on mobile)
         const stickyWrapper = document.getElementById('stickyWrapper');
         const stickyObserver = new IntersectionObserver(
             ([e]) => stickyWrapper.classList.toggle('is-stuck', e.intersectionRatio < 1),
@@ -522,13 +511,6 @@
         );
         stickyObserver.observe(stickyWrapper);
 
-        /* =========================================================
-           MINI PLAYER (mobile only)
-           Once the user scrolls past the player + stream-details
-           block, shrink the video into a small corner box so the
-           channel list has room to breathe. Tap it to jump back up,
-           or close it to pause playback.
-        ========================================================= */
         const miniPlayerClose = document.getElementById('miniPlayerClose');
         const miniTapZone = document.getElementById('miniTapZone');
         const miniSentinel = document.getElementById('miniPlayerSentinel');
@@ -573,21 +555,12 @@
             if (window.innerWidth >= MOBILE_BREAKPOINT) deactivateMiniPlayer();
         });
 
-        /* =========================================================
-           AUTO-ROTATE
-           Toggle saved in localStorage. When ON and the phone is
-           rotated to landscape, the player auto-enters fullscreen;
-           rotating back to portrait exits it. Also tries to lock the
-           screen orientation while fullscreen is active.
-           Note: iOS Safari restricts fullscreen requests that aren't
-           directly triggered by a tap, so this works best on Android.
-        ========================================================= */
         const AUTO_ROTATE_KEY = 'zionAutoRotate_v1';
         let autoRotateEnabled = true;
         try {
             const stored = localStorage.getItem(AUTO_ROTATE_KEY);
             autoRotateEnabled = stored === null ? true : stored === '1';
-        } catch (e) { /* storage unavailable, default stays true */ }
+        } catch (e) { }
 
         function updateAutoRotateButton() {
             const btn = document.getElementById('autoRotateBtn');
@@ -608,7 +581,7 @@
                 } else {
                     if (plyr && plyr.fullscreen && plyr.fullscreen.active) plyr.fullscreen.exit();
                 }
-            } catch (e) { /* fullscreen request blocked by browser, ignore */ }
+            } catch (e) { }
         }
         if (window.matchMedia) {
             const orientationMq = window.matchMedia('(orientation: landscape)');
@@ -628,70 +601,29 @@
         });
 
         /* =========================================================
-           HEALTH / TRENDING SYSTEM
-           Every real play attempt (success or failure) is recorded
-           in localStorage so the "Trending Now" ranking and the
-           default FIFA channel always reflect what is *actually*
-           working right now, automatically, with no manual curation.
+           STATIC HEALTH SYSTEM (Fetched from GitHub Actions)
         ========================================================= */
-        const HEALTH_KEY = 'zionStreamHealth_v1';
         let healthData = {};
 
-        function loadHealth() {
-            try {
-                const raw = localStorage.getItem(HEALTH_KEY);
-                healthData = raw ? JSON.parse(raw) : {};
-            } catch (e) {
-                healthData = {};
-            }
-        }
-        function saveHealth() {
-            try { localStorage.setItem(HEALTH_KEY, JSON.stringify(healthData)); } catch (e) { /* storage unavailable, ignore */ }
-        }
-        function getHealth(url) {
-            return healthData[url] || { success: 0, fail: 0, last: null };
-        }
-        function recordHealth(url, ok) {
-            const h = getHealth(url);
-            if (ok) { h.success += 1; h.last = 'ok'; } else { h.fail += 1; h.last = 'fail'; }
-            h.ts = Date.now();
-            healthData[url] = h;
-            saveHealth();
-        }
-        // tier 0 = confirmed working, 1 = untested / mixed, 2 = confirmed failing
-        function healthRank(ch) {
-            const h = getHealth(ch.url);
-            let tier = 1;
-            if (h.success > 0 && h.last === 'ok') tier = 0;
-            else if (h.fail > 0 && h.last === 'fail' && h.success === 0) tier = 2;
-            return { tier, score: h.success - h.fail };
-        }
-        function sortByTrending(list) {
-            return [...list].sort((a, b) => {
-                const ra = healthRank(a), rb = healthRank(b);
-                if (ra.tier !== rb.tier) return ra.tier - rb.tier;
-                if (rb.score !== ra.score) return rb.score - ra.score;
-                return 0;
-            });
-        }
-        function refreshHealthDots() {
-            document.querySelectorAll('.channel-card').forEach(card => {
-                const url = card.dataset.url;
-                const h = getHealth(url);
-                let tier = 1;
-                if (h.success > 0 && h.last === 'ok') tier = 0;
-                else if (h.fail > 0 && h.last === 'fail' && h.success === 0) tier = 2;
-                const dot = card.querySelector('.health-dot');
-                if (dot) dot.className = 'health-dot ' + (tier === 0 ? 'dot-good' : tier === 2 ? 'dot-bad' : 'dot-unknown');
-            });
-        }
-
         async function fetchAllPlaylists() {
-            document.getElementById('activeTitle').innerText = "Syncing All Live Servers...";
+            document.getElementById('activeTitle').innerText = "Syncing Live Servers...";
             showLoader();
-            loadHealth();
             updateAutoRotateButton();
+            
             try {
+                // ১. আগে লেটেস্ট health.json নামিয়ে নেবে
+                const healthUrl = `https://Mmzion.github.io/tv/health.json?t=${Date.now()}`;
+                
+                try {
+                    const healthRes = await fetch(healthUrl);
+                    if (healthRes.ok) {
+                        healthData = await healthRes.json();
+                    }
+                } catch (err) {
+                    console.warn("Could not load health.json, proceeding without global health check.");
+                }
+
+                // ২. এরপর প্লেলিস্ট নামাবে
                 const [fifaRes, sportsRes, banglaRes, channelsRes] = await Promise.all([
                     fetch(apiUrls.fifa).then(r => r.json()).catch(() => []),
                     fetch(apiUrls.sports).then(r => r.json()).catch(() => []),
@@ -715,6 +647,40 @@
                 document.getElementById('activeTitle').innerText = "Sync Failed. Please Reload Page!";
                 hideLoader();
             }
+        }
+
+        // এই ফাংশনটি এখন সরাসরি health.json এর উপর নির্ভর করে কাজ করবে
+        function healthRank(ch) {
+            const statusObj = healthData[ch.url];
+            if (statusObj && statusObj.status === 'ok') return { tier: 0, score: 100 }; // সবুজ ডট
+            if (statusObj && statusObj.status === 'fail') return { tier: 2, score: -100 }; // লাল ডট
+            return { tier: 1, score: 0 }; // গ্রে ডট (যদি চেক না হয়ে থাকে)
+        }
+
+        function sortByTrending(list) {
+            return [...list].sort((a, b) => {
+                const ra = healthRank(a), rb = healthRank(b);
+                if (ra.tier !== rb.tier) return ra.tier - rb.tier;
+                if (rb.score !== ra.score) return rb.score - ra.score;
+                return 0;
+            });
+        }
+
+        function refreshHealthDots() {
+            document.querySelectorAll('.channel-card').forEach(card => {
+                const url = card.dataset.url;
+                const rank = healthRank({url: url});
+                const dot = card.querySelector('.health-dot');
+                if (dot) dot.className = 'health-dot ' + (rank.tier === 0 ? 'dot-good' : rank.tier === 2 ? 'dot-bad' : 'dot-unknown');
+            });
+        }
+
+        // ইউজার যখন নিজে প্লে করবে তখন যদি ফেইল হয়, তাহলে সাময়িকভাবে UI আপডেট করবে
+        function recordHealth(url, ok) {
+            if (!healthData[url]) healthData[url] = {};
+            healthData[url].status = ok ? 'ok' : 'fail';
+            // লোকালি UI আপডেট করার জন্য ফাংশনটি কল করার দরকার নেই, 
+            // switchStandardChannel কল শেষ হলেই refreshHealthDots() অটোমেটিক রান করবে।
         }
 
         /* =========================================================
@@ -751,8 +717,6 @@
             channels.forEach((ch, i) => container.appendChild(buildCard(ch, i)));
         }
 
-        // Renders a tab body: Trending Now row on top, then either the full
-        // sorted list (fifa/sports/bangla) or the country browser (channels).
         function renderTabWithTrending(key, panelId) {
             const panel = document.getElementById(panelId);
             if (!panel) return;
@@ -794,8 +758,6 @@
             }
         }
 
-        // Country/category browser for the "Live Channels" tab, grouped by
-        // the playlist's "group" field (mostly country names in this feed).
         function renderCountryBrowser(channels, panel) {
             const groups = {};
             channels.forEach(ch => {
@@ -847,12 +809,10 @@
         ========================================================= */
         let playToken = 0;
 
-        // Plays one specific channel object. Calls onResult(true/false) exactly
-        // once, based on whether playback actually started or failed/timed out.
         function switchStandardChannel(channelObj, onResult) {
             const myToken = ++playToken;
             savedCurrentChannelData = channelObj;
-            miniPlayerManuallyClosed = false; // a fresh channel pick re-enables the mini player
+            miniPlayerManuallyClosed = false; 
             showLoader();
             loader.querySelector('span').innerText = 'Loading Stream';
 
@@ -876,8 +836,11 @@
                 clearTimeout(watchdog);
                 video.removeEventListener('playing', onPlaying);
                 video.removeEventListener('error', onError);
+                
+                // গিটহাব থেকে স্ট্যাটিক ডেটা আসলেও ইউজার সেশনে UI আপডেট করার লজিক
                 recordHealth(channelObj.url, ok);
                 refreshHealthDots();
+                
                 if (onResult) onResult(ok);
             };
             const onPlaying = () => finish(true);
@@ -941,8 +904,6 @@
             }
         }
 
-        // Finds every entry across all categories that shares the same channel
-        // name (i.e. mirrors/duplicate servers for the same channel).
         function getMirrorsForChannel(channelObj) {
             const all = [...database.fifa, ...database.sports, ...database.bangla, ...database.channels];
             const target = (channelObj.name || '').trim().toLowerCase();
@@ -951,8 +912,6 @@
             return [channelObj, ...sortByTrending(others)];
         }
 
-        // Plays the channel the user picked; if it fails, automatically tries
-        // the next best mirror of the SAME channel until one works.
         function playWithMirrorFallback(channelObj, attemptIndex = 0, mirrorList = null) {
             const list = mirrorList || getMirrorsForChannel(channelObj);
             if (attemptIndex >= Math.min(list.length, MAX_MIRROR_ATTEMPTS)) {
@@ -966,12 +925,10 @@
             });
         }
 
-        // Used only for the automatic FIFA default pick on page load: walks
-        // down a trending-sorted list of DIFFERENT channels until one plays.
         function autoPlayBestChannel(list, attemptIndex = 0) {
             if (!list || list.length === 0) return;
             if (attemptIndex >= Math.min(list.length, MAX_AUTO_ATTEMPTS)) {
-                if (list[0]) switchStandardChannel(list[0]); // last resort: just show the top pick
+                if (list[0]) switchStandardChannel(list[0]); 
                 return;
             }
             const candidate = list[attemptIndex];
