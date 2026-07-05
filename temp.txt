@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Zion Sports — Ultimate OTT</title>
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Zion Sports — Ultimate OTT">
+    <meta property="og:description" content="Watch Live Premium Streams on Zion Sports.">
+    <meta property="og:image" content="https://i.ibb.co.com/ymJhZWxG/1000075445-clean.png">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --purple-primary: #7c3aed;
+            --purple-glow: rgba(124, 58, 237, 0.4);
+            --purple-bg-dark: #090514;
+            --panel-bg: rgba(22, 14, 45, 0.6);
+            --card-border: rgba(124, 58, 237, 0.15);
+            --font-display: 'Manrope', 'Segoe UI', sans-serif;
+            --font-body: 'Inter', 'Segoe UI', Roboto, sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+
+        body { 
+            background:
+                radial-gradient(ellipse 900px 480px at 50% -8%, rgba(124, 58, 237, 0.20), transparent 60%),
+                radial-gradient(ellipse 700px 400px at 100% 10%, rgba(236, 72, 153, 0.08), transparent 55%),
+                var(--purple-bg-dark) !important;
+            background-attachment: fixed;
+            color: #f1f5f9 !important; 
+            font-family: var(--font-body); 
+            min-height: 100vh; 
+            margin: 0;
+            padding: 0;
+        }
+
+        .ott-nav { 
+            background: rgba(9, 5, 20, 0.85) !important; 
+            backdrop-filter: blur(20px); 
+            height: 55px; 
+            display: flex; 
+            align-items: center; 
+            padding: 0 15px; 
+            border-bottom: 1px solid rgba(124, 58, 237, 0.2); 
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 2200;
+        }
+        .ott-nav .brand { font-weight: 800; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
+        .ott-nav .brand i { color: var(--purple-primary); font-size: 18px; }
+        .ott-nav .brand-text {
+            font-family: var(--font-display);
+            font-weight: 800;
+            background: linear-gradient(135deg, #d8b4fe, #7c3aed 55%, #f472b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+       
+        .theater-screen-sticky-wrapper {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 2090; 
+            background: #000;
+            width: 100%;
+            transition: box-shadow .25s ease, border-radius .25s ease;
+        }
+        .theater-screen-sticky-wrapper.is-stuck {
+            box-shadow: 0 12px 28px rgba(0,0,0,0.85);
+        }
+
+        /* ---- Mini player (mobile only): shrinks into a corner box once the
+             user scrolls well past the player + stream details. ---- */
+        .theater-screen-sticky-wrapper.mini-player {
+            position: fixed !important;
+            top: auto !important;
+            bottom: 84px;
+            right: 10px;
+            width: 152px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 28px rgba(0,0,0,0.65);
+            border: 1px solid rgba(124, 58, 237, 0.45);
+            z-index: 2500;
+        }
+        .theater-screen-sticky-wrapper.mini-player .theater-screen { aspect-ratio: 16 / 9; }
+        .theater-screen-sticky-wrapper.mini-player .plyr__controls,
+        .theater-screen-sticky-wrapper.mini-player .unmute-overlay { display: none !important; }
+
+        .mini-player-tap-zone {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            display: none;
+            cursor: pointer;
+            background: transparent;
+        }
+        .theater-screen-sticky-wrapper.mini-player .mini-player-tap-zone { display: block; }
+
+        .mini-player-close {
+            position: absolute;
+            top: 4px; right: 4px;
+            z-index: 6;
+            background: rgba(0,0,0,0.75);
+            color: #fff;
+            border: none;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            cursor: pointer;
+        }
+        .theater-screen-sticky-wrapper.mini-player .mini-player-close { display: flex; }
+
+        #miniPlayerSentinel { height: 1px; width: 100%; }
+
+        .theater-screen { 
+            position: relative; 
+            width: 100%; 
+            aspect-ratio: 16 / 9; 
+            overflow: hidden; 
+            background: #000;
+        }
+        
+        #plyr-wrapper { width: 100%; height: 100%; position: absolute; top:0; left:0; z-index: 1; }
+        video { width: 100% !important; height: 100% !important; background: #000; object-fit: contain !important; }
+        .plyr { width: 100%; height: 100%; }
+
+        /* Loading spinner shown while stream  */
+        .player-loader {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+            background: radial-gradient(ellipse at center, rgba(124,58,237,0.08), #000 75%);
+            z-index: 3;
+            pointer-events: none;
+            transition: opacity .25s ease;
+        }
+        .player-loader.hidden { opacity: 0; visibility: hidden; }
+        .spinner-ring {
+            width: 36px; height: 36px;
+            border: 3px solid rgba(124, 58, 237, 0.2);
+            border-top-color: var(--purple-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .player-loader span { font-family: var(--font-display); font-size: 11px; color: #a78bfa; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+
+        /* simple first-tap unmute lay (removes itself after one tap) */
+        .unmute-overlay {
+            position: absolute;
+            bottom: 14px; left: 50%; transform: translateX(-50%);
+            z-index: 4;
+            background: rgba(0,0,0,0.7);
+            border: 1px solid rgba(124,58,237,0.5);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 7px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(6px);
+        }
+        .unmute-overlay.show { display: inline-flex; }
+
+        .ott-dashboard { padding: 12px; }
+
+        .stream-details { 
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(22, 14, 45, 0.75));
+            padding: 10px 14px; 
+            border-radius: 12px; 
+            border: 1px solid rgba(124, 58, 237, 0.18); 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            position: relative; 
+        }
+        .active-logo-img { width: 32px; height: 32px; object-fit: contain; border-radius: 6px; background: rgba(255,255,255,0.08); padding: 3px; border: 1px solid rgba(124, 58, 237, 0.3); flex-shrink: 0; }
+        #activeTitle { font-family: var(--font-display); font-size: 14px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        .badge-live { 
+            background: linear-gradient(135deg, #ef4444, #dc2626); 
+            color: #fff; font-size: 9px; padding: 3px 7px; 
+            border-radius: 4px; text-transform: uppercase; font-weight: bold; 
+            flex-shrink: 0;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .badge-live::before {
+            content: ''; width: 5px; height: 5px; border-radius: 50%; background: #fff;
+            animation: pulse-dot 1.4s infinite;
+        }
+        @keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .horizontal-panel { margin-top: 12px; background: var(--panel-bg); padding: 12px; border-radius: 14px; border: 1px solid rgba(124, 58, 237, 0.1); }
+
+        .stream-actions { margin-left: auto; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+        .btn-reload-stream {
+            background: rgba(124, 58, 237, 0.1);
+            color: #c084fc;
+            border: 1px solid rgba(124, 58, 237, 0.4);
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .btn-reload-stream:hover { background: rgba(124, 58, 237, 0.25); }
+        .btn-reload-stream:active { transform: scale(0.95); }
+        .btn-reload-stream.spinning i { animation: spin 0.6s linear; }
+        .btn-reload-stream.icon-only { padding: 6px 9px; }
+        .btn-reload-stream.active-toggle { background: var(--purple-primary); color: #fff; border-color: var(--purple-primary); box-shadow: 0 0 10px var(--purple-glow); }
+
+        @media (min-width: 992px) { #autoRotateBtn { display: none; } }
+
+        .ott-tabs-wrapper { margin-top: 12px; background: rgba(22, 14, 45, 0.8); padding: 4px; border-radius: 10px; display: inline-flex; gap: 4px; border: 1px solid rgba(124, 58, 237, 0.15); width: 100%; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+        .ott-tabs-wrapper::-webkit-scrollbar { display: none; }
+        .tab-trigger { background: transparent; color: #7c7299; border: none; padding: 9px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; border-radius: 7px; transition: all 0.2s; }
+        .tab-trigger:hover:not(.active) { color: #c4b5fd; background: rgba(124, 58, 237, 0.08); }
+        .tab-trigger.active { background: var(--purple-primary); color: #fff; box-shadow: 0 0 10px var(--purple-glow); }
+
+        /* tab body wrapper: holds heading + grid sections, no grid of its own */
+        .tab-panel-content { width: 100%; }
+        .tab-panel-content.panel-grid-hidden { display: none !important; }
+
+        /* section headings (Trending Now / All Channels / Browse by Country) */
+        .section-heading {
+            font-family: var(--font-display);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #a78bfa;
+            margin: 14px 0 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .section-heading:first-child { margin-top: 0; }
+        .section-heading i { color: #f59e0b; }
+
+        .trending-row .channel-card { border-color: rgba(245, 158, 11, 0.3); }
+        .trending-row .channel-card.active { border-color: var(--purple-primary); }
+        .trending-row .channel-card::before {
+            content: '🔥';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            font-size: 10px;
+            width: 17px; height: 17px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.45);
+            z-index: 2;
+        }
+
+        /* country pill selector */
+        .country-pill-row {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 6px;
+            padding-bottom: 6px;
+            margin-bottom: 4px;
+            scrollbar-width: none;
+        }
+        .country-pill-row::-webkit-scrollbar { display: none; }
+        .country-pill {
+            flex-shrink: 0;
+            background: rgba(124, 58, 237, 0.08);
+            border: 1px solid rgba(124, 58, 237, 0.25);
+            color: #c4b5fd;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .2s;
+        }
+        .country-pill:hover { background: rgba(124, 58, 237, 0.18); }
+        .country-pill.active { background: var(--purple-primary); color: #fff; border-color: var(--purple-primary); box-shadow: 0 0 10px var(--purple-glow); }
+
+        /* 📦 রেসপনসিভ চ্যানেল গ্রিড */
+        .iptv-grid-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            width: 100%;
+        }
+        .panel-grid-hidden { display: none !important; }
+
+        @keyframes cardFadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .channel-card { 
+            position: relative;
+            background: rgba(255,255,255,0.02); 
+            padding: 10px 6px; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center;
+            gap: 6px;
+            aspect-ratio: 1.1 / 1;
+            border: 1px solid var(--card-border); 
+            transition: transform 0.2s cubic-bezier(.4,0,.2,1), border-color 0.2s, background 0.2s, box-shadow 0.2s; 
+            width: 100%;
+            min-width: 0;
+            animation: cardFadeIn 0.3s ease backwards;
+            animation-delay: calc(var(--i, 0) * 18ms);
+        }
+        .channel-card:hover { transform: translateY(-3px); border-color: rgba(124, 58, 237, 0.4); background: rgba(124, 58, 237, 0.05); box-shadow: 0 8px 18px rgba(124, 58, 237, 0.18); }
+        .channel-card.active { border: 1.5px solid var(--purple-primary); background: rgba(124, 58, 237, 0.12); box-shadow: 0 0 18px rgba(124, 58, 237, 0.3); }
+        
+        .logo-img { width: 34px; height: 34px; object-fit: contain; border-radius: 6px; padding: 2px; background: rgba(255,255,255,0.04); }
+        .card-info-box { display: flex; flex-direction: column; align-items: center; width: 100%; overflow: hidden; }
+        .card-name { font-weight: 600; font-size: 10px; color: #cbd5e1; text-transform: uppercase; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: 100%; }
+
+        /* health status dot on each card */
+        .health-dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #6b7280;
+            box-shadow: 0 0 4px rgba(0,0,0,0.6);
+        }
+        .dot-good { background: #22c55e; box-shadow: 0 0 5px #22c55e; }
+        .dot-bad { background: #ef4444; }
+        .dot-unknown { background: #6b7280; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .channel-card { animation: none !important; }
+        }
+
+        /* Plyr theme polish */
+        .plyr--video { --plyr-color-main: var(--purple-primary); }
+        .plyr__control--overlaid { background: rgba(124, 58, 237, 0.85) !important; }
+        .plyr__control--overlaid:hover { background: var(--purple-primary) !important; }
+        .plyr--video .plyr__controls { background: linear-gradient(transparent, rgba(0,0,0,0.85)); }
+
+        @media (min-width: 992px) {
+            .ott-main-layout {
+                display: grid;
+                grid-template-columns: 60% 40%;
+                gap: 20px;
+                padding: 20px;
+                max-width: 1300px;
+                margin: 0 auto;
+                align-items: start;
+            }
+            .left-column-wrapper {
+                position: sticky;
+                top: 20px;
+                z-index: 10;
+            }
+            .theater-screen-sticky-wrapper {
+                position: relative; 
+                border-radius: 14px;
+                overflow: hidden;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                border: 1px solid rgba(124, 58, 237, 0.2);
+            }
+            .ott-dashboard { padding: 0 !important; }
+            .horizontal-panel {
+                max-height: calc(100vh - 150px);
+                overflow-y: auto;
+                padding-right: 5px;
+            }
+            .horizontal-panel::-webkit-scrollbar { width: 5px; }
+            .horizontal-panel::-webkit-scrollbar-thumb { background: var(--purple-primary); border-radius: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="ott-nav"><div class="text-white brand"><i class="bi bi-play-circle"></i> <span class="brand-text">ZION SPORTS</span></div></nav>
+
+    <div class="ott-main-layout">
+        
+        <div class="left-column-wrapper">
+            <div class="theater-screen-sticky-wrapper" id="stickyWrapper">
+                <div class="theater-screen" id="theaterScreen">
+                    <div id="plyr-wrapper">
+                        <video id="player" playsinline controls autoplay></video>
+                    </div>
+                    <div class="player-loader" id="playerLoader">
+                        <div class="spinner-ring"></div>
+                        <span>Loading Stream</span>
+                    </div>
+                    <button class="unmute-overlay" id="unmuteBtn"><i class="bi bi-volume-mute-fill"></i> Tap to unmute</button>
+                    <button class="mini-player-close" id="miniPlayerClose" aria-label="Close mini player"><i class="bi bi-x-lg"></i></button>
+                    <div class="mini-player-tap-zone" id="miniTapZone" aria-label="Expand player"></div>
+                </div>
+            </div>
+            
+            <div class="stream-details mt-3">
+                <span class="badge-live">Live</span>
+                <img id="activeLogo" src="" class="active-logo-img" alt="logo" onerror="this.style.display='none'">
+                <h1 class="h6 m-0" id="activeTitle">Loading Server...</h1>
+
+                <div class="stream-actions">
+                    <button class="btn-reload-stream icon-only" id="autoRotateBtn" onclick="toggleAutoRotate()" title="Auto-rotate to landscape"><i class="bi bi-arrow-repeat"></i></button>
+                    <button class="btn-reload-stream" id="reloadBtn" onclick="reloadCurrentStream()"><i class="bi bi-arrow-clockwise"></i> Reload</button>
+                </div>
+            </div>
+            <div id="miniPlayerSentinel" aria-hidden="true"></div>
+        </div>
+
+        <div class="container-fluid ott-dashboard">
+            
+            <div class="ott-tabs-wrapper mt-0">
+                <button id="tabFifa" class="tab-trigger active" onclick="togglePanelTab('fifa', this)"><i class="bi bi-trophy-fill me-1"></i> FIFA Premium</button>
+                <button id="tabSports" class="tab-trigger" onclick="togglePanelTab('sports', this)"><i class="bi bi-broadcast me-1"></i> Live Sports</button>
+                <button id="tabBangla" class="tab-trigger" onclick="togglePanelTab('bangla', this)"><i class="bi bi-flag-fill me-1"></i> Bangla TV</button>
+                <button id="tabChannels" class="tab-trigger" onclick="togglePanelTab('channels', this)"><i class="bi bi-tv me-1"></i> Live Channels</button>
+            </div>
+
+            <div class="horizontal-panel">
+                
+                <div id="fifaTabPanel" class="tab-panel-content"></div>
+                <div id="sportsTabPanel" class="tab-panel-content panel-grid-hidden"></div>
+                <div id="banglaTabPanel" class="tab-panel-content panel-grid-hidden"></div>
+                <div id="channelsTabPanel" class="tab-panel-content panel-grid-hidden"></div>
+
+            </div>
+            <div class="text-center mt-5 text-muted" style="font-size: 10px; opacity: 0.2;">© 2026 Zion Sports • Powered by GitHub Pages</div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+
+    <script>
+        const apiUrls = {
+            fifa: "https://iamshajon.com/playlist/fifa.json",
+            sports: "https://iamshajon.com/playlist/sports.json",
+            bangla: "https://iamshajon.com/playlist/bangla.json",
+            channels: "https://iamshajon.com/playlist/channels.json"
+        };
+
+        const FALLBACK_LOGO = "https://upload.wikimedia.org/wikipedia/en/thumb/1/17/2026_FIFA_World_Cup_emblem.svg/250px-2026_FIFA_World_Cup_emblem.svg.png";
+        const MAX_AUTO_ATTEMPTS = 6;     // how many channels to auto-try for the default FIFA pick
+        const MAX_MIRROR_ATTEMPTS = 8;   // how many mirrors to try when a manually-picked channel fails
+        const PLAY_TIMEOUT_MS = 14000;   // if nothing plays within this time, treat as a failure
+        const MOBILE_BREAKPOINT = 992;
+
+        let database = { fifa: [], sports: [], bangla: [], channels: [] };
+        const video = document.getElementById('player');
+        const loader = document.getElementById('playerLoader');
+        const unmuteBtn = document.getElementById('unmuteBtn');
+        const reloadBtn = document.getElementById('reloadBtn');
+        let hls = null;
+        let dashPlayer = null;
+        let savedCurrentChannelData = null;
+        let activeCountryFilter = null; // currently selected country pill inside "Live Channels" tab
+
+        const plyr = new Plyr(video, { 
+            autoplay: true, 
+            clickToPlay: true,
+            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'pip', 'fullscreen']
+        });
+
+        function showLoader() { loader.classList.remove('hidden'); }
+        function hideLoader() { loader.classList.add('hidden'); }
+
+        video.addEventListener('waiting', showLoader);
+        video.addEventListener('playing', () => { hideLoader(); checkMuteState(); });
+        video.addEventListener('canplay', hideLoader);
+
+        function checkMuteState() {
+            unmuteBtn.classList.toggle('show', video.muted);
+        }
+        unmuteBtn.addEventListener('click', () => {
+            video.muted = false;
+            video.volume = 1.0;
+            unmuteBtn.classList.remove('show');
+        });
+
+        // Sticky shadow toggle (YouTube-style stuck indicator on mobile)
+        const stickyWrapper = document.getElementById('stickyWrapper');
+        const stickyObserver = new IntersectionObserver(
+            ([e]) => stickyWrapper.classList.toggle('is-stuck', e.intersectionRatio < 1),
+            { threshold: [1] }
+        );
+        stickyObserver.observe(stickyWrapper);
+
+        /* =========================================================
+           MINI PLAYER (mobile only)
+           Once the user scrolls past the player + stream-details
+           block, shrink the video into a small corner box so the
+           channel list has room to breathe. Tap it to jump back up,
+           or close it to pause playback.
+        ========================================================= */
+        const miniPlayerClose = document.getElementById('miniPlayerClose');
+        const miniTapZone = document.getElementById('miniTapZone');
+        const miniSentinel = document.getElementById('miniPlayerSentinel');
+        let miniPlayerActive = false;
+        let miniPlayerManuallyClosed = false;
+
+        function activateMiniPlayer() {
+            if (miniPlayerActive || miniPlayerManuallyClosed || window.innerWidth >= MOBILE_BREAKPOINT) return;
+            miniPlayerActive = true;
+            stickyWrapper.classList.add('mini-player');
+        }
+        function deactivateMiniPlayer() {
+            if (!miniPlayerActive) return;
+            miniPlayerActive = false;
+            stickyWrapper.classList.remove('mini-player');
+        }
+        function expandMiniPlayer() {
+            stickyWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        if (miniTapZone) miniTapZone.addEventListener('click', expandMiniPlayer);
+        if (miniPlayerClose) {
+            miniPlayerClose.addEventListener('click', (e) => {
+                e.stopPropagation();
+                miniPlayerManuallyClosed = true;
+                deactivateMiniPlayer();
+                video.pause();
+            });
+        }
+        if (miniSentinel) {
+            const miniObserver = new IntersectionObserver(([entry]) => {
+                if (window.innerWidth >= MOBILE_BREAKPOINT) { deactivateMiniPlayer(); return; }
+                if (miniPlayerManuallyClosed) return;
+                if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+                    activateMiniPlayer();
+                } else {
+                    deactivateMiniPlayer();
+                }
+            }, { threshold: 0 });
+            miniObserver.observe(miniSentinel);
+        }
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= MOBILE_BREAKPOINT) deactivateMiniPlayer();
+        });
+
+        /* =========================================================
+           AUTO-ROTATE
+           Toggle saved in localStorage. When ON and the phone is
+           rotated to landscape, the player auto-enters fullscreen;
+           rotating back to portrait exits it. Also tries to lock the
+           screen orientation while fullscreen is active.
+           Note: iOS Safari restricts fullscreen requests that aren't
+           directly triggered by a tap, so this works best on Android.
+        ========================================================= */
+        const AUTO_ROTATE_KEY = 'zionAutoRotate_v1';
+        let autoRotateEnabled = true;
+        try {
+            const stored = localStorage.getItem(AUTO_ROTATE_KEY);
+            autoRotateEnabled = stored === null ? true : stored === '1';
+        } catch (e) { /* storage unavailable, default stays true */ }
+
+        function updateAutoRotateButton() {
+            const btn = document.getElementById('autoRotateBtn');
+            if (!btn) return;
+            btn.classList.toggle('active-toggle', autoRotateEnabled);
+            btn.title = autoRotateEnabled ? 'Auto-rotate: ON' : 'Auto-rotate: OFF';
+        }
+        function toggleAutoRotate() {
+            autoRotateEnabled = !autoRotateEnabled;
+            try { localStorage.setItem(AUTO_ROTATE_KEY, autoRotateEnabled ? '1' : '0'); } catch (e) {}
+            updateAutoRotateButton();
+        }
+        function handleOrientationChange(isLandscape) {
+            if (!autoRotateEnabled || window.innerWidth >= MOBILE_BREAKPOINT) return;
+            try {
+                if (isLandscape) {
+                    if (plyr && plyr.fullscreen && !plyr.fullscreen.active) plyr.fullscreen.enter();
+                } else {
+                    if (plyr && plyr.fullscreen && plyr.fullscreen.active) plyr.fullscreen.exit();
+                }
+            } catch (e) { /* fullscreen request blocked by browser, ignore */ }
+        }
+        if (window.matchMedia) {
+            const orientationMq = window.matchMedia('(orientation: landscape)');
+            const orientationHandler = (e) => handleOrientationChange(e.matches);
+            if (orientationMq.addEventListener) orientationMq.addEventListener('change', orientationHandler);
+            else if (orientationMq.addListener) orientationMq.addListener(orientationHandler);
+        }
+        plyr.on('enterfullscreen', () => {
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(() => {});
+            }
+        });
+        plyr.on('exitfullscreen', () => {
+            if (screen.orientation && screen.orientation.unlock) {
+                try { screen.orientation.unlock(); } catch (e) {}
+            }
+        });
+
+        /* =========================================================
+           HEALTH / TRENDING SYSTEM
+           Every real play attempt (success or failure) is recorded
+           in localStorage so the "Trending Now" ranking and the
+           default FIFA channel always reflect what is *actually*
+           working right now, automatically, with no manual curation.
+        ========================================================= */
+        const HEALTH_KEY = 'zionStreamHealth_v1';
+        let healthData = {};
+
+        function loadHealth() {
+            try {
+                const raw = localStorage.getItem(HEALTH_KEY);
+                healthData = raw ? JSON.parse(raw) : {};
+            } catch (e) {
+                healthData = {};
+            }
+        }
+        function saveHealth() {
+            try { localStorage.setItem(HEALTH_KEY, JSON.stringify(healthData)); } catch (e) { /* storage unavailable, ignore */ }
+        }
+        function getHealth(url) {
+            return healthData[url] || { success: 0, fail: 0, last: null };
+        }
+        function recordHealth(url, ok) {
+            const h = getHealth(url);
+            if (ok) { h.success += 1; h.last = 'ok'; } else { h.fail += 1; h.last = 'fail'; }
+            h.ts = Date.now();
+            healthData[url] = h;
+            saveHealth();
+        }
+        // tier 0 = confirmed working, 1 = untested / mixed, 2 = confirmed failing
+        function healthRank(ch) {
+            const h = getHealth(ch.url);
+            let tier = 1;
+            if (h.success > 0 && h.last === 'ok') tier = 0;
+            else if (h.fail > 0 && h.last === 'fail' && h.success === 0) tier = 2;
+            return { tier, score: h.success - h.fail };
+        }
+        function sortByTrending(list) {
+            return [...list].sort((a, b) => {
+                const ra = healthRank(a), rb = healthRank(b);
+                if (ra.tier !== rb.tier) return ra.tier - rb.tier;
+                if (rb.score !== ra.score) return rb.score - ra.score;
+                return 0;
+            });
+        }
+        function refreshHealthDots() {
+            document.querySelectorAll('.channel-card').forEach(card => {
+                const url = card.dataset.url;
+                const h = getHealth(url);
+                let tier = 1;
+                if (h.success > 0 && h.last === 'ok') tier = 0;
+                else if (h.fail > 0 && h.last === 'fail' && h.success === 0) tier = 2;
+                const dot = card.querySelector('.health-dot');
+                if (dot) dot.className = 'health-dot ' + (tier === 0 ? 'dot-good' : tier === 2 ? 'dot-bad' : 'dot-unknown');
+            });
+        }
+
+        async function fetchAllPlaylists() {
+            document.getElementById('activeTitle').innerText = "Syncing All Live Servers...";
+            showLoader();
+            loadHealth();
+            updateAutoRotateButton();
+            try {
+                const [fifaRes, sportsRes, banglaRes, channelsRes] = await Promise.all([
+                    fetch(apiUrls.fifa).then(r => r.json()).catch(() => []),
+                    fetch(apiUrls.sports).then(r => r.json()).catch(() => []),
+                    fetch(apiUrls.bangla).then(r => r.json()).catch(() => []),
+                    fetch(apiUrls.channels).then(r => r.json()).catch(() => [])
+                ]);
+
+                database.fifa = Array.isArray(fifaRes) ? fifaRes : [];
+                database.sports = Array.isArray(sportsRes) ? sportsRes : [];
+                database.bangla = Array.isArray(banglaRes) ? banglaRes : [];
+                database.channels = Array.isArray(channelsRes) ? channelsRes : [];
+
+                renderTabWithTrending('fifa', 'fifaTabPanel');
+                renderTabWithTrending('sports', 'sportsTabPanel');
+                renderTabWithTrending('bangla', 'banglaTabPanel');
+                renderTabWithTrending('channels', 'channelsTabPanel');
+
+                autoPlayDefaultChannel();
+            } catch (error) {
+                console.error("Playlist sync failed:", error);
+                document.getElementById('activeTitle').innerText = "Sync Failed. Please Reload Page!";
+                hideLoader();
+            }
+        }
+
+        /* =========================================================
+           RENDERING
+        ========================================================= */
+        function buildCard(ch, index) {
+            const card = document.createElement('div');
+            card.className = 'channel-card';
+            card.style.setProperty('--i', index || 0);
+            card.dataset.url = ch.url;
+            card.dataset.name = ch.name || '';
+            card.onclick = function () { playWithMirrorFallback(ch); };
+
+            const logoSrc = ch.logo && ch.logo !== "" ? ch.logo : FALLBACK_LOGO;
+            const rank = healthRank(ch);
+            const dotClass = rank.tier === 0 ? 'dot-good' : rank.tier === 2 ? 'dot-bad' : 'dot-unknown';
+
+            card.innerHTML = `
+                <span class="health-dot ${dotClass}"></span>
+                <img src="${logoSrc}" class="logo-img" alt="${ch.name}" onerror="this.src='${FALLBACK_LOGO}'">
+                <div class="card-info-box">
+                    <div class="card-name">${ch.name}</div>
+                </div>
+            `;
+            return card;
+        }
+
+        function renderGrid(channels, container) {
+            container.innerHTML = "";
+            if (!channels || channels.length === 0) {
+                container.innerHTML = `<div class="text-muted text-center p-3" style="grid-column: 1 / -1;">No channels live.</div>`;
+                return;
+            }
+            channels.forEach((ch, i) => container.appendChild(buildCard(ch, i)));
+        }
+
+        // Renders a tab body: Trending Now row on top, then either the full
+        // sorted list (fifa/sports/bangla) or the country browser (channels).
+        function renderTabWithTrending(key, panelId) {
+            const panel = document.getElementById(panelId);
+            if (!panel) return;
+
+            const channels = database[key] || [];
+            panel.innerHTML = "";
+
+            if (channels.length === 0) {
+                panel.innerHTML = `<div class="text-muted text-center p-3">No channels live.</div>`;
+                return;
+            }
+
+            const sorted = sortByTrending(channels);
+            let trending = sorted.filter(ch => healthRank(ch).tier !== 2).slice(0, 8);
+            if (trending.length === 0) trending = sorted.slice(0, 8);
+
+            const trendHeading = document.createElement('div');
+            trendHeading.className = 'section-heading';
+            trendHeading.innerHTML = `<i class="bi bi-fire"></i> Trending Now`;
+            panel.appendChild(trendHeading);
+
+            const trendGrid = document.createElement('div');
+            trendGrid.className = 'iptv-grid-row trending-row';
+            renderGrid(trending, trendGrid);
+            panel.appendChild(trendGrid);
+
+            if (key === 'channels') {
+                renderCountryBrowser(channels, panel);
+            } else {
+                const allHeading = document.createElement('div');
+                allHeading.className = 'section-heading';
+                allHeading.innerText = 'All Channels';
+                panel.appendChild(allHeading);
+
+                const allGrid = document.createElement('div');
+                allGrid.className = 'iptv-grid-row';
+                renderGrid(sorted, allGrid);
+                panel.appendChild(allGrid);
+            }
+        }
+
+        // Country/category browser for the "Live Channels" tab, grouped by
+        // the playlist's "group" field (mostly country names in this feed).
+        function renderCountryBrowser(channels, panel) {
+            const groups = {};
+            channels.forEach(ch => {
+                const g = (ch.group && ch.group.trim()) ? ch.group.trim() : 'Other';
+                if (!groups[g]) groups[g] = [];
+                groups[g].push(ch);
+            });
+            const countryNames = Object.keys(groups).sort((a, b) => a.localeCompare(b));
+
+            const browseHeading = document.createElement('div');
+            browseHeading.className = 'section-heading';
+            browseHeading.innerText = 'Browse by Country';
+            panel.appendChild(browseHeading);
+
+            const pillRow = document.createElement('div');
+            pillRow.className = 'country-pill-row';
+
+            const allPill = document.createElement('button');
+            allPill.type = 'button';
+            allPill.className = 'country-pill' + (activeCountryFilter === null ? ' active' : '');
+            allPill.innerText = `All (${channels.length})`;
+            allPill.onclick = () => { activeCountryFilter = null; renderTabWithTrending('channels', 'channelsTabPanel'); };
+            pillRow.appendChild(allPill);
+
+            countryNames.forEach(name => {
+                const pill = document.createElement('button');
+                pill.type = 'button';
+                pill.className = 'country-pill' + (activeCountryFilter === name ? ' active' : '');
+                pill.innerText = `${name} (${groups[name].length})`;
+                pill.onclick = () => { activeCountryFilter = name; renderTabWithTrending('channels', 'channelsTabPanel'); };
+                pillRow.appendChild(pill);
+            });
+            panel.appendChild(pillRow);
+
+            const gridHeading = document.createElement('div');
+            gridHeading.className = 'section-heading';
+            gridHeading.innerText = activeCountryFilter ? activeCountryFilter : 'All Channels';
+            panel.appendChild(gridHeading);
+
+            const grid = document.createElement('div');
+            grid.className = 'iptv-grid-row';
+            const listToShow = activeCountryFilter ? sortByTrending(groups[activeCountryFilter]) : sortByTrending(channels);
+            renderGrid(listToShow, grid);
+            panel.appendChild(grid);
+        }
+
+        /* =========================================================
+           PLAYBACK + AUTOMATIC FAILOVER
+        ========================================================= */
+        let playToken = 0;
+
+        // Plays one specific channel object. Calls onResult(true/false) exactly
+        // once, based on whether playback actually started or failed/timed out.
+        function switchStandardChannel(channelObj, onResult) {
+            const myToken = ++playToken;
+            savedCurrentChannelData = channelObj;
+            miniPlayerManuallyClosed = false; // a fresh channel pick re-enables the mini player
+            showLoader();
+            loader.querySelector('span').innerText = 'Loading Stream';
+
+            document.querySelectorAll('.channel-card').forEach(c => {
+                c.classList.toggle('active', c.dataset.url === channelObj.url);
+            });
+
+            document.getElementById('activeTitle').innerText = channelObj.name;
+            const activeLogo = document.getElementById('activeLogo');
+            activeLogo.src = channelObj.logo && channelObj.logo !== "" ? channelObj.logo : FALLBACK_LOGO;
+            activeLogo.style.display = 'inline-block';
+
+            if (hls) { hls.destroy(); hls = null; }
+            if (dashPlayer) { dashPlayer.reset(); dashPlayer = null; }
+
+            let settled = false;
+            let watchdog;
+            const finish = (ok) => {
+                if (settled || myToken !== playToken) return;
+                settled = true;
+                clearTimeout(watchdog);
+                video.removeEventListener('playing', onPlaying);
+                video.removeEventListener('error', onError);
+                recordHealth(channelObj.url, ok);
+                refreshHealthDots();
+                if (onResult) onResult(ok);
+            };
+            const onPlaying = () => finish(true);
+            const onError = () => finish(false);
+            video.addEventListener('playing', onPlaying);
+            video.addEventListener('error', onError);
+            watchdog = setTimeout(() => finish(false), PLAY_TIMEOUT_MS);
+
+            try {
+                if (channelObj.type === 'dash' || channelObj.url.includes('.mpd')) {
+                    dashPlayer = dashjs.MediaPlayer().create();
+
+                    if (channelObj.kid && channelObj.key) {
+                        dashPlayer.setProtectionData({
+                            "org.w3.clearkey": {
+                                "clearkeys": { [channelObj.kid]: channelObj.key }
+                            }
+                        });
+                    }
+
+                    dashPlayer.initialize(video, channelObj.url, true);
+                    dashPlayer.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, function () {
+                        video.muted = false;
+                        video.volume = 1.0;
+                    });
+                    dashPlayer.on(dashjs.MediaPlayer.events.ERROR, function () { finish(false); });
+                } else {
+                    if (Hls.isSupported()) {
+                        hls = new Hls({
+                            maxBufferLength: 40,
+                            maxMaxBufferLength: 80,
+                            enableWorker: true,
+                            liveSyncDurationCount: 3
+                        });
+                        hls.loadSource(channelObj.url);
+                        hls.attachMedia(video);
+                        hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                            video.muted = false;
+                            video.volume = 1.0;
+                            video.play().catch(() => {
+                                video.muted = true;
+                                video.play().then(checkMuteState);
+                            });
+                        });
+                        hls.on(Hls.Events.ERROR, function (event, data) {
+                            if (data.fatal) {
+                                loader.querySelector('span').innerText = 'Stream Error — switching source';
+                                showLoader();
+                                finish(false);
+                            }
+                        });
+                    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                        video.src = channelObj.url;
+                        video.play().catch(() => finish(false));
+                    } else {
+                        finish(false);
+                    }
+                }
+            } catch (e) {
+                finish(false);
+            }
+        }
+
+        // Finds every entry across all categories that shares the same channel
+        // name (i.e. mirrors/duplicate servers for the same channel).
+        function getMirrorsForChannel(channelObj) {
+            const all = [...database.fifa, ...database.sports, ...database.bangla, ...database.channels];
+            const target = (channelObj.name || '').trim().toLowerCase();
+            const matches = all.filter(c => (c.name || '').trim().toLowerCase() === target);
+            const others = matches.filter(c => c.url !== channelObj.url);
+            return [channelObj, ...sortByTrending(others)];
+        }
+
+        // Plays the channel the user picked; if it fails, automatically tries
+        // the next best mirror of the SAME channel until one works.
+        function playWithMirrorFallback(channelObj, attemptIndex = 0, mirrorList = null) {
+            const list = mirrorList || getMirrorsForChannel(channelObj);
+            if (attemptIndex >= Math.min(list.length, MAX_MIRROR_ATTEMPTS)) {
+                loader.querySelector('span').innerText = 'All sources failed — try another channel';
+                showLoader();
+                return;
+            }
+            const candidate = list[attemptIndex];
+            switchStandardChannel(candidate, (ok) => {
+                if (!ok) playWithMirrorFallback(channelObj, attemptIndex + 1, list);
+            });
+        }
+
+        // Used only for the automatic FIFA default pick on page load: walks
+        // down a trending-sorted list of DIFFERENT channels until one plays.
+        function autoPlayBestChannel(list, attemptIndex = 0) {
+            if (!list || list.length === 0) return;
+            if (attemptIndex >= Math.min(list.length, MAX_AUTO_ATTEMPTS)) {
+                if (list[0]) switchStandardChannel(list[0]); // last resort: just show the top pick
+                return;
+            }
+            const candidate = list[attemptIndex];
+            switchStandardChannel(candidate, (ok) => {
+                if (!ok) autoPlayBestChannel(list, attemptIndex + 1);
+            });
+        }
+
+        function reloadCurrentStream() {
+            if (savedCurrentChannelData) {
+                reloadBtn.classList.add('spinning');
+                playWithMirrorFallback(savedCurrentChannelData);
+                setTimeout(() => reloadBtn.classList.remove('spinning'), 600);
+            }
+        }
+
+        function togglePanelTab(tabName, buttonElement) {
+            document.querySelectorAll('.tab-trigger').forEach(t => t.classList.remove('active'));
+            buttonElement.classList.add('active');
+
+            document.getElementById('fifaTabPanel').classList.add('panel-grid-hidden');
+            document.getElementById('sportsTabPanel').classList.add('panel-grid-hidden');
+            document.getElementById('banglaTabPanel').classList.add('panel-grid-hidden');
+            document.getElementById('channelsTabPanel').classList.add('panel-grid-hidden');
+
+            if (tabName === 'fifa') {
+                document.getElementById('fifaTabPanel').classList.remove('panel-grid-hidden');
+            } else if (tabName === 'sports') {
+                document.getElementById('sportsTabPanel').classList.remove('panel-grid-hidden');
+            } else if (tabName === 'bangla') {
+                document.getElementById('banglaTabPanel').classList.remove('panel-grid-hidden');
+            } else if (tabName === 'channels') {
+                document.getElementById('channelsTabPanel').classList.remove('panel-grid-hidden');
+            }
+        }
+
+        function autoPlayDefaultChannel() {
+            if (!database.fifa || database.fifa.length === 0) return;
+            const sorted = sortByTrending(database.fifa);
+            autoPlayBestChannel(sorted, 0);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchAllPlaylists();
+        });
+    </script>
+</body>
+</html>
