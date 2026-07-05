@@ -966,7 +966,7 @@
             });
         }
 
-        // Used only for the automatic FIFA default pick on page load: walks
+        // Used only for the automatic default pick on page load: walks
         // down a trending-sorted list of DIFFERENT channels until one plays.
         function autoPlayBestChannel(list, attemptIndex = 0) {
             if (!list || list.length === 0) return;
@@ -1009,9 +1009,30 @@
         }
 
         function autoPlayDefaultChannel() {
-            if (!database.fifa || database.fifa.length === 0) return;
-            const sorted = sortByTrending(database.fifa);
-            autoPlayBestChannel(sorted, 0);
+            // সমস্ত চ্যানেলের ডেটা একসাথে করা
+            const allChannels = [...database.fifa, ...database.sports, ...database.bangla, ...database.channels];
+
+            // পছন্দের চ্যানেলগুলোর নাম (ছোট হাতের অক্ষরে)
+            const preferredNames = ["somoy tv", "bein sports"];
+            
+            // ডেটাবেস থেকে পছন্দের চ্যানেলগুলো ফিল্টার করা
+            let preferredList = allChannels.filter(ch => {
+                const chName = (ch.name || '').toLowerCase();
+                return preferredNames.some(pref => chName.includes(pref));
+            });
+
+            // পছন্দের চ্যানেলগুলোকেও হেলথ এবং ট্রেন্ডিং অনুযায়ী সর্ট করা
+            preferredList = sortByTrending(preferredList);
+
+            // যদি পছন্দের চ্যানেল পাওয়া যায়, তবে সেটা প্লে করবে
+            if (preferredList.length > 0) {
+                autoPlayBestChannel(preferredList, 0);
+            } 
+            // যদি না পাওয়া যায়, তবে আগের মতো ফিফা (FIFA) লিস্ট থেকে প্লে করবে
+            else if (database.fifa && database.fifa.length > 0) {
+                const sorted = sortByTrending(database.fifa);
+                autoPlayBestChannel(sorted, 0);
+            }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
