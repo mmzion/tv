@@ -139,6 +139,38 @@
         video { width: 100% !important; height: 100% !important; background: #000; object-fit: contain !important; }
         .plyr { width: 100%; height: 100%; }
 
+        /* 🌟 Subtle Text Logo Watermark 🌟 */
+        .text-watermark {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            z-index: 50;
+            pointer-events: none; /* Clicks pass through */
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.4); 
+            text-transform: uppercase;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); 
+            user-select: none;
+            transition: all 0.3s ease;
+        }
+        .text-watermark span {
+            color: rgba(124, 58, 237, 0.5);
+        }
+        .plyr--fullscreen-active .text-watermark {
+            font-size: 16px;
+            top: 25px;
+            right: 30px;
+        }
+        .theater-screen-sticky-wrapper.mini-player .text-watermark {
+            font-size: 8px;
+            top: 6px;
+            right: 26px;
+            letter-spacing: 0.5px;
+        }
+
         /* Loading spinner shown while stream  */
         .player-loader {
             position: absolute;
@@ -496,6 +528,17 @@
             autoplay: true, 
             clickToPlay: true,
             controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'pip', 'fullscreen']
+        });
+
+        // 🌟 Add Text Watermark to the Player Dynamically 🌟
+        plyr.on('ready', () => {
+            const plyrContainer = document.querySelector('.plyr');
+            if (plyrContainer && !document.querySelector('.text-watermark')) {
+                const watermark = document.createElement('div');
+                watermark.className = 'text-watermark';
+                watermark.innerHTML = 'ZION <span>SPORTS</span>';
+                plyrContainer.appendChild(watermark);
+            }
         });
 
         function showLoader() { loader.classList.remove('hidden'); }
@@ -966,7 +1009,7 @@
             });
         }
 
-        // Used only for the automatic default pick on page load: walks
+        // Used only for the automatic FIFA default pick on page load: walks
         // down a trending-sorted list of DIFFERENT channels until one plays.
         function autoPlayBestChannel(list, attemptIndex = 0) {
             if (!list || list.length === 0) return;
@@ -1009,30 +1052,9 @@
         }
 
         function autoPlayDefaultChannel() {
-            // সমস্ত চ্যানেলের ডেটা একসাথে করা
-            const allChannels = [...database.fifa, ...database.sports, ...database.bangla, ...database.channels];
-
-            // পছন্দের চ্যানেলগুলোর নাম (ছোট হাতের অক্ষরে)
-            const preferredNames = ["somoy tv", "bein sports"];
-            
-            // ডেটাবেস থেকে পছন্দের চ্যানেলগুলো ফিল্টার করা
-            let preferredList = allChannels.filter(ch => {
-                const chName = (ch.name || '').toLowerCase();
-                return preferredNames.some(pref => chName.includes(pref));
-            });
-
-            // পছন্দের চ্যানেলগুলোকেও হেলথ এবং ট্রেন্ডিং অনুযায়ী সর্ট করা
-            preferredList = sortByTrending(preferredList);
-
-            // যদি পছন্দের চ্যানেল পাওয়া যায়, তবে সেটা প্লে করবে
-            if (preferredList.length > 0) {
-                autoPlayBestChannel(preferredList, 0);
-            } 
-            // যদি না পাওয়া যায়, তবে আগের মতো ফিফা (FIFA) লিস্ট থেকে প্লে করবে
-            else if (database.fifa && database.fifa.length > 0) {
-                const sorted = sortByTrending(database.fifa);
-                autoPlayBestChannel(sorted, 0);
-            }
+            if (!database.fifa || database.fifa.length === 0) return;
+            const sorted = sortByTrending(database.fifa);
+            autoPlayBestChannel(sorted, 0);
         }
 
         window.addEventListener('DOMContentLoaded', () => {
