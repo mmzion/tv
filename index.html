@@ -452,21 +452,6 @@
         .plyr__control--overlaid:hover { background: var(--purple-primary) !important; }
         .plyr--video .plyr__controls { background: linear-gradient(transparent, rgba(0,0,0,0.85)); }
 
-        .proxy-warning {
-            background: rgba(239, 68, 68, 0.12);
-            border: 1px solid rgba(239, 68, 68, 0.35);
-            color: #fca5a5;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 8px 12px;
-            border-radius: 10px;
-            margin-top: 10px;
-            display: none;
-            align-items: center;
-            gap: 8px;
-        }
-        .proxy-warning.show { display: flex; }
-
         @media (min-width: 992px) {
             .ott-main-layout {
                 display: grid;
@@ -509,13 +494,11 @@
         <div class="left-column-wrapper">
             <div class="theater-screen-sticky-wrapper" id="stickyWrapper">
                 <div class="theater-screen" id="theaterScreen">
-                    <!-- Standard Video Player -->
                     <div id="plyr-wrapper">
                         <video id="player" playsinline controls autoplay></video>
                     </div>
                     
-                    <!-- Iframe Player (for embedded links) -->
-                    <iframe id="iframe-player" class="hidden" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+                    <iframe id="iframe-player" class="hidden" sandbox="allow-scripts allow-same-origin allow-presentation allow-forms" allowfullscreen allow="autoplay; encrypted-media"></iframe>
 
                     <div class="player-loader" id="playerLoader">
                         <div class="spinner-ring"></div>
@@ -537,15 +520,13 @@
                     <button class="btn-reload-stream" id="reloadBtn" onclick="reloadCurrentStream()"><i class="bi bi-arrow-clockwise"></i> Reload</button>
                 </div>
             </div>
-            <div class="proxy-warning" id="proxyWarning"><i class="bi bi-exclamation-triangle-fill"></i> <span>PROXY_BASE_URL is not set — many streams need the proxy to play. See the comment at the top of the script.</span></div>
             <div id="miniPlayerSentinel" aria-hidden="true"></div>
         </div>
 
         <div class="container-fluid ott-dashboard">
             
-            <!-- Manual Link Input Area -->
             <div class="manual-link-container">
-                <input type="text" id="manualLinkInput" placeholder="Paste m3u8, mpd, or iframe link here to play..." />
+                <input type="text" id="manualLinkInput" placeholder="Paste m3u8 link, embed URL, or Website Link to extract stream..." />
                 <button onclick="playManualStream()"><i class="bi bi-play-fill"></i> Play</button>
             </div>
 
@@ -642,11 +623,6 @@
         let dashPlayer = null;
         let savedCurrentChannelData = null;
         let activeCountryFilter = null; 
-
-        if (!PROXY_BASE_URL) {
-            const w = document.getElementById('proxyWarning');
-            if (w) w.classList.add('show');
-        }
 
         const plyr = new Plyr(video, { 
             autoplay: true, 
@@ -866,7 +842,6 @@
             card.style.setProperty('--i', index || 0);
             card.dataset.url = ch.url;
             card.dataset.name = ch.name || '';
-            // Store type explicitly so it plays correctly in the right player
             card.dataset.type = ch.type || ''; 
             card.onclick = function () { playWithMirrorFallback(ch); };
 
@@ -1002,25 +977,54 @@
             }, true);
         }
 
-        // Logic for Manual URL Input
-        function playManualStream() {
-            const url = document.getElementById('manualLinkInput').value.trim();
-            if (!url) return alert("Please enter a valid link.");
+        // --- NEW LOGIC: LINK EXTRACTION VIA CORS PROXY ---
+        async function playManualStream() {
+            const inputUrl = document.getElementById('manualLinkInput').value.trim();
+            if (!inputUrl) return alert("Please enter a valid link.");
 
-            let type = 'iframe'; 
-            if (url.includes('.m3u8')) type = 'hls';
-            else if (url.includes('.mpd')) type = 'dash';
+            // Check if it's already a direct video link or embed link
+            const isDirectStream = inputUrl.includes('.m3u8') || inputUrl.includes('.mpd');
+            const isEmbed = inputUrl.includes('embed') || inputUrl.includes('iframe') || inputUrl.includes('e.php');
 
-            const manualChannel = {
-                name: "Manual Custom Stream",
-                url: url,
-                type: type,
-                logo: FALLBACK_LOGO
-            };
+            if (isDirectStream || isEmbed) {
+                let type = 'iframe'; 
+                if (inputUrl.includes('.m3u8')) type = 'hls';
+                else if (inputUrl.includes('.mpd')) type = 'dash';
+                
+                playWithMirrorFallback({ name: "Manual Stream", url: inputUrl, type: type, logo: FALLBACK_LOGO });
+                stickyWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                return;
+            }
 
-            playWithMirrorFallback(manualChannel);
-            // Scroll to player
-            stickyWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // If it's a normal website URL, try to extract links using a public CORS proxy
+            document.getElementById('activeTitle').innerText = "Extracting link from website...";
+            showLoader();
+            
+            try {
+                // Using allorigins as a free CORS proxy to fetch HTML content
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(inputUrl)}`;
+                const response = await fetch(proxyUrl);
+                const data = await response.json();
+                const html = data.contents;
+                
+                // Regex to find .m3u8 or .mpd links within the HTML source
+                const streamMatch = html.match(/(https?:\/\/[^\s"'<>]+\.(?:m3u8|mpd)[^\s"'<>]*)/i);
+                
+                if (streamMatch && streamMatch[1]) {
+                    const extractedUrl = streamMatch[1];
+                    let type = extractedUrl.includes('.m3u8') ? 'hls' : 'dash';
+                    playWithMirrorFallback({ name: "Extracted Stream", url: extractedUrl, type: type, logo: FALLBACK_LOGO });
+                    stickyWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    hideLoader();
+                    alert("Could not find any visible .m3u8 or .mpd stream on that webpage. The site might be protected or encrypting its links.");
+                    document.getElementById('activeTitle').innerText = "Extraction Failed";
+                }
+            } catch (error) {
+                hideLoader();
+                alert("Failed to fetch the website. It might be blocking proxy requests.");
+                document.getElementById('activeTitle').innerText = "Extraction Failed";
+            }
         }
 
         function switchStandardChannel(channelObj, onResult) {
@@ -1039,11 +1043,9 @@
             activeLogo.src = channelObj.logo && channelObj.logo !== "" ? channelObj.logo : FALLBACK_LOGO;
             activeLogo.style.display = 'inline-block';
 
-            // Check if it's an iframe (either defined in dataset or doesn't have standard media extensions)
             const isIframe = channelObj.type === 'iframe' || (!channelObj.url.includes('.m3u8') && !channelObj.url.includes('.mpd'));
 
             if (isIframe) {
-                // Handle Iframe Embeds
                 plyrWrapper.classList.add('hidden');
                 iframePlayer.classList.remove('hidden');
                 
@@ -1053,7 +1055,6 @@
 
                 iframePlayer.src = channelObj.url;
 
-                // Loaders don't get native events for cross-origin iframes, so we manually hide it
                 setTimeout(() => {
                     if (myToken === playToken) {
                         hideLoader();
@@ -1065,7 +1066,6 @@
                 return;
             }
 
-            // Handle standard Video (m3u8/mpd)
             iframePlayer.src = "";
             iframePlayer.classList.add('hidden');
             plyrWrapper.classList.remove('hidden');
