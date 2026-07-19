@@ -42,6 +42,8 @@
             padding: 0;
         }
 
+        .hidden { display: none !important; }
+
         .ott-nav { 
             background: rgba(9, 5, 20, 0.85) !important; 
             backdrop-filter: blur(20px); 
@@ -66,7 +68,6 @@
             color: transparent;
         }
 
-       
         .theater-screen-sticky-wrapper {
             position: -webkit-sticky;
             position: sticky;
@@ -80,8 +81,6 @@
             box-shadow: 0 12px 28px rgba(0,0,0,0.85);
         }
 
-        /* ---- Mini player (mobile only): shrinks into a corner box once the
-             user scrolls well past the player + stream details. ---- */
         .theater-screen-sticky-wrapper.mini-player {
             position: fixed !important;
             top: auto !important;
@@ -97,6 +96,7 @@
         .theater-screen-sticky-wrapper.mini-player .theater-screen { aspect-ratio: 16 / 9; }
         .theater-screen-sticky-wrapper.mini-player .plyr__controls,
         .theater-screen-sticky-wrapper.mini-player .unmute-overlay { display: none !important; }
+        .theater-screen-sticky-wrapper.mini-player iframe { pointer-events: none; }
 
         .mini-player-tap-zone {
             position: absolute;
@@ -139,13 +139,24 @@
         video { width: 100% !important; height: 100% !important; background: #000; object-fit: contain !important; }
         .plyr { width: 100%; height: 100%; }
 
-        /* 🌟 Subtle Text Logo Watermark 🌟 */
+        /* Iframe Player Styles */
+        #iframe-player {
+            width: 100%;
+            height: 100%;
+            border: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            background: #000;
+        }
+
         .text-watermark {
             position: absolute;
             top: 15px;
             right: 20px;
             z-index: 50;
-            pointer-events: none; /* Clicks pass through */
+            pointer-events: none;
             font-family: var(--font-display);
             font-weight: 800;
             font-size: 12px;
@@ -171,7 +182,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Loading spinner shown while stream  */
         .player-loader {
             position: absolute;
             inset: 0;
@@ -196,7 +206,6 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .player-loader span { font-family: var(--font-display); font-size: 11px; color: #a78bfa; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
 
-        /* simple first-tap unmute lay (removes itself after one tap) */
         .unmute-overlay {
             position: absolute;
             bottom: 14px; left: 50%; transform: translateX(-50%);
@@ -244,6 +253,49 @@
         }
         @keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
+        /* Manual Input Box Styles */
+        .manual-link-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+            background: rgba(22, 14, 45, 0.75);
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(124, 58, 237, 0.2);
+        }
+        .manual-link-container input {
+            flex-grow: 1;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            color: #fff;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .manual-link-container input:focus {
+            border-color: var(--purple-primary);
+        }
+        .manual-link-container button {
+            background: var(--purple-primary);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .manual-link-container button:hover {
+            box-shadow: 0 0 12px var(--purple-glow);
+            transform: translateY(-1px);
+        }
+
         .horizontal-panel { margin-top: 12px; background: var(--panel-bg); padding: 12px; border-radius: 14px; border: 1px solid rgba(124, 58, 237, 0.1); }
 
         .stream-actions { margin-left: auto; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
@@ -277,11 +329,9 @@
         .tab-trigger:hover:not(.active) { color: #c4b5fd; background: rgba(124, 58, 237, 0.08); }
         .tab-trigger.active { background: var(--purple-primary); color: #fff; box-shadow: 0 0 10px var(--purple-glow); }
 
-        /* tab body wrapper: holds heading + grid sections, no grid of its own */
         .tab-panel-content { width: 100%; }
         .tab-panel-content.panel-grid-hidden { display: none !important; }
 
-        /* section headings (Trending Now / All Channels / Browse by Country) */
         .section-heading {
             font-family: var(--font-display);
             font-size: 11px;
@@ -313,7 +363,6 @@
             z-index: 2;
         }
 
-        /* country pill selector */
         .country-pill-row {
             display: flex;
             flex-wrap: nowrap;
@@ -340,7 +389,6 @@
         .country-pill:hover { background: rgba(124, 58, 237, 0.18); }
         .country-pill.active { background: var(--purple-primary); color: #fff; border-color: var(--purple-primary); box-shadow: 0 0 10px var(--purple-glow); }
 
-        /* 📦 রেসপনসিভ চ্যানেল গ্রিড */
         .iptv-grid-row {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
@@ -381,7 +429,6 @@
         .card-info-box { display: flex; flex-direction: column; align-items: center; width: 100%; overflow: hidden; }
         .card-name { font-weight: 600; font-size: 10px; color: #cbd5e1; text-transform: uppercase; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: 100%; }
 
-        /* health status dot on each card */
         .health-dot {
             position: absolute;
             top: 6px;
@@ -400,27 +447,10 @@
             .channel-card { animation: none !important; }
         }
 
-        /* Plyr theme polish */
         .plyr--video { --plyr-color-main: var(--purple-primary); }
         .plyr__control--overlaid { background: rgba(124, 58, 237, 0.85) !important; }
         .plyr__control--overlaid:hover { background: var(--purple-primary) !important; }
         .plyr--video .plyr__controls { background: linear-gradient(transparent, rgba(0,0,0,0.85)); }
-
-        /* One-time proxy warning banner */
-        .proxy-warning {
-            background: rgba(239, 68, 68, 0.12);
-            border: 1px solid rgba(239, 68, 68, 0.35);
-            color: #fca5a5;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 8px 12px;
-            border-radius: 10px;
-            margin-top: 10px;
-            display: none;
-            align-items: center;
-            gap: 8px;
-        }
-        .proxy-warning.show { display: flex; }
 
         @media (min-width: 992px) {
             .ott-main-layout {
@@ -467,6 +497,9 @@
                     <div id="plyr-wrapper">
                         <video id="player" playsinline controls autoplay></video>
                     </div>
+                    
+                    <iframe id="iframe-player" class="hidden" sandbox="allow-scripts allow-same-origin allow-presentation allow-forms" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+
                     <div class="player-loader" id="playerLoader">
                         <div class="spinner-ring"></div>
                         <span>Loading Stream</span>
@@ -487,27 +520,32 @@
                     <button class="btn-reload-stream" id="reloadBtn" onclick="reloadCurrentStream()"><i class="bi bi-arrow-clockwise"></i> Reload</button>
                 </div>
             </div>
-            <div class="proxy-warning" id="proxyWarning"><i class="bi bi-exclamation-triangle-fill"></i> <span>PROXY_BASE_URL is not set — many streams need the proxy to play. See the comment at the top of the script.</span></div>
             <div id="miniPlayerSentinel" aria-hidden="true"></div>
         </div>
 
         <div class="container-fluid ott-dashboard">
             
-            <div class="ott-tabs-wrapper mt-0">
+            <div class="manual-link-container">
+                <input type="text" id="manualLinkInput" placeholder="Paste m3u8 link, embed URL, or Website Link to extract stream..." />
+                <button onclick="playManualStream()"><i class="bi bi-play-fill"></i> Play</button>
+            </div>
+
+            <div class="ott-tabs-wrapper mt-3">
                 <button id="tabFifa" class="tab-trigger active" onclick="togglePanelTab('fifa', this)"><i class="bi bi-trophy-fill me-1"></i> FIFA Premium</button>
+                <button id="tabNewLinks" class="tab-trigger" onclick="togglePanelTab('newlinks', this)"><i class="bi bi-star-fill me-1"></i> New Links</button>
                 <button id="tabSports" class="tab-trigger" onclick="togglePanelTab('sports', this)"><i class="bi bi-broadcast me-1"></i> Live Sports</button>
                 <button id="tabBangla" class="tab-trigger" onclick="togglePanelTab('bangla', this)"><i class="bi bi-flag-fill me-1"></i> Bangla TV</button>
                 <button id="tabChannels" class="tab-trigger" onclick="togglePanelTab('channels', this)"><i class="bi bi-tv me-1"></i> Live Channels</button>
             </div>
 
             <div class="horizontal-panel">
-                
                 <div id="fifaTabPanel" class="tab-panel-content"></div>
+                <div id="newlinksTabPanel" class="tab-panel-content panel-grid-hidden"></div>
                 <div id="sportsTabPanel" class="tab-panel-content panel-grid-hidden"></div>
                 <div id="banglaTabPanel" class="tab-panel-content panel-grid-hidden"></div>
                 <div id="channelsTabPanel" class="tab-panel-content panel-grid-hidden"></div>
-
             </div>
+            
             <div class="text-center mt-5 text-muted" style="font-size: 10px; opacity: 0.2;">© 2026 Zion Sports • Powered by GitHub Pages</div>
         </div>
 
@@ -518,24 +556,7 @@
     <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 
     <script>
-        /* =========================================================
-           ⚙️ PROXY CONFIGURATION — READ THIS FIRST
-           -------------------------------------------------------
-           Most channels in these playlists will NOT play without a
-           proxy. Two hard browser limits make this unavoidable:
-             • Browsers block "mixed content" (http:// streams on an
-               https:// page).
-             • JavaScript is not allowed to set Referer/Origin/User-
-               Agent headers — several stream servers require these
-               exact headers to accept the request.
-           A small server-side proxy fixes all three problems at once.
-           A ready-to-deploy Cloudflare Worker (worker.js) is provided
-           alongside this file — deploy it (free, ~5 minutes) and put
-           its URL below. Everything keeps working (with more
-           failures) even if you leave this blank, but most streams
-           marked "useProxy" or using http:// URLs will not load.
-        ========================================================= */
-        const PROXY_BASE_URL = ""; // e.g. "https://zion-proxy.yourname.workers.dev"
+        const PROXY_BASE_URL = ""; 
 
         function buildProxyUrl(rawUrl, ch) {
             if (!PROXY_BASE_URL) return rawUrl;
@@ -555,25 +576,53 @@
         };
 
         const FALLBACK_LOGO = "https://upload.wikimedia.org/wikipedia/en/thumb/1/17/2026_FIFA_World_Cup_emblem.svg/250px-2026_FIFA_World_Cup_emblem.svg.png";
-        const MAX_AUTO_ATTEMPTS = 6;     // how many channels to auto-try for the default FIFA pick
-        const MAX_MIRROR_ATTEMPTS = 8;   // how many mirrors to try when a manually-picked channel fails
-        const PLAY_TIMEOUT_MS = 14000;   // if nothing plays within this time, treat as a failure
+        const MAX_AUTO_ATTEMPTS = 6;     
+        const MAX_MIRROR_ATTEMPTS = 8;   
+        const PLAY_TIMEOUT_MS = 14000;   
         const MOBILE_BREAKPOINT = 992;
 
-        let database = { fifa: [], sports: [], bangla: [], channels: [] };
+        let database = { 
+            fifa: [], 
+            sports: [], 
+            bangla: [], 
+            channels: [],
+            newlinks: [
+                { name: "TSN [HD]", url: "https://embed.st/embed/admin/ppv-england-vs-argentina/1", type: "iframe", logo: "", group: "Sports Embed" },
+                { name: "T Sports Server 1", url: "https://bdix.my.id/onair/e.php?channel=tsports", type: "iframe", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzV2mfuaWiI0HdxWZlS5_Q4i7ZOfZnpoy3Gw&s", group: "Sports Embed" },
+                { name: "T Sports Server 2", url: "https://bdix.my.id/onair/e.php?channel=tsports2", type: "iframe", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzV2mfuaWiI0HdxWZlS5_Q4i7ZOfZnpoy3Gw&s", group: "Sports Embed" },
+                { name: "CAZETV 1080p", url: "https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/1080p-vtt/index.m3u8", type: "hls", logo: "", group: "Sports" },
+                { name: "CAZETV 720p", url: "https://dfr80qz435crc.cloudfront.net/MNOP/Amagi/Caze/Caze_TV_BR/720p-vtt/index.m3u8", type: "hls", logo: "", group: "Sports" },
+                { name: "Tsports (World Cup)", url: "https://flussonic.deltainfonet.com/01_Tsports_HD/tracks-v1a1/mono.m3u8", type: "hls", logo: "", group: "Sports" },
+                { name: "BEIN 1", url: "https://1nyaler.streamhostingcdn.top/stream/23/index.m3u8", type: "hls", logo: "", group: "Sports" },
+                { name: "TOFFEE", url: "https://ezlivetv-proxy.martvila-com.workers.dev/ch2.m3u8", type: "hls", logo: "", group: "Sports" },
+                { name: "BIOSCOPE+ 2", url: "https://nhnsteambox26.lovable.app/api/public/stream?url=https%3A%2F%2Ffifa.droxilen.workers.dev%2Fstream%3Fch%3D1", type: "hls", logo: "", group: "Sports" },
+                { name: "T Sports HLS", url: "https://103.59.176.72:8083/live1/tracks-v1a1/mono.m3u8?token=123", type: "hls", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzV2mfuaWiI0HdxWZlS5_Q4i7ZOfZnpoy3Gw&s", group: "Sports" },
+                { name: "Somoy TV", url: "https://live.thebosstv.com:30443/dwlive/Somoy-TV/chunks.m3u8", type: "hls", logo: "https://media-stg.assettype.com/bdnews-english/import/english/imgAll/2024August/somoy-tv-logo-1723310567.jpg", group: "News" },
+                { name: "NTV", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1716/output/index.m3u8", type: "hls", logo: "", group: "News" },
+                { name: "Channel 1", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1702/output/index.m3u8", type: "hls", logo: "", group: "News" },
+                { name: "Jamuna TV", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1701/output/index.m3u8", type: "hls", logo: "", group: "News" },
+                { name: "Sangsad TV", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8", type: "hls", logo: "", group: "News" },
+                { name: "Channel 24", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1703/output/index.m3u8", type: "hls", logo: "", group: "News" },
+                { name: "News 24", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1708/output/index.m3u8", type: "hls", logo: "", group: "News" },
+                { name: "Star News", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1710/output/index.m3u8", type: "hls", logo: "", group: "News" },
+                { name: "Ekattor TV", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1705/output/index.m3u8", type: "hls", logo: "", group: "News" },
+                { name: "DBC News", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1728/output/index.m3u8", type: "hls", logo: "", group: "News" },
+                { name: "Deepto Tv", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1711/output/index.m3u8", type: "hls", logo: "", group: "Entertainment" },
+                { name: "G-Series", url: "https://vods2.aynaott.com/gseriesDrama/tracks-v1a1/mono.ts.m3u8", type: "hls", logo: "", group: "Entertainment" },
+                { name: "Discovery HD", url: "https://ottbanglaplatform.com/tv/toffee/live.php?id=discovery_hd&e=.m3u8", type: "hls", logo: "", group: "Entertainment" }
+            ] 
+        };
+        
         const video = document.getElementById('player');
+        const iframePlayer = document.getElementById('iframe-player');
+        const plyrWrapper = document.getElementById('plyr-wrapper');
         const loader = document.getElementById('playerLoader');
         const unmuteBtn = document.getElementById('unmuteBtn');
         const reloadBtn = document.getElementById('reloadBtn');
         let hls = null;
         let dashPlayer = null;
         let savedCurrentChannelData = null;
-        let activeCountryFilter = null; // currently selected country pill inside "Live Channels" tab
-
-        if (!PROXY_BASE_URL) {
-            const w = document.getElementById('proxyWarning');
-            if (w) w.classList.add('show');
-        }
+        let activeCountryFilter = null; 
 
         const plyr = new Plyr(video, { 
             autoplay: true, 
@@ -581,7 +630,6 @@
             controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'pip', 'fullscreen']
         });
 
-        // 🌟 Add Text Watermark to the Player Dynamically 🌟
         plyr.on('ready', () => {
             const plyrContainer = document.querySelector('.plyr');
             if (plyrContainer && !document.querySelector('.text-watermark')) {
@@ -608,7 +656,6 @@
             unmuteBtn.classList.remove('show');
         });
 
-        // Sticky shadow toggle (YouTube-style stuck indicator on mobile)
         const stickyWrapper = document.getElementById('stickyWrapper');
         const stickyObserver = new IntersectionObserver(
             ([e]) => stickyWrapper.classList.toggle('is-stuck', e.intersectionRatio < 1),
@@ -616,13 +663,6 @@
         );
         stickyObserver.observe(stickyWrapper);
 
-        /* =========================================================
-           MINI PLAYER (mobile only)
-           Once the user scrolls past the player + stream-details
-           block, shrink the video into a small corner box so the
-           channel list has room to breathe. Tap it to jump back up,
-           or close it to pause playback.
-        ========================================================= */
         const miniPlayerClose = document.getElementById('miniPlayerClose');
         const miniTapZone = document.getElementById('miniTapZone');
         const miniSentinel = document.getElementById('miniPlayerSentinel');
@@ -649,6 +689,7 @@
                 miniPlayerManuallyClosed = true;
                 deactivateMiniPlayer();
                 video.pause();
+                iframePlayer.src = "";
             });
         }
         if (miniSentinel) {
@@ -667,21 +708,12 @@
             if (window.innerWidth >= MOBILE_BREAKPOINT) deactivateMiniPlayer();
         });
 
-        /* =========================================================
-           AUTO-ROTATE
-           Toggle saved in localStorage. When ON and the phone is
-           rotated to landscape, the player auto-enters fullscreen;
-           rotating back to portrait exits it. Also tries to lock the
-           screen orientation while fullscreen is active.
-           Note: iOS Safari restricts fullscreen requests that aren't
-           directly triggered by a tap, so this works best on Android.
-        ========================================================= */
         const AUTO_ROTATE_KEY = 'zionAutoRotate_v1';
         let autoRotateEnabled = true;
         try {
             const stored = localStorage.getItem(AUTO_ROTATE_KEY);
             autoRotateEnabled = stored === null ? true : stored === '1';
-        } catch (e) { /* storage unavailable, default stays true */ }
+        } catch (e) { }
 
         function updateAutoRotateButton() {
             const btn = document.getElementById('autoRotateBtn');
@@ -702,7 +734,7 @@
                 } else {
                     if (plyr && plyr.fullscreen && plyr.fullscreen.active) plyr.fullscreen.exit();
                 }
-            } catch (e) { /* fullscreen request blocked by browser, ignore */ }
+            } catch (e) { }
         }
         if (window.matchMedia) {
             const orientationMq = window.matchMedia('(orientation: landscape)');
@@ -721,13 +753,6 @@
             }
         });
 
-        /* =========================================================
-           HEALTH / TRENDING SYSTEM
-           Every real play attempt (success or failure) is recorded
-           in localStorage so the "Trending Now" ranking and the
-           default FIFA channel always reflect what is *actually*
-           working right now, automatically, with no manual curation.
-        ========================================================= */
         const HEALTH_KEY = 'zionStreamHealth_v1';
         let healthData = {};
 
@@ -740,7 +765,7 @@
             }
         }
         function saveHealth() {
-            try { localStorage.setItem(HEALTH_KEY, JSON.stringify(healthData)); } catch (e) { /* storage unavailable, ignore */ }
+            try { localStorage.setItem(HEALTH_KEY, JSON.stringify(healthData)); } catch (e) { }
         }
         function getHealth(url) {
             return healthData[url] || { success: 0, fail: 0, last: null };
@@ -752,7 +777,6 @@
             healthData[url] = h;
             saveHealth();
         }
-        // tier 0 = confirmed working, 1 = untested / mixed, 2 = confirmed failing
         function healthRank(ch) {
             const h = getHealth(ch.url);
             let tier = 1;
@@ -802,6 +826,7 @@
                 renderTabWithTrending('sports', 'sportsTabPanel');
                 renderTabWithTrending('bangla', 'banglaTabPanel');
                 renderTabWithTrending('channels', 'channelsTabPanel');
+                renderTabWithTrending('newlinks', 'newlinksTabPanel');
 
                 autoPlayDefaultChannel();
             } catch (error) {
@@ -811,15 +836,13 @@
             }
         }
 
-        /* =========================================================
-           RENDERING
-        ========================================================= */
         function buildCard(ch, index) {
             const card = document.createElement('div');
             card.className = 'channel-card';
             card.style.setProperty('--i', index || 0);
             card.dataset.url = ch.url;
             card.dataset.name = ch.name || '';
+            card.dataset.type = ch.type || ''; 
             card.onclick = function () { playWithMirrorFallback(ch); };
 
             const logoSrc = ch.logo && ch.logo !== "" ? ch.logo : FALLBACK_LOGO;
@@ -845,8 +868,6 @@
             channels.forEach((ch, i) => container.appendChild(buildCard(ch, i)));
         }
 
-        // Renders a tab body: Trending Now row on top, then either the full
-        // sorted list (fifa/sports/bangla) or the country browser (channels).
         function renderTabWithTrending(key, panelId) {
             const panel = document.getElementById(panelId);
             if (!panel) return;
@@ -873,7 +894,7 @@
             renderGrid(trending, trendGrid);
             panel.appendChild(trendGrid);
 
-            if (key === 'channels') {
+            if (key === 'channels' || key === 'newlinks') {
                 renderCountryBrowser(channels, panel);
             } else {
                 const allHeading = document.createElement('div');
@@ -888,8 +909,6 @@
             }
         }
 
-        // Country/category browser for the "Live Channels" tab, grouped by
-        // the playlist's "group" field (mostly country names in this feed).
         function renderCountryBrowser(channels, panel) {
             const groups = {};
             channels.forEach(ch => {
@@ -901,7 +920,7 @@
 
             const browseHeading = document.createElement('div');
             browseHeading.className = 'section-heading';
-            browseHeading.innerText = 'Browse by Country';
+            browseHeading.innerText = 'Browse by Category';
             panel.appendChild(browseHeading);
 
             const pillRow = document.createElement('div');
@@ -911,7 +930,7 @@
             allPill.type = 'button';
             allPill.className = 'country-pill' + (activeCountryFilter === null ? ' active' : '');
             allPill.innerText = `All (${channels.length})`;
-            allPill.onclick = () => { activeCountryFilter = null; renderTabWithTrending('channels', 'channelsTabPanel'); };
+            allPill.onclick = () => { activeCountryFilter = null; renderTabWithTrending(panel.id.replace('TabPanel', ''), panel.id); };
             pillRow.appendChild(allPill);
 
             countryNames.forEach(name => {
@@ -919,7 +938,7 @@
                 pill.type = 'button';
                 pill.className = 'country-pill' + (activeCountryFilter === name ? ' active' : '');
                 pill.innerText = `${name} (${groups[name].length})`;
-                pill.onclick = () => { activeCountryFilter = name; renderTabWithTrending('channels', 'channelsTabPanel'); };
+                pill.onclick = () => { activeCountryFilter = name; renderTabWithTrending(panel.id.replace('TabPanel', ''), panel.id); };
                 pillRow.appendChild(pill);
             });
             panel.appendChild(pillRow);
@@ -936,15 +955,8 @@
             panel.appendChild(grid);
         }
 
-        /* =========================================================
-           PLAYBACK + AUTOMATIC FAILOVER
-        ========================================================= */
         let playToken = 0;
 
-        // Custom hls.js loader: rewrites EVERY request (manifest, level
-        // playlists, segments, encryption keys) to go through the proxy
-        // with this channel's referer/origin/UA baked in. This is what
-        // actually fixes CORS + mixed-content + header spoofing for HLS.
         function createProxyHlsLoader(ch) {
             const BaseLoader = Hls.DefaultConfig.loader;
             return class ProxyLoader extends BaseLoader {
@@ -955,9 +967,6 @@
             };
         }
 
-        // dash.js's RequestModifier extension point rewrites the URL of
-        // EVERY request dash.js makes (manifest, segments, license calls),
-        // routing them through the same proxy.
         function applyDashProxy(player, ch) {
             if (!PROXY_BASE_URL) return;
             player.extend("RequestModifier", function () {
@@ -968,12 +977,60 @@
             }, true);
         }
 
-        // Plays one specific channel object. Calls onResult(true/false) exactly
-        // once, based on whether playback actually started or failed/timed out.
+        // --- NEW LOGIC: LINK EXTRACTION VIA CORS PROXY ---
+        async function playManualStream() {
+            const inputUrl = document.getElementById('manualLinkInput').value.trim();
+            if (!inputUrl) return alert("Please enter a valid link.");
+
+            // Check if it's already a direct video link or embed link
+            const isDirectStream = inputUrl.includes('.m3u8') || inputUrl.includes('.mpd');
+            const isEmbed = inputUrl.includes('embed') || inputUrl.includes('iframe') || inputUrl.includes('e.php');
+
+            if (isDirectStream || isEmbed) {
+                let type = 'iframe'; 
+                if (inputUrl.includes('.m3u8')) type = 'hls';
+                else if (inputUrl.includes('.mpd')) type = 'dash';
+                
+                playWithMirrorFallback({ name: "Manual Stream", url: inputUrl, type: type, logo: FALLBACK_LOGO });
+                stickyWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                return;
+            }
+
+            // If it's a normal website URL, try to extract links using a public CORS proxy
+            document.getElementById('activeTitle').innerText = "Extracting link from website...";
+            showLoader();
+            
+            try {
+                // Using allorigins as a free CORS proxy to fetch HTML content
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(inputUrl)}`;
+                const response = await fetch(proxyUrl);
+                const data = await response.json();
+                const html = data.contents;
+                
+                // Regex to find .m3u8 or .mpd links within the HTML source
+                const streamMatch = html.match(/(https?:\/\/[^\s"'<>]+\.(?:m3u8|mpd)[^\s"'<>]*)/i);
+                
+                if (streamMatch && streamMatch[1]) {
+                    const extractedUrl = streamMatch[1];
+                    let type = extractedUrl.includes('.m3u8') ? 'hls' : 'dash';
+                    playWithMirrorFallback({ name: "Extracted Stream", url: extractedUrl, type: type, logo: FALLBACK_LOGO });
+                    stickyWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    hideLoader();
+                    alert("Could not find any visible .m3u8 or .mpd stream on that webpage. The site might be protected or encrypting its links.");
+                    document.getElementById('activeTitle').innerText = "Extraction Failed";
+                }
+            } catch (error) {
+                hideLoader();
+                alert("Failed to fetch the website. It might be blocking proxy requests.");
+                document.getElementById('activeTitle').innerText = "Extraction Failed";
+            }
+        }
+
         function switchStandardChannel(channelObj, onResult) {
             const myToken = ++playToken;
             savedCurrentChannelData = channelObj;
-            miniPlayerManuallyClosed = false; // a fresh channel pick re-enables the mini player
+            miniPlayerManuallyClosed = false; 
             showLoader();
             loader.querySelector('span').innerText = 'Loading Stream';
 
@@ -985,6 +1042,33 @@
             const activeLogo = document.getElementById('activeLogo');
             activeLogo.src = channelObj.logo && channelObj.logo !== "" ? channelObj.logo : FALLBACK_LOGO;
             activeLogo.style.display = 'inline-block';
+
+            const isIframe = channelObj.type === 'iframe' || (!channelObj.url.includes('.m3u8') && !channelObj.url.includes('.mpd'));
+
+            if (isIframe) {
+                plyrWrapper.classList.add('hidden');
+                iframePlayer.classList.remove('hidden');
+                
+                video.pause();
+                if (hls) { hls.destroy(); hls = null; }
+                if (dashPlayer) { dashPlayer.reset(); dashPlayer = null; }
+
+                iframePlayer.src = channelObj.url;
+
+                setTimeout(() => {
+                    if (myToken === playToken) {
+                        hideLoader();
+                        recordHealth(channelObj.url, true);
+                        refreshHealthDots();
+                        if (onResult) onResult(true);
+                    }
+                }, 1500);
+                return;
+            }
+
+            iframePlayer.src = "";
+            iframePlayer.classList.add('hidden');
+            plyrWrapper.classList.remove('hidden');
 
             if (hls) { hls.destroy(); hls = null; }
             if (dashPlayer) { dashPlayer.reset(); dashPlayer = null; }
@@ -1020,9 +1104,6 @@
                         });
                     }
 
-                    // The manifest URL itself must also go through the proxy —
-                    // the RequestModifier only covers requests dash.js makes
-                    // internally after this initial load.
                     const dashManifestUrl = PROXY_BASE_URL ? buildProxyUrl(channelObj.url, channelObj) : channelObj.url;
                     dashPlayer.initialize(video, dashManifestUrl, true);
                     dashPlayer.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, function () {
@@ -1057,11 +1138,6 @@
                             }
                         });
                     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                        // Native HLS (Safari/iOS): the browser's own network
-                        // stack fetches the manifest and every segment, so we
-                        // can only route this through the proxy at the top
-                        // level; per-segment header spoofing isn't possible
-                        // here, but this still fixes mixed-content + CORS.
                         video.src = PROXY_BASE_URL ? buildProxyUrl(channelObj.url, channelObj) : channelObj.url;
                         video.play().catch(() => finish(false));
                     } else {
@@ -1073,18 +1149,14 @@
             }
         }
 
-        // Finds every entry across all categories that shares the same channel
-        // name (i.e. mirrors/duplicate servers for the same channel).
         function getMirrorsForChannel(channelObj) {
-            const all = [...database.fifa, ...database.sports, ...database.bangla, ...database.channels];
+            const all = [...database.fifa, ...database.sports, ...database.bangla, ...database.channels, ...database.newlinks];
             const target = (channelObj.name || '').trim().toLowerCase();
             const matches = all.filter(c => (c.name || '').trim().toLowerCase() === target);
             const others = matches.filter(c => c.url !== channelObj.url);
             return [channelObj, ...sortByTrending(others)];
         }
 
-        // Plays the channel the user picked; if it fails, automatically tries
-        // the next best mirror of the SAME channel until one works.
         function playWithMirrorFallback(channelObj, attemptIndex = 0, mirrorList = null) {
             const list = mirrorList || getMirrorsForChannel(channelObj);
             if (attemptIndex >= Math.min(list.length, MAX_MIRROR_ATTEMPTS)) {
@@ -1098,12 +1170,10 @@
             });
         }
 
-        // Used only for the automatic FIFA default pick on page load: walks
-        // down a trending-sorted list of DIFFERENT channels until one plays.
         function autoPlayBestChannel(list, attemptIndex = 0) {
             if (!list || list.length === 0) return;
             if (attemptIndex >= Math.min(list.length, MAX_AUTO_ATTEMPTS)) {
-                if (list[0]) switchStandardChannel(list[0]); // last resort: just show the top pick
+                if (list[0]) switchStandardChannel(list[0]);
                 return;
             }
             const candidate = list[attemptIndex];
@@ -1128,9 +1198,12 @@
             document.getElementById('sportsTabPanel').classList.add('panel-grid-hidden');
             document.getElementById('banglaTabPanel').classList.add('panel-grid-hidden');
             document.getElementById('channelsTabPanel').classList.add('panel-grid-hidden');
+            document.getElementById('newlinksTabPanel').classList.add('panel-grid-hidden');
 
             if (tabName === 'fifa') {
                 document.getElementById('fifaTabPanel').classList.remove('panel-grid-hidden');
+            } else if (tabName === 'newlinks') { 
+                document.getElementById('newlinksTabPanel').classList.remove('panel-grid-hidden');
             } else if (tabName === 'sports') {
                 document.getElementById('sportsTabPanel').classList.remove('panel-grid-hidden');
             } else if (tabName === 'bangla') {
